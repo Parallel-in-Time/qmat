@@ -1,0 +1,22 @@
+*.pyc
+*.swp
+
+# OSX
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Spyder
+.spyproject
+
+*.xml
+
+# jupyter
+.ipynb_checkpoints
+
+# VSCode
+.vscode
+*.cpp
