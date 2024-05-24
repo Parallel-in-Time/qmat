@@ -101,6 +101,12 @@ class NodesGenerator(object):
         nodes = eigh_tridiagonal(alpha, np.sqrt(beta[1:]))[0]
         nodes.sort()
 
+        # Force overwrite boundary values if necessary (better precision)
+        if self.quadType in ["LOBATTO", "RADAU-RIGHT"]:
+            nodes[-1] = 1
+        if self.quadType in ["LOBATTO", "RADAU-LEFT"]:
+            nodes[0] = -1
+
         return nodes
 
 

@@ -3,6 +3,7 @@
 """
 Utility module
 """
+import pkgutil
 
 def checkOverriding(cls, name, isProperty=True):
     method = getattr(cls, name)
@@ -14,7 +15,7 @@ def checkOverriding(cls, name, isProperty=True):
             f"{name} method must be a property in {cls.__name__} class"
     else:
         pass
-        # TODO : check that signature are the same
+        # TODO : check that signatures are the same
 
 
 def storeAlias(cls, dico, alias):
@@ -30,3 +31,19 @@ def storeClass(cls, dico):
             f"aliases must be a list in class {cls.__name__}"
         for alias in aliases:
             storeAlias(cls, dico, alias)
+
+
+def importAll(localVars, path, name, _import):
+    """The magic function"""
+    _all = [var for var in localVars.keys() if not var.startswith('__')]
+    for _, moduleName, _ in pkgutil.walk_packages(path):
+        _all.append(moduleName)
+        _import(name+'.'+moduleName)
+
+
+def getClasses(dico):
+    classes = {}
+    for key, val in dico.items():
+        if val not in classes.values():
+            classes[key] = val
+    return classes

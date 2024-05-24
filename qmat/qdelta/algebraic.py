@@ -8,14 +8,6 @@ import scipy.linalg as spl
 
 from qmat.qdelta import QDeltaGenerator, register
 
-@register
-class Exact(QDeltaGenerator):
-    """Take Q (exact approximation)"""
-    aliases = ["EXACT"]
-
-    def getQDelta(self, k=None):
-        np.copyto(self.QDelta, self.Q)
-        return self.QDelta
 
 @register
 class PIC(QDeltaGenerator):
@@ -26,26 +18,37 @@ class PIC(QDeltaGenerator):
         return self.QDelta
 
 
+
+@register
+class Exact(QDeltaGenerator):
+    """Takes Q (exact approximation)"""
+    aliases = ["EXACT"]
+
+    def getQDelta(self, k=None):
+        np.copyto(self.QDelta, self.Q)
+        return self.QDelta
+
+
 @register
 class LU(QDeltaGenerator):
     """LU approximation from Weiser"""
 
     def getQDelta(self, k=None):
-        QT = self.Q.T
-        _, _, U = spl.lu(QT)
+        _, _, U = spl.lu(self.Q.T)
         np.copyto(self.QDelta, U.T)
         return self.QDelta
+
 
 @register
 class LU2(QDeltaGenerator):
     """LU approximation from Weiser multiplied by 2"""
 
     def getQDelta(self, k=None):
-        QT = self.Q.T
-        _, _, U = spl.lu(QT)
+        _, _, U = spl.lu(self.Q.T)
         np.copyto(self.QDelta, U.T)
         self.QDelta *= 2
         return self.QDelta
+
 
 @register
 class QPar(QDeltaGenerator):
@@ -56,9 +59,10 @@ class QPar(QDeltaGenerator):
         np.copyto(self.QDelta, np.diag(np.diag(self.Q)))
         return self.QDelta
 
+
 @register
 class QG(QDeltaGenerator):
-    """Approximation using diagonal of Q"""
+    """Approximation using lower triangular part of Q"""
     aliases = ["GaussSeidel"]
 
     def getQDelta(self, k=None):

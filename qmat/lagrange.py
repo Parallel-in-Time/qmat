@@ -179,6 +179,7 @@ class LagrangeApproximation(object):
             raise NotImplementedError(
                 f'weightComputation={weightComputation}')
         weights = invProd
+        weights /= np.max(np.abs(weights))
 
         # Store attributes
         self.points = points

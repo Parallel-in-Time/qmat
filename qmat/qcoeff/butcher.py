@@ -17,6 +17,7 @@ References
 import numpy as np
 
 from qmat.qcoeff import QGenerator, register
+from qmat.utils import storeClass
 
 
 class RK(QGenerator):
@@ -26,16 +27,36 @@ class RK(QGenerator):
     order = None
 
     @property
-    def Q(self): return np.array(self.A, dtype=float)
+    def nodes(self): return self.c
 
     @property
-    def nodes(self): return np.array(self.c, dtype=float)
+    def weights(self): return self.b
 
     @property
-    def weights(self): return np.array(self.b, dtype=float)
+    def Q(self): return self.A
 
 
-@register
+RK_SCHEMES:dict[str:RK] = {}
+
+def checkAndStore(cls:RK)->RK:
+    cls.A = np.array(cls.A, dtype=float)
+    cls.b = np.array(cls.b, dtype=float)
+    cls.c = np.array(cls.c, dtype=float)
+    assert cls.b.size == cls.c.size, \
+        f"b (size {cls.b.size}) and c (size {cls.b.size})" + \
+        f" have not the same size in {cls.__name__}"
+    assert cls.A.shape == (cls.c.size, cls.c.size), \
+        f"A (shape {cls.A.shape}) and c (size {cls.b.size})" + \
+        f" have inconsistent dimensions in {cls.__name__}"
+    assert cls.order is not None, \
+        f"order not defined for {cls.__name__}"
+    storeClass(cls, RK_SCHEMES)
+    return cls
+
+def registerRK(cls:RK)->RK:
+    return register(checkAndStore(cls))
+
+@registerRK
 class FE(RK):
     """Forward Euler method (cf Wikipedia)"""
     aliases = ["EE"]
@@ -44,7 +65,7 @@ class FE(RK):
     c = [0]
     order = 1
 
-@register
+@registerRK
 class RK4(RK):
     """Classical Runge Kutta method of order 4 (cf Wikipedia)"""
     aliases = ["ERK4"]
@@ -56,19 +77,19 @@ class RK4(RK):
     c = [0, 1/2, 1/2, 1]
     order = 4
 
-@register
+@registerRK
 class RK4_38(RK):
     """The 3/8-rule due to Kutta, order 4  (cf Wikipedia)"""
     aliases = ["ERK4_38"]
     A = [[0, 0, 0, 0],
          [1/3, 0, 0, 0],
          [-1/3, 1, 0, 0],
-         [1, -1, 1, 0]],
+         [1, -1, 1, 0]]
     b = [1/8, 3/8, 3/8, 1/8]
     c = [0, 1/3, 2/3, 1]
     order = 4
 
-@register
+@registerRK
 class RK53(RK):
     """Explicit Runge-Kutta in 5 steps of order 3 from Wang & Spiteri [1]"""
     aliases = ["ERK53"]
@@ -81,7 +102,7 @@ class RK53(RK):
     c = [0, 1/7, 3/16, 1/3, 2/3]
     order = 3
 
-@register
+@registerRK
 class RK21(RK):
     """Explicit Runge-Kutta in 2 steps of order 1 from Wang & Spiteri [1]"""
     aliases = ["ERK21"]
@@ -91,7 +112,7 @@ class RK21(RK):
     c = [0, 3/4]
     order = 1
 
-@register
+@registerRK
 class RK2(RK):
     """Classical Runge Kutta method of order 2 (cf Wikipedia)"""
     aliases = ["ERK2"]
@@ -101,7 +122,7 @@ class RK2(RK):
     c = [0, 1/2]
     order = 2
 
-@register
+@registerRK
 class HEUN2(RK):
     """Heun method of order 2 (cf Wikipedia)"""
     aliases = ["HEUN"]
@@ -111,7 +132,7 @@ class HEUN2(RK):
     c = [0, 1.]
     order = 2
 
-@register
+@registerRK
 class RK32(RK):
     """Explicit Runge-Kutta in 3 steps of order 2 from Wang & Spiteri [1]"""
     aliases = ["ERK32", "RK32-SSP"]
@@ -122,7 +143,7 @@ class RK32(RK):
     c = [0, 1/3, 1]
     order = 2
 
-@register
+@registerRK
 class RK33(RK):
     """Explicit Runge-Kutta in 3 steps of order 3 from Wang & Spiteri [1]"""
     aliases = ["ERK33", "RK33-SSP"]
@@ -133,69 +154,90 @@ class RK33(RK):
     c = [0, 1, 1/2]
     order = 3
 
-@register
+@registerRK
 class RK65(RK):
     """Explicit Runge-Kutta in 6 steps of order 5, (236a) from Butcher [4]"""
     aliases = ["ERK65"]
     A = [[0, 0, 0, 0, 0, 0],
          [0.25, 0, 0, 0, 0, 0],
-         [1./8, 1./8, 0, 0, 0, 0],
+         [1/8, 1./8, 0, 0, 0, 0],
          [0, 0, 0.5, 0, 0, 0],
-         [3./16, -3./8, 3./8, 9./16, 0, 0],
-         [-3./7, 8./7, 6./7, -12./7, 8./7, 0]]
-    b = [7./90, 0, 32./90, 12./90, 32./90, 7./90]
-    c = [0, 0.25, 0.25, 0.5, 0.75, 1.]
+         [3/16, -3/8, 3/8, 9/16, 0, 0],
+         [-3/7, 8/7, 6/7, -12/7, 8/7, 0]]
+    b = [7/90, 0, 32/90, 12/90, 32/90, 7/90]
+    c = [0, 0.25, 0.25, 0.5, 0.75, 1]
     order = 5
 
+@registerRK
+class BE(RK):
+    """Backward Euler method (also SDIRK1, see [2])"""
+    aliases = ["IE"]
+    A = [[1]]
+    b = [1]
+    c = [1]
+    order = 1
 
-tablesImplicit = \
-    {'BE':  # Backward Euler method (also SDIRK1, see [2])
-     {'A': [[1.]],
-      'b': [1.],
-      'c': [1.],
-      'c1': 1/2, 'order': 1},
-     'TRAPZ':  # Trapeze method (cf Wikipedia)
-     {'A': [[0, 0],
-            [1./2, 1./2]],
-      'b': [1./2, 1./2],
-      'c': [0., 1.],
-      'c1': 1/12, 'order': 2},
-     'GAUSS-LG':  # Gauss-Legendre method of order 4 (cf Wikipedia)
-     {'A': [[0.25, 0.25-1./6*3**(0.5)],
-            [0.25+1./6*3**(0.5), 0.25]],
-      'b': [0.5, 0.5],
-      'c': [0.5-1./6*3**(0.5), 0.5+1./6*3**(0.5)],
-      'c1': -1/720, 'order': 4},
-     'SDIRK2':  # First S-stable Diagonally Implicit Runge Kutta method of
-                # order 2 in two stages, from Alexander [2]
-     {'A': [[1-2**0.5/2, 0],
-            [2**0.5/2, 1-2**0.5/2]],
-      'b': [2**0.5/2, 1-2**0.5/2],
-      'c': [1-2**0.5/2, 1.],
-      'c1': 0.0404401145198803, 'order': 2},
-     'SDIRK2-2':  # Second S-stable Diagonally Implicit Runge Kutta method of
-                  # order 2 in two stages, from Alexander [2]
-     {'A': [[1+2**0.5/2, 0],
-            [-2**0.5/2, 1+2**0.5/2]],
-      'b': [-2**0.5/2, 1+2**0.5/2],
-      'c': [1+2**0.5/2, 1.],
-      'c1': -1.37377344785315, 'order': 2},
-     'SDIRK3':  # S-stable Diagonally Implicit Runge Kutta method of
-                # order 3 in three stages, from Alexander [2]
-     {'A': [[0.43586652150845967, 0, 0],
-            [0.28206673924577014, 0.43586652150845967, 0],
-            [1.2084966491760119, -0.6443631706844715, 0.43586652150845967]],
-      'b': [1.2084966491760119, -0.6443631706844715, 0.43586652150845967],
-      'c': [0.43586652150845967, 0.7179332607542298, 1.],
-      'c1': -0.0258970846506337, 'order': 3},
-     'SDIRK54':  # S-stable Diagonally Implicit Runge Kutta method of
-                 # order 4 in five stages, from Wanner and Hairer [3]
-     {'A': [[1/4, 0, 0, 0, 0],
-            [1/2, 1/4, 0, 0, 0],
-            [17/50, -1/25, 1/4, 0, 0],
-            [371/1360, -137/2720, 15/544, 1/4, 0],
-            [25/24, -49/48, 125/16, -85/12, 1/4]],
-      'b': [25/24, -49/48, 125/16, -85/12, 1/4],
-      'c': [1/4, 3/4, 11/20, 1/2, 1],
-      'c1': -8.46354080300333e-4, 'order': 4},
-     }
+@registerRK
+class TRAP(RK):
+    """Trapeze method (cf Wikipedia)"""
+    aliases = ["TRAPZ", "CN"]
+    A = [[0, 0],
+         [1/2, 1/2]]
+    b = [1/2, 1/2]
+    c = [0, 1]
+    order = 2
+
+@registerRK
+class GAUSS_LG(RK):
+    """Gauss-Legendre method of order 4 (cf Wikipedia)"""
+    aliases = ["GAUSS-LG"]
+    A = [[0.25, 0.25-1/6*3**(0.5)],
+         [0.25+1/6*3**(0.5), 0.25]]
+    b = [0.5, 0.5]
+    c = [0.5-1/6*3**(0.5), 0.5+1/6*3**(0.5)]
+    order = 4
+
+@registerRK
+class SDIRK2(RK):
+    """First S-stable Diagonally Implicit Runge Kutta method of order 2 in two stages, 
+    from Alexander [2]"""
+    A = [[1-2**0.5/2, 0],
+         [2**0.5/2, 1-2**0.5/2]]
+    b = [2**0.5/2, 1-2**0.5/2]
+    c = [1-2**0.5/2, 1.]
+    order = 2
+
+@registerRK
+class SDIRK2_2(RK):
+    """Second S-stable Diagonally Implicit Runge Kutta method of order 2 in two stages, 
+    from Alexander [2]"""
+    aliases = ["SDIRK2-2"]
+    A = [[1+2**0.5/2, 0],
+         [-2**0.5/2, 1+2**0.5/2]]
+    b = [-2**0.5/2, 1+2**0.5/2]
+    c = [1+2**0.5/2, 1]
+    order = 2
+
+@registerRK
+class SDIRK3(RK):
+    """S-stable Diagonally Implicit Runge Kutta method of order 3 in three stages, 
+    from Alexander [2]"""
+    A = [[0.43586652150845967, 0, 0],
+         [0.28206673924577014, 0.43586652150845967, 0],
+         [1.2084966491760119, -0.6443631706844715, 0.43586652150845967]]
+    b = [1.2084966491760119, -0.6443631706844715, 0.43586652150845967]
+    c = [0.43586652150845967, 0.7179332607542298, 1.]
+    order = 3
+
+@registerRK
+class SDIRK54(RK):
+    """S-stable Diagonally Implicit Runge Kutta method of order 4 in five stages, 
+    from Wanner and Hairer [3]"""
+    A = [[1/4, 0, 0, 0, 0],
+         [1/2, 1/4, 0, 0, 0],
+         [17/50, -1/25, 1/4, 0, 0],
+         [371/1360, -137/2720, 15/544, 1/4, 0],
+         [25/24, -49/48, 125/16, -85/12, 1/4]]
+    b = [25/24, -49/48, 125/16, -85/12, 1/4]
+    c = [1/4, 3/4, 11/20, 1/2, 1]
+    order = 4

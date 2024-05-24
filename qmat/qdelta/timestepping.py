@@ -9,11 +9,13 @@ from qmat.qdelta import QDeltaGenerator, register
 
 class TimeStepping(QDeltaGenerator):
 
-    def __init__(self, nodes, Q, **params):
-        super().__init__(nodes, Q, **params)
-        deltas = np.copy(nodes)
+    def __init__(self, nodes, **kwargs):
+        self.nodes = np.asarray(nodes)
+        deltas = nodes.copy()
         deltas[1:] = np.ediff1d(nodes)
         self.deltas = deltas
+        M = self.nodes.size
+        self.QDelta = np.zeros((M, M), dtype=float)
 
 
 @register
@@ -22,9 +24,9 @@ class BE(TimeStepping):
     aliases = ["IE"]
 
     def getQDelta(self, k=None):
-        QDelta, M, deltas = self.QDelta, self.M, self.deltas
+        QDelta, M, deltas = self.QDelta, self.nodes.size, self.deltas
         for i in range(M):
-            QDelta[i:, :M-i] += np.diag(deltas[M-i])
+            QDelta[i:, :M-i] += np.diag(deltas[:M-i])
         return QDelta
 
 @register
@@ -33,7 +35,7 @@ class FE(TimeStepping):
     aliases = ["EE"]
 
     def getQDelta(self, k=None):
-        QDelta, M, deltas = self.QDelta, self.M, self.deltas
+        QDelta, M, deltas = self.QDelta, self.nodes.size, self.deltas
         for i in range(1, M):
             QDelta[i:, :M-i] += np.diag(deltas[1:M-i+1])
 
@@ -47,7 +49,7 @@ class TRAP(TimeStepping):
     aliases = ["CN"]
 
     def getQDelta(self, k=None):
-        QDelta, M, deltas = self.QDelta, self.M, self.deltas
+        QDelta, M, deltas = self.QDelta, self.nodes.size, self.deltas
         for i in range(0, M):
             QDelta[i:, :M-i] += np.diag(deltas[:M-i])
         for i in range(1, M):
