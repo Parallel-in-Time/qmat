@@ -21,6 +21,9 @@
 .vscode
 *.cpp
 
-# Pytest stuff
+# Pytest and coeverage stuff
 .benchmarks
 .pytest_cache
+.coverage*
+htmlcov
+sitecustomize.py

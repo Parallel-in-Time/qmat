@@ -33,10 +33,7 @@ T = 2*np.pi
 
 @pytest.mark.parametrize("scheme", SCHEMES.keys())
 def testDahlquist(scheme):
-    try:
-        gen = SCHEMES[scheme]()
-    except TypeError:
-        gen = SCHEMES[scheme](**SCHEMES[scheme].DEFAULT_PARAMS)
+    gen = SCHEMES[scheme].getInstance()
     nSteps = nStepsForTest(gen)
     err = [gen.errorDahlquist(lam, u0, T, nS) for nS in nSteps]
     order, rmse = numericalOrder(nSteps, err)

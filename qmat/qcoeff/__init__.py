@@ -10,6 +10,13 @@ from qmat.lagrange import LagrangeApproximation
 
 class QGenerator(object):
 
+    @classmethod
+    def getInstance(cls):
+        try:
+            return cls()
+        except TypeError:
+            return cls(**cls.DEFAULT_PARAMS)
+
     @property
     def nodes(self):
         raise NotImplementedError("mouahahah")
@@ -22,6 +29,15 @@ class QGenerator(object):
     def weights(self):
         raise NotImplementedError("mouahahah")
 
+
+    @property
+    def T(self):
+        """Transfert matrix from zero-to-nodes to node-to-node"""
+        M = self.Q.shape[0]
+        T = np.eye(M)
+        T[1:,:-1][np.diag_indices(M-1)] = -1
+        return T
+
     @property
     def S(self):
         Q = np.asarray(self.Q)
@@ -29,6 +45,12 @@ class QGenerator(object):
         T = np.eye(M)
         T[1:,:-1][np.diag_indices(M-1)] = -1
         return T @ Q
+
+    @property
+    def Tinv(self):
+        """Transfert matrix from node-to-node to zero-to-node"""
+        M = self.Q.shape[0]
+        return np.tri(M)
 
     @property
     def hCoeffs(self):

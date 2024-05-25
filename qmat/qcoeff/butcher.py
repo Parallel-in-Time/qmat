@@ -82,6 +82,9 @@ class RK4(RK):
     @property
     def order(self): return 4
 
+    @property
+    def hCoeffs(self): return np.array([0, 0, 0, 1], dtype=float)
+
 
 @registerRK
 class RK4_38(RK):
@@ -196,6 +199,9 @@ class RK65(RK):
 
     @property
     def order(self): return 5
+
+    @property
+    def hCoeffs(self): return np.array([0, 0, 0, 0, 0, 1], dtype=float)
 
 
 @registerRK
