@@ -13,11 +13,12 @@ def stiffSR(Q, QDelta):
     return max(abs(np.linalg.eigvals(M)))
 
 margin = 1.5
+
 STIFF_SR = {
-    "MIN": 0.43*margin,
-    "VDHS": 0.026*margin,
-    "MIN3": 0.0082*margin,
-    "MIN-SR-S": 0.00025*margin,
+    "MIN": 0.43,
+    "VDHS": 0.026,
+    "MIN3": 0.0082,
+    "MIN-SR-S": 0.00025,
     }
 STIFF_PARAMS = {
     "nNodes": 4,
@@ -31,7 +32,7 @@ def testStiff4LegendreRadauRight(name):
     gen = QDELTA_GENERATORS[name](Q=coll.Q, **STIFF_PARAMS)
     QDelta = gen.getQDelta()
     sr = stiffSR(coll.Q, QDelta)
-    assert sr < STIFF_SR[name], "spectral radius too high"
+    assert sr < STIFF_SR[name] * margin, "spectral radius too high"
 
 
 def nilpotencyNonStiff(Q, QDelta):
@@ -49,7 +50,8 @@ def testNonStiff(nNodes, nodeType, quadType):
     gen = module.MIN_SR_NS(nodes)
     QDelta = gen.getQDelta()
 
-    assert nilpotencyNonStiff(Q, QDelta) < 1e-15, "nilpotency measure is to high"
+    assert nilpotencyNonStiff(Q, QDelta) < 1e-15 * margin, \
+        "nilpotency measure is to high"
 
 
 def nilpotencyStiff(Q, QDelta):
@@ -71,7 +73,8 @@ def testStiff(nNodes, nodeType, quadType):
     gen = module.MIN_SR_S(nNodes=nNodes, nodeType=nodeType, quadType=quadType)
     QDelta = gen.getQDelta()
 
-    assert nilpotencyStiff(Q, QDelta) < 1e-11, "nilpotency measure is to high"
+    assert nilpotencyStiff(Q, QDelta) < 1e-11 * margin, \
+        "nilpotency measure is to high"
 
 
 @pytest.mark.parametrize("quadType", ["GAUSS", "RADAU-RIGHT"])
@@ -88,7 +91,8 @@ def testFlex(nNodes, nodeType, quadType):
     for k in range(nNodes):
         P = (I - np.linalg.solve(gen.getQDelta(k+1), Q)) @ P
 
-    assert np.linalg.norm(P, ord=np.inf) < 1e-13, "nilpotency measure is to high"
+    assert np.linalg.norm(P, ord=np.inf) < 1e-13 * margin, \
+        "nilpotency measure is to high"
 
     genS = module.MIN_SR_S(nNodes=nNodes, nodeType=nodeType, quadType=quadType)
 
