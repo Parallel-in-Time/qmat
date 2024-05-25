@@ -25,6 +25,8 @@ def testGeneration(name):
         f"nodes and weights for {name} don't have the same size : {n1} / {w1}"
     assert Q1.shape == (n1.size, n1.size), \
         f"Q for {name} has unconsistent shape : {Q1.shape}"
+    assert gen.nNodes == n1.size, \
+        f"nNodes property from {name} is not equal to node size !"
 
     try:
         n2, w2, Q2 = genQCoeffs(name)

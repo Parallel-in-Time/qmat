@@ -28,7 +28,10 @@ class QGenerator(object):
     @property
     def weights(self):
         raise NotImplementedError("mouahahah")
-
+    
+    @property
+    def nNodes(self):
+        return self.nodes.size
 
     @property
     def T(self):

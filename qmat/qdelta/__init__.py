@@ -27,7 +27,7 @@ class QDeltaGenerator(object):
             out = [self.getQDelta(k)]
         if dTau:
             out += [self.dTau]
-        return out
+        return out if len(out) > 1 else out[0]
 
 QDELTA_GENERATORS:dict[str:QDeltaGenerator] = {}
 
@@ -54,7 +54,7 @@ def genQDeltaCoeffs(qDeltaType, nSweeps=None, dTau=False, **params):
             # complete with additional sweeps
             assert nSweeps >= len(qDeltaType), \
                 f"nSweeps ({nSweeps} lower than list length for qDeltaType ({qDeltaType})"
-            qDeltaType += [qDeltaType[0]]*(nSweeps-len(qDeltaType))
+            qDeltaType += [qDeltaType[-1]]*(nSweeps-len(qDeltaType))
         else:
             raise ValueError(f"bad value of nSweep {nSweeps}")
     else:
@@ -88,7 +88,7 @@ def genQDeltaCoeffs(qDeltaType, nSweeps=None, dTau=False, **params):
             if dTau:
                 out += [gens[0].dTau]
 
-    return out
+    return out if len(out) > 1 else out[0]
 
 
 # Import all local submodules

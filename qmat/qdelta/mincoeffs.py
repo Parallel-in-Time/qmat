@@ -4,7 +4,7 @@
 Submodule to store precomputed diagonal coefficients for min-type QDelta matrices
 """
 
-MIN3_COEFFS = {
+MIN3 = {
     "LEGENDRE": {
         "LOBATTO": {
             9: [    # rho = 0.154786693955
@@ -132,3 +132,12 @@ MIN3_COEFFS = {
         }
 
     }
+
+MIN_VDHS = {
+    "LEGENDRE": {
+        "RADAU-RIGHT": {
+            3: [4365/13624, 1032/7373, 1887/5077],
+            4: [3055/9532, 531/5956, 1471/8094, 1848/7919],
+        }
+    }
+}

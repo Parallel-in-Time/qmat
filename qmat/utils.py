@@ -42,11 +42,15 @@ def importAll(localVars, path, name, _import):
         _import(name+'.'+moduleName)
 
 
-def getClasses(dico):
+def getClasses(dico, module=None):
     classes = {}
-    for key, val in dico.items():
-        if val not in classes.values():
-            classes[key] = val
+    if module is None:
+        check = lambda cls: True
+    else:
+        check = lambda cls: cls.__module__.endswith("."+module)
+    for key, cls in dico.items():
+        if cls not in classes.values() and check(cls):
+            classes[key] = cls
     return classes
 
 

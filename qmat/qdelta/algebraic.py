@@ -18,7 +18,6 @@ class PIC(QDeltaGenerator):
         return self.QDelta
 
 
-
 @register
 class Exact(QDeltaGenerator):
     """Takes Q (exact approximation)"""
@@ -61,7 +60,7 @@ class QPar(QDeltaGenerator):
 
 
 @register
-class QG(QDeltaGenerator):
+class GS(QDeltaGenerator):
     """Approximation using lower triangular part of Q"""
     aliases = ["GaussSeidel"]
 

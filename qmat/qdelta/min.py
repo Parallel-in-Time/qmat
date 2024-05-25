@@ -8,7 +8,7 @@ import numpy as np
 import scipy.optimize as spo
 
 from qmat.qdelta import QDeltaGenerator, register
-from qmat.qdelta.mincoeffs import MIN3_COEFFS
+import qmat.qdelta.mincoeffs as tables
 from qmat.qcoeff.collocation import Collocation
 
 
@@ -28,8 +28,41 @@ class MIN(QDeltaGenerator):
         return self.QDelta
 
 
-@register
-class MIN3(QDeltaGenerator):
+class FromTable(QDeltaGenerator):
+
+    def __init__(self, nNodes, nodeType, quadType, **kwargs):
+        self.nNodes = nNodes
+        self.nodeType = nodeType
+        self.quadType = quadType
+        self.QDelta = np.zeros((nNodes, nNodes), dtype=float)
+
+    def getQDelta(self, k=None):
+        name = self.__class__.__name__
+        try:
+            table = getattr(tables, name)
+            coeffs = table[self.nodeType][self.quadType][self.nNodes]
+        except KeyError:
+            raise NotImplementedError(
+                "no {name} MIN coefficients for"
+                f"{self.nNodes} {self.nodeType} {self.quadType} nodes")
+        np.copyto(self.QDelta, np.diag(coeffs))
+        return self.QDelta
+
+    def check(cls):
+        try:
+            getattr(tables, cls.__name__)
+        except AttributeError:
+            raise AttributeError(
+                f"no MIN coefficients table found for {cls.__name__}"
+                " in qmat.qdelta.mincoeffs")
+        return cls
+
+def registerTable(cls:FromTable)->FromTable:
+    return register(FromTable.check(cls))
+
+
+@registerTable
+class MIN3(FromTable):
     """
     These values have been obtained using Indie Solver, a commercial solver for
     black-box optimization which aggregates several state-of-the-art optimization
@@ -40,21 +73,10 @@ class MIN3(QDeltaGenerator):
     """
     aliases = ["Magic_Numbers"]
 
-    def __init__(self, nNodes, nodeType, quadType, **kwargs):
-        self.nNodes = nNodes
-        self.nodeType = nodeType
-        self.quadType = quadType
-        self.QDelta = np.zeros((nNodes, nNodes), dtype=float)
 
-    def getQDelta(self, k=None):
-        try:
-            coeffs = MIN3_COEFFS[self.nodeType][self.quadType][self.nNodes]
-        except KeyError:
-            raise NotImplementedError(
-                "no MIN3 coefficients for"
-                f"{self.nNodes} {self.nodeType} {self.quadType} nodes")
-        np.copyto(self.QDelta, np.diag(coeffs))
-        return self.QDelta
+@registerTable
+class MIN_VDHS(FromTable):
+    aliases = ["VDHS"]
 
 
 @register
@@ -75,12 +97,12 @@ class MIN_SR_NS(QDeltaGenerator):
 class MIN_SR_S(QDeltaGenerator):
     aliases = ["MIN-SR-S"]
 
-    def __init__(self, nodes, nodeType, quadType):
-        self.nodes = np.asarray(nodes, dtype=float)
+    def __init__(self, nNodes, nodeType, quadType, **kwargs):
+        self.nNodes = nNodes
         self.nodeType = nodeType
         self.quadType = quadType
-        M = self.nodes.size
-        self.QDelta = np.zeros((M, M), dtype=float)
+        self.QDelta = np.zeros((nNodes, nNodes), dtype=float)
+        self.coll = Collocation(nNodes, nodeType, quadType)
 
     def computeCoeffs(self, M, a=None, b=None):
         """
@@ -110,7 +132,10 @@ class MIN_SR_S(QDeltaGenerator):
             The nodes associated to the current coefficients.
         """
         nodeType, quadType = self.nodeType, self.quadType
-        collM = Collocation(nNodes=M, nodeType=nodeType, quadType=quadType)
+        if M == self.nNodes:
+            collM = self.coll
+        else:
+            collM = Collocation(nNodes=M, nodeType=nodeType, quadType=quadType)
         QM, nodesM = collM.Q, collM.nodes
 
         if quadType in ['LOBATTO', 'RADAU-LEFT']:
@@ -145,7 +170,7 @@ class MIN_SR_S(QDeltaGenerator):
             nodesM = np.asarray([0.0] + list(nodesM))
 
         return coeffs, nodesM
-    
+
     @staticmethod
     def fit(coeffs, nodes):
         """Function fitting given coefficients to a power law"""
@@ -157,11 +182,11 @@ class MIN_SR_S(QDeltaGenerator):
         sol = spo.minimize(lawDiff, [1.0, 1.0], method="nelder-mead")
         return sol.x
 
-    def getQDelta(self, k=None):        
+    def getQDelta(self, k=None):
         # Compute coefficients incrementally
         a, b = None, None
         m0 = 2 if self.quadType in ['LOBATTO', 'RADAU-LEFT'] else 1
-        for m in range(m0, self.nodes.size + 1):
+        for m in range(m0, self.nNodes + 1):
             coeffs, nodes = self.computeCoeffs(m, a, b)
             if m > 1:
                 a, b = self.fit(coeffs * m, nodes)
@@ -179,13 +204,13 @@ class MIN_SR_FLEX(MIN_SR_S):
             k = 1
         if k < 1:
             raise ValueError(f"k must be greater than 0 ({k})")
-        if k <= self.nodes.size:
-            np.copyto(self.QDelta, np.diag(self.nodes)/k)
+        nodes = self.coll.nodes
+        if k <= nodes.size:
+            np.copyto(self.QDelta, np.diag(nodes)/k)
         else:
             try:
                 self.QDelta_MIN_SR_S
             except AttributeError:
-                gen = MIN_SR_S(self.nodes, self.nodeType, self.quadType)
-                self.QDelta_MIN_SR_S = gen.getQDelta()
+                self.QDelta_MIN_SR_S = super().getQDelta()
             np.copyto(self.QDelta, self.QDelta_MIN_SR_S)
         return self.QDelta
