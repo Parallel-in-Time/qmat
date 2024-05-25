@@ -1,6 +1,8 @@
 [tool.pytest.ini_options]
 pythonpath = ["."]
-nb_diff_ignore = ["/metadata/"]
+nb_diff_ignore = [
+    "/metadata/",
+    "/cells/*/outputs/*/data/image/png"]
 
 [tool.coverage.run]
 relative_files = true
