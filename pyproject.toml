@@ -1,5 +1,6 @@
 [tool.pytest.ini_options]
 pythonpath = ["."]
+nb_diff_ignore = ["/metadata/"]
 
 [tool.coverage.run]
 relative_files = true

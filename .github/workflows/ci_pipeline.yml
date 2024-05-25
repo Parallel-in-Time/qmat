@@ -52,8 +52,7 @@ jobs:
         pip install -r tutorials/requirements.txt
     - name: Extend PYTHONPATH
       run: |
-        export PYTHONPATH="$PYTHONPATH:$(pwd)"
-        echo "PYTHONPATH=$PYTHONPATH" >> $GITHUB_ENV
+        echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV
     - name: Test with pytest-notebook
       run: |
         pytest tutorials --nb-test-files -x -v
