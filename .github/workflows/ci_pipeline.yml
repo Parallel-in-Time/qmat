@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  test:
+  test code:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -25,18 +25,34 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 pytest pytest-notebook
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Extend PYTHONPATH
-      run: |
-        export PYTHONPATH="$PYTHONPATH:$(pwd)"
+        pip install flake8 pytest
+        pip install -r requirements.txt
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-    - name: Test qmat with pytest
+    - name: Test with pytest
       run: |
         pytest qmat -x -v
-    - name: Test tutorials with pytest-notebook
+
+  test tutorials:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.11"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-notebook
+        pip install -r requirements.txt
+    - name: Extend PYTHONPATH
+      run: |
+        export PYTHONPATH="$PYTHONPATH:$(pwd)"
+    - name: Test with pytest-notebook
       run: |
         pytest tutorials --nb-test-files -x -v
+  
