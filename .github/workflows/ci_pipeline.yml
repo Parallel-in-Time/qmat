@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  test code:
+  test-code:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -35,7 +35,7 @@ jobs:
       run: |
         pytest qmat -x -v
 
-  test tutorials:
+  test-tutorials:
     runs-on: ubuntu-latest
     
     steps:
