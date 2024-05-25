@@ -44,6 +44,10 @@ class QGenerator(object):
         return out
 
 
+    @property
+    def order(self):
+        raise NotImplementedError("mouahahah")
+
     def solveDahlquist(self, lam, u0, T, nSteps):
         nodes, weights, Q = self.nodes, self.weights, self.Q
 
@@ -70,8 +74,25 @@ class QGenerator(object):
 Q_GENERATORS:dict[str:QGenerator] = {}
 
 def register(cls:QGenerator)->QGenerator:
-    for name in ["nodes", "Q", "weights"]:
+    # Check for correct overriding
+    for name in ["nodes", "Q", "weights", "order"]:
         checkOverriding(cls, name)
+    # Check that TEST_PARAMS are given and valid if no default constructor
+    try:
+        cls()
+    except TypeError:
+        try:
+            params = cls.DEFAULT_PARAMS
+        except AttributeError:
+            raise AttributeError(
+                f"{cls.__name__} requires DEFAULT_PARAMS attribute"
+                " since it has no default constructor")
+        try:
+            cls(**params)
+        except:
+            raise TypeError(
+                f"{cls.__name__} could not be instanciated with DEFAULT_PARAMS")
+    # Store class (and aliases)
     storeClass(cls, Q_GENERATORS)
     return cls
 

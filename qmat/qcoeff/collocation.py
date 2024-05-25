@@ -12,15 +12,21 @@ from qmat.lagrange import LagrangeApproximation
 @register
 class Collocation(QGenerator):
 
+    DEFAULT_PARAMS = {
+        "nNodes": 4,
+        "nodeType": "LEGENDRE",
+        "quadType": "RADAU-RIGHT",
+        }
     aliases = ["coll"]
 
     def __init__(self, nNodes, nodeType, quadType):
+        self.nodeType, self.quadType = nodeType, quadType
 
         # Generate nodes between [0, 1]
         nodes = NodesGenerator(nodeType, quadType).getNodes(nNodes)
         nodes += 1
         nodes /= 2
-        np.round(nodes, 14, out=nodes)
+        np.round(nodes, 14, out=nodes) # TODO : check if necessary ...
         self._nodes = nodes
 
         # Lagrange approximation based on nodes
@@ -31,6 +37,10 @@ class Collocation(QGenerator):
         Q = approx.getIntegrationMatrix([(0, tau) for tau in nodes])
         weights = approx.getIntegrationMatrix([(0, 1)]).ravel()
         self._Q, self._weights = Q, weights
+
+        # For convergence tests
+        if nodes.size == 3 and nodeType in ["CHEBY-3", "CHEBY-4"]:
+            self.CONV_TEST_NSTEPS = [32, 64, 128]  # high error constant
 
     @property
     def nodes(self): return self._nodes
@@ -51,3 +61,23 @@ class Collocation(QGenerator):
     @property
     def hCoeffs(self):
         return self._approx.getInterpolationMatrix([1]).ravel()
+
+    @property
+    def order(self):
+        M, nodeType, quadType = self.nodes.size, self.nodeType, self.quadType
+        if nodeType != "LEGENDRE":
+            if M == 3 \
+                and quadType in ["GAUSS", "LOBATTO"] \
+                and nodeType in ["EQUID", "CHEBY-1", "CHEBY-2"]:
+                return M+1  # why ? no idea ...
+            return M
+        else:
+            quadType = self.quadType
+            if quadType == "GAUSS":
+                return 2*M
+            elif quadType.startswith("RADAU"):
+                return 2*M-1
+            elif quadType == "LOBATTO":
+                return 2*M-2
+            else:
+                raise ValueError(f"unknown quadType={quadType}")

@@ -18,6 +18,7 @@ def referenceWeights(pType, n):
     weights /= np.max(np.abs(weights))
     return points, weights
 
+
 @pytest.mark.parametrize("weightComputation", ["AUTO", "FAST", "STABLE", "CHEBFUN"])
 @pytest.mark.parametrize("pType", ["CHEBY-1", "CHEBY-2"])
 def testWeights(pType, weightComputation):

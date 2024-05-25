@@ -45,7 +45,7 @@ REF_NODES['EQUID'] = {n: equidNodes(n) for n in nTests}
 
 
 @pytest.mark.parametrize("nodeType", REF_NODES.keys())
-def testGaussNodes(nodeType):
+def testGauss(nodeType):
     gen = NodesGenerator(nodeType=nodeType, quadType='GAUSS')
     ref = REF_NODES[nodeType]
     for n, nodes in ref.items():
@@ -54,7 +54,7 @@ def testGaussNodes(nodeType):
 
 @pytest.mark.parametrize("quadType", ["LOBATTO", "RADAU-RIGHT", "RADAU-LEFT"])
 @pytest.mark.parametrize("nodeType", NODE_TYPES)
-def testNonGaussNodes(nodeType, quadType):
+def testNonGauss(nodeType, quadType):
     gen = NodesGenerator(nodeType=nodeType, quadType=quadType)
     for n in nTests:
         nodes = gen.getNodes(n)
