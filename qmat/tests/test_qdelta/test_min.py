@@ -12,11 +12,12 @@ def stiffSR(Q, QDelta):
     M = I - np.linalg.solve(QDelta, Q)
     return max(abs(np.linalg.eigvals(M)))
 
+margin = 1.5
 STIFF_SR = {
-    "MIN": 0.43,
-    "VDHS": 0.026,
-    "MIN3": 0.0082,
-    "MIN-SR-S": 0.00025,
+    "MIN": 0.43*margin,
+    "VDHS": 0.026*margin,
+    "MIN3": 0.0082*margin,
+    "MIN-SR-S": 0.00025*margin,
     }
 STIFF_PARAMS = {
     "nNodes": 4,

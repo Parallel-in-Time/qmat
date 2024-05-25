@@ -66,10 +66,9 @@ class Collocation(QGenerator):
     def order(self):
         M, nodeType, quadType = self.nodes.size, self.nodeType, self.quadType
         if nodeType != "LEGENDRE":
-            if M == 3 \
-                and quadType in ["GAUSS", "LOBATTO"] \
+            if quadType in ["GAUSS", "LOBATTO"] \
                 and nodeType in ["EQUID", "CHEBY-1", "CHEBY-2"]:
-                return M+1  # why ? no idea ...
+                return M + (M % 2) # why ? no idea ...
             return M
         else:
             quadType = self.quadType
