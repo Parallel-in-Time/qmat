@@ -20,6 +20,9 @@ def testGeneration(name, nNodes):
         f"QDelta for {name} is not np.ndarray but {type(QD1)}"
     assert QD1.shape == (nNodes, nNodes), \
         f"QDelta for {name} has unconsistent shape : {QD1.shape}"
+    if name != "Exact":
+        assert np.allclose(np.tril(QD1), QD1), \
+            f"QDelta for {name} is not lower triangular"
 
     QD2 = genQDeltaCoeffs(name, Q=Q)
     assert QD1.shape == QD2.shape, \
@@ -29,7 +32,7 @@ def testGeneration(name, nNodes):
 
     _, dTau1 = gen.genCoeffs(dTau=True)
     assert type(dTau1) == np.ndarray, \
-        f"dTau for {name} is not np.ndarray but {type(QD1)}"
+        f"dTau for {name} is not np.ndarray but {type(dTau1)}"
     assert dTau1.ndim == 1, \
         f"dTau for {name} is not 1D : {dTau1}"
     assert dTau1.size == nNodes, \

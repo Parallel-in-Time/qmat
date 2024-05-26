@@ -12,6 +12,7 @@ def stiffSR(Q, QDelta):
     M = I - np.linalg.solve(QDelta, Q)
     return max(abs(np.linalg.eigvals(M)))
 
+# TODO : switch to micromamba for dependencies to avoid this ...
 margin = 1.5
 
 STIFF_SR = {
@@ -30,7 +31,13 @@ STIFF_PARAMS = {
 def testStiff4LegendreRadauRight(name):
     coll = Collocation(**STIFF_PARAMS)
     gen = QDELTA_GENERATORS[name](Q=coll.Q, **STIFF_PARAMS)
+
     QDelta = gen.getQDelta()
+    assert np.allclose(np.tril(QDelta), QDelta), \
+        "QDelta is not lower triangular"
+    assert np.allclose(QDelta, np.diag(np.diag(QDelta))), \
+        "QDelta is not diagonal"
+
     sr = stiffSR(coll.Q, QDelta)
     assert sr < STIFF_SR[name] * margin, "spectral radius too high"
 
@@ -50,6 +57,10 @@ def testNonStiff(nNodes, nodeType, quadType):
     gen = module.MIN_SR_NS(nodes)
     QDelta = gen.getQDelta()
 
+    assert np.allclose(np.tril(QDelta), QDelta), \
+        "QDelta is not lower triangular"
+    assert np.allclose(QDelta, np.diag(np.diag(QDelta))), \
+        "QDelta is not diagonal"
     assert nilpotencyNonStiff(Q, QDelta) < 1e-15 * margin, \
         "nilpotency measure is to high"
 
@@ -73,6 +84,10 @@ def testStiff(nNodes, nodeType, quadType):
     gen = module.MIN_SR_S(nNodes=nNodes, nodeType=nodeType, quadType=quadType)
     QDelta = gen.getQDelta()
 
+    assert np.allclose(np.tril(QDelta), QDelta), \
+        "QDelta is not lower triangular"
+    assert np.allclose(QDelta, np.diag(np.diag(QDelta))), \
+        "QDelta is not diagonal"
     assert nilpotencyStiff(Q, QDelta) < 1e-11 * margin, \
         "nilpotency measure is to high"
 
@@ -91,6 +106,10 @@ def testFlex(nNodes, nodeType, quadType):
     for k in range(nNodes):
         P = (I - np.linalg.solve(gen.getQDelta(k+1), Q)) @ P
 
+    assert np.allclose(np.tril(P), P), \
+        "QDelta product is not lower triangular"
+    assert np.allclose(P, np.diag(np.diag(P))), \
+        "QDelta product is not diagonal"
     assert np.linalg.norm(P, ord=np.inf) < 1e-13 * margin, \
         "nilpotency measure is to high"
 

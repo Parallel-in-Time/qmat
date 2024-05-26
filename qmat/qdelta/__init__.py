@@ -13,6 +13,10 @@ class QDeltaGenerator(object):
         self.Q = np.asarray(Q, dtype=float)
         self.QDelta = np.zeros_like(self.Q)
 
+    def storeAndReturn(self, QDelta):
+        np.copyto(self.QDelta, QDelta)
+        return self.QDelta
+
     def getQDelta(self, k=None):
         raise NotImplementedError("mouahahah")
 

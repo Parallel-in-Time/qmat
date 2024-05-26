@@ -68,7 +68,7 @@ class Collocation(QGenerator):
         if nodeType != "LEGENDRE":
             if quadType in ["GAUSS", "LOBATTO"] \
                 and nodeType in ["EQUID", "CHEBY-1", "CHEBY-2"]:
-                return M + (M % 2) # why ? no idea ...
+                return M + (M % 2)  # why ? the node symmetry I guess ...
             return M
         else:
             quadType = self.quadType

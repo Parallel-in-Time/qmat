@@ -27,7 +27,8 @@ class BE(TimeStepping):
         QDelta, M, deltas = self.QDelta, self.nodes.size, self.deltas
         for i in range(M):
             QDelta[i:, :M-i] += np.diag(deltas[:M-i])
-        return QDelta
+        return self.storeAndReturn(QDelta)
+
 
 @register
 class FE(TimeStepping):
@@ -38,6 +39,7 @@ class FE(TimeStepping):
         QDelta, M, deltas = self.QDelta, self.nodes.size, self.deltas
         for i in range(1, M):
             QDelta[i:, :M-i] += np.diag(deltas[1:M-i+1])
+        return self.storeAndReturn(QDelta)
 
     @property
     def dTau(self):

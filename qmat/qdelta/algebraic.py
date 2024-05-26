@@ -24,8 +24,7 @@ class Exact(QDeltaGenerator):
     aliases = ["EXACT"]
 
     def getQDelta(self, k=None):
-        np.copyto(self.QDelta, self.Q)
-        return self.QDelta
+        return self.storeAndReturn(self.Q)
 
 
 @register
@@ -34,8 +33,7 @@ class LU(QDeltaGenerator):
 
     def getQDelta(self, k=None):
         _, _, U = spl.lu(self.Q.T)
-        np.copyto(self.QDelta, U.T)
-        return self.QDelta
+        return self.storeAndReturn(U.T)
 
 
 @register
@@ -44,9 +42,7 @@ class LU2(QDeltaGenerator):
 
     def getQDelta(self, k=None):
         _, _, U = spl.lu(self.Q.T)
-        np.copyto(self.QDelta, U.T)
-        self.QDelta *= 2
-        return self.QDelta
+        return self.storeAndReturn(2*U.T)
 
 
 @register
@@ -55,8 +51,7 @@ class QPar(QDeltaGenerator):
     aliases = ["Qpar", "Qdiag"]
 
     def getQDelta(self, k=None):
-        np.copyto(self.QDelta, np.diag(np.diag(self.Q)))
-        return self.QDelta
+        return self.storeAndReturn(np.diag(np.diag(self.Q)))
 
 
 @register
@@ -65,5 +60,4 @@ class GS(QDeltaGenerator):
     aliases = ["GaussSeidel"]
 
     def getQDelta(self, k=None):
-        np.copyto(self.QDelta, np.tril(self.Q))
-        return self.QDelta
+        return self.storeAndReturn(np.tril(self.Q))

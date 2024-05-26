@@ -11,7 +11,6 @@ def nStepsForTest(scheme):
     try:
         nSteps = scheme.CONV_TEST_NSTEPS
     except AttributeError:
-        nSteps = [1, 2, 4]  # default value (very high order methods)
         if scheme.order == 1:
             nSteps = [64, 128, 256]
         elif scheme.order == 2:
@@ -24,6 +23,8 @@ def nStepsForTest(scheme):
             nSteps = [4, 8, 16]
         elif scheme.order in [8, 9]:
             nSteps = [2, 4, 8]
+        else:
+            nSteps = [1, 2, 4]  # default value (very high order methods)
     return nSteps
 
 u0 = 1
