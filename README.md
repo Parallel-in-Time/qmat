@@ -8,7 +8,7 @@ and more general multi-stages time-integration methods (like Runge-Kutta, etc ..
 
 It allows to generate $Q$-coefficients for multi-stages methods(equivalent to Butcher tables) :
 
-$$
+```math
 Q\text{-coefficients : }
 \begin{array}
     {c|c}
@@ -24,7 +24,8 @@ Q\text{-coefficients : }
     & b^\top
 \end{array}
 \quad\text{(Butcher table)}
-$$
+```
+
 and many different **lower-triangular** approximation of the $Q$ matrix, named $Q_\Delta$.
 Those $Q_\Delta$ matrices are key elements for SDC, or more general Iterated Runge-Kutta Methods.
 
