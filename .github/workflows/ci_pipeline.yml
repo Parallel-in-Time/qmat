@@ -34,19 +34,15 @@ jobs:
     - name: Run pytest with coverage
       run: |
         echo "print('Loading sitecustomize.py...');import coverage;coverage.process_startup()" > sitecustomize.py
-        coverage run -m pytest --continue-on-collection-errors -v --durations=0 tests
-    - name: Make coverage report
-      run: |
-        coverage combine
-        mv .coverage coverage_py${{ matrix.python }}.dat
-    - name: Uploading artifacts
-      uses: actions/upload-artifact@v4
-      if: matrix.python == '3.11'
+        coverage run -m pytest --continue-on-collection-errors -v --durations=0 ./tests
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v4
+      if: github.repository_owner == 'Parallel-in-Time' && matrix.python == '3.11'
       with:
-        name: coverage-artifacts-py${{ matrix.python }}
-        path: |
-          coverage_py${{ matrix.python }}.dat
-
+        flags: smart-tests
+        verbose: true
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   test-tutorials:
     runs-on: ubuntu-latest
@@ -68,5 +64,5 @@ jobs:
         echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV
     - name: Test with pytest-notebook
       run: |
-        pytest tutorials --nb-test-files -x -v
+        pytest ./tutorials --nb-test-files -v
   

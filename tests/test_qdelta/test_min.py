@@ -12,7 +12,7 @@ def stiffSR(Q, QDelta):
     M = I - np.linalg.solve(QDelta, Q)
     return max(abs(np.linalg.eigvals(M)))
 
-# TODO : produces SR is not the same on different system ... to investigate
+# TODO : stiff spectral radius is not the same on different system ... to investigate
 margin = 2
 
 STIFF_SR = {
