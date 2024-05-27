@@ -33,7 +33,7 @@ class QDeltaGenerator(object):
             out += [self.dTau]
         return out if len(out) > 1 else out[0]
 
-QDELTA_GENERATORS:dict[str:QDeltaGenerator] = {}
+QDELTA_GENERATORS = {}
 
 def register(cls:QDeltaGenerator)->QDeltaGenerator:
     checkOverriding(cls, "getQDelta", isProperty=False)

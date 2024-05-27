@@ -28,7 +28,7 @@ class QGenerator(object):
     @property
     def weights(self):
         raise NotImplementedError("mouahahah")
-    
+
     @property
     def nNodes(self):
         return self.nodes.size
@@ -96,7 +96,7 @@ class QGenerator(object):
         return np.linalg.norm(uNum-uExact, ord=np.inf)
 
 
-Q_GENERATORS:dict[str:QGenerator] = {}
+Q_GENERATORS = {}
 
 def register(cls:QGenerator)->QGenerator:
     # Check for correct overriding

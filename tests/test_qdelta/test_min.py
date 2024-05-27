@@ -12,8 +12,8 @@ def stiffSR(Q, QDelta):
     M = I - np.linalg.solve(QDelta, Q)
     return max(abs(np.linalg.eigvals(M)))
 
-# TODO : switch to micromamba for dependencies to avoid this ...
-margin = 1.5
+# TODO : produces SR is not the same on different system ... to investigate
+margin = 2
 
 STIFF_SR = {
     "MIN": 0.43,

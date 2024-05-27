@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ['3.9', '3.10', '3.11', '3.12']
+        python: ['3.8', '3.9', '3.10', '3.11', '3.12']
     defaults:
       run:
         shell: bash -l {0}
@@ -25,15 +25,28 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 pytest
         pip install -r requirements.txt
+        pip install -r tests/requirements.txt
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-    - name: Test with pytest
+    - name: Run pytest with coverage
       run: |
-        pytest qmat -x -v
+        echo "print('Loading sitecustomize.py...');import coverage;coverage.process_startup()" > sitecustomize.py
+        coverage run -m pytest --continue-on-collection-errors -v --durations=0 tests
+    - name: Make coverage report
+      run: |
+        coverage combine
+        mv .coverage coverage_py${{ matrix.python }}.dat
+    - name: Uploading artifacts
+      uses: actions/upload-artifact@v4
+      if: matrix.python == '3.11'
+      with:
+        name: coverage-artifacts-py${{ matrix.python }}
+        path: |
+          coverage_py${{ matrix.python }}.dat
+
 
   test-tutorials:
     runs-on: ubuntu-latest
@@ -47,8 +60,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pytest pytest-notebook
         pip install -r requirements.txt
+        pip install -r tests/requirements.txt
         pip install -r tutorials/requirements.txt
     - name: Extend PYTHONPATH
       run: |

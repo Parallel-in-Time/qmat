@@ -35,7 +35,7 @@ class RK(QGenerator):
     def Q(self): return self.A
 
 
-RK_SCHEMES:dict[str:RK] = {}
+RK_SCHEMES = {}
 
 def checkAndStore(cls:RK)->RK:
     cls.A = np.array(cls.A, dtype=float)

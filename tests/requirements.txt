@@ -1,0 +1,5 @@
+flake8 
+pytest
+pytest-notebook
+pytest-timeout 
+coverage[toml]
