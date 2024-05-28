@@ -50,5 +50,5 @@ QDelta = genQDeltaCoeffs("IE", nodes=nodes)
 c, b, A = genQCoeffs("ERK4")
 ```
 
-> :bell: _If you are not familiar with SDC or related methods, and want to learn more about it, checkout the [**extended documentation and tutorials ...**](./tutorials/)_ (:hammer_and_wrench: in construction)
+> :bell: _If you are not familiar with SDC or related methods, and want to learn more about it, checkout the [**extended documentation and tutorials ...**](./docs/)_ :hammer_and_wrench: in construction
 

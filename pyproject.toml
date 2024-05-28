@@ -1,5 +1,52 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "qmat"
+version = "0.0.1"
+dependencies = [
+    "numpy",
+    "scipy",
+]
+requires-python = ">=3.8"
+maintainers = [
+    {name = "Thibaut Lunet", email = "thibaut.lunet@tuhh.de"},
+]
+description = "Generation of Q-coefficients for Spectral Deferred Corrections (and other time-integration methods ...)"
+readme = "README.md"
+license = {file = "LICENSE"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+
+    "Topic :: Scientific/Engineering :: Mathematics",
+
+    "License :: OSI Approved :: BSD License",
+
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+[project.optional-dependencies]
+test = [
+    "flake8",
+    "pytest",
+    "pytest-notebook",
+    "pytest-timeout",
+    "coverage[toml]",
+    "notebook",
+    "matplotlib",
+]
+
+[project.urls]
+Homepage = "https://github.com/Parallel-in-Time/qmat"
+Tracker = "https://github.com/Parallel-in-Time/qmat/issues"
+
 [tool.pytest.ini_options]
-pythonpath = ["."]
 nb_diff_ignore = [
     "/metadata/",
     "/cells/*/outputs/*/data/image/png"]
