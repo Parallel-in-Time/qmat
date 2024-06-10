@@ -58,5 +58,5 @@ jobs:
         pip install .[test]
     - name: Test with pytest-notebook
       run: |
-        pytest ./docs --nb-test-files -v
+        pytest ./docs/notebooks --nb-test-files -v
   

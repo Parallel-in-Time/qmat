@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qmat.qdelta.min &mdash; QMat Package  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=2e11fc30" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            QMat Package
+              <img src="../../../_static/sdc_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing QMat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/README.html">Notebook Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../notebooks/README.html#base-usage">Base usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../notebooks/01_qCoeffs.html">Step 1 : generate <span class="math notranslate nohighlight">\(Q\)</span>-coefficients</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../notebooks/01_qCoeffs.html#Use-a-generic-function">Use a generic function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../notebooks/01_qCoeffs.html#Use-generator-objects">Use generator objects</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../notebooks/02_rk.html">Step 2 : build a Runge-Kutta type time-stepper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../notebooks/03_qDelta.html">Step 3 : generate <span class="math notranslate nohighlight">\(Q_\Delta\)</span> coefficients</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../notebooks/03_qDelta.html#Procedural-approach-:-use-a-generic-function">Procedural approach : use a generic function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../notebooks/03_qDelta.html#OOP-approach-:-use-generator-objects">OOP approach : use generator objects</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../notebooks/04_sdc.html">Step 4 : build a Spectral Deferred Correction type time-stepper</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notebooks/README.html#advanced-usage">Advanced usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../notebooks/11_prolongation.html">Step 5 : generalizing the prolongation for RK-type and SDC-type time-steppers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../notebooks/11_prolongation.html#Additional-coefficients-from-G-generators">Additional coefficients from <span class="math notranslate nohighlight">\(G\)</span>-generators</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../notebooks/12_initialization.html">Step 6 : generalizing the initialization of SDC-type time-steppers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#general-rules">General rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#base-recipes">Base recipes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../devdoc/testing.html">Testing your changes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/qmat/index.html">QMat API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../autoapi/qmat/index.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/qmat/qcoeff/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.qcoeff</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/qmat/qcoeff/index.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/qmat/qdelta/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.qdelta</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/qmat/qdelta/index.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../autoapi/qmat/index.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/qmat/lagrange/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.lagrange</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/qmat/lagrange/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/qmat/nodes/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.nodes</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/qmat/nodes/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/qmat/sdc/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.sdc</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/qmat/sdc/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/qmat/utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.utils</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/qmat/utils/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../autoapi/qmat/index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">QMat Package</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">qmat.qdelta.min</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for qmat.qdelta.min</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Submodule for QDelta coefficients based on minimization approaches</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="k">as</span> <span class="nn">spo</span>
+
+<span class="kn">from</span> <span class="nn">qmat.qdelta</span> <span class="kn">import</span> <span class="n">QDeltaGenerator</span><span class="p">,</span> <span class="n">register</span>
+<span class="kn">import</span> <span class="nn">qmat.qdelta.mincoeffs</span> <span class="k">as</span> <span class="nn">tables</span>
+<span class="kn">from</span> <span class="nn">qmat.qcoeff.collocation</span> <span class="kn">import</span> <span class="n">Collocation</span>
+
+
+<div class="viewcode-block" id="MIN">
+<a class="viewcode-back" href="../../../autoapi/qmat/qdelta/min/index.html#qmat.qdelta.min.MIN">[docs]</a>
+<span class="nd">@register</span>
+<span class="k">class</span> <span class="nc">MIN</span><span class="p">(</span><span class="n">QDeltaGenerator</span><span class="p">):</span>
+    <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MIN-Speck&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="MIN.rho">
+<a class="viewcode-back" href="../../../autoapi/qmat/qdelta/min/index.html#qmat.qdelta.min.MIN.rho">[docs]</a>
+    <span class="k">def</span> <span class="nf">rho</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">QDelta</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="p">))))</span></div>
+
+
+<div class="viewcode-block" id="MIN.getQDelta">
+<a class="viewcode-back" href="../../../autoapi/qmat/qdelta/min/index.html#qmat.qdelta.min.MIN.getQDelta">[docs]</a>
+    <span class="k">def</span> <span class="nf">getQDelta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">spo</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;Nelder-Mead&#39;</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">QDelta</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">QDelta</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="FromTable">
+<a class="viewcode-back" href="../../../autoapi/qmat/qdelta/min/index.html#qmat.qdelta.min.FromTable">[docs]</a>
+<span class="k">class</span> <span class="nc">FromTable</span><span class="p">(</span><span class="n">QDeltaGenerator</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nNodes</span><span class="p">,</span> <span class="n">nodeType</span><span class="p">,</span> <span class="n">quadType</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nNodes</span> <span class="o">=</span> <span class="n">nNodes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodeType</span> <span class="o">=</span> <span class="n">nodeType</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quadType</span> <span class="o">=</span> <span class="n">quadType</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">QDelta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nNodes</span><span class="p">,</span> <span class="n">nNodes</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FromTable.getQDelta">
+<a class="viewcode-back" href="../../../autoapi/qmat/qdelta/min/index.html#qmat.qdelta.min.FromTable.getQDelta">[docs]</a>
+    <span class="k">def</span> <span class="nf">getQDelta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="n">coeffs</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">nodeType</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">quadType</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">nNodes</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;no </span><span class="si">{name}</span><span class="s2"> MIN coefficients for&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nNodes</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nodeType</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">quadType</span><span class="si">}</span><span class="s2"> nodes&quot;</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">QDelta</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">coeffs</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">QDelta</span></div>
+
+
+<div class="viewcode-block" id="FromTable.check">
+<a class="viewcode-back" href="../../../autoapi/qmat/qdelta/min/index.html#qmat.qdelta.min.FromTable.check">[docs]</a>
+    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;no MIN coefficients table found for </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">&quot; in qmat.qdelta.mincoeffs&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span></div>
+</div>
+
+
+<div class="viewcode-block" id="registerTable">
+<a class="viewcode-back" href="../../../autoapi/qmat/qdelta/min/index.html#qmat.qdelta.min.registerTable">[docs]</a>
+<span class="k">def</span> <span class="nf">registerTable</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span><span class="n">FromTable</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">FromTable</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">register</span><span class="p">(</span><span class="n">FromTable</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="bp">cls</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="MIN3">
+<a class="viewcode-back" href="../../../autoapi/qmat/qdelta/min/index.html#qmat.qdelta.min.MIN3">[docs]</a>
+<span class="nd">@registerTable</span>
+<span class="k">class</span> <span class="nc">MIN3</span><span class="p">(</span><span class="n">FromTable</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    These values have been obtained using Indie Solver, a commercial solver for</span>
+<span class="sd">    black-box optimization which aggregates several state-of-the-art optimization</span>
+<span class="sd">    methods (free academic subscription plan).</span>
+<span class="sd">    Objective function :</span>
+<span class="sd">        sum over 17^2 values of lamdt, real and imaginary</span>
+<span class="sd">    (WORKS SURPRISINGLY WELL!)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Magic_Numbers&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="MIN_VDHS">
+<a class="viewcode-back" href="../../../autoapi/qmat/qdelta/min/index.html#qmat.qdelta.min.MIN_VDHS">[docs]</a>
+<span class="nd">@registerTable</span>
+<span class="k">class</span> <span class="nc">MIN_VDHS</span><span class="p">(</span><span class="n">FromTable</span><span class="p">):</span>
+    <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;VDHS&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="MIN_SR_NS">
+<a class="viewcode-back" href="../../../autoapi/qmat/qdelta/min/index.html#qmat.qdelta.min.MIN_SR_NS">[docs]</a>
+<span class="nd">@register</span>
+<span class="k">class</span> <span class="nc">MIN_SR_NS</span><span class="p">(</span><span class="n">QDeltaGenerator</span><span class="p">):</span>
+    <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MIN-SR-NS&quot;</span><span class="p">,</span> <span class="s2">&quot;MIN_GT&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">QDelta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">M</span><span class="p">,</span> <span class="n">M</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MIN_SR_NS.getQDelta">
+<a class="viewcode-back" href="../../../autoapi/qmat/qdelta/min/index.html#qmat.qdelta.min.MIN_SR_NS.getQDelta">[docs]</a>
+    <span class="k">def</span> <span class="nf">getQDelta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">QDelta</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">QDelta</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="MIN_SR_S">
+<a class="viewcode-back" href="../../../autoapi/qmat/qdelta/min/index.html#qmat.qdelta.min.MIN_SR_S">[docs]</a>
+<span class="nd">@register</span>
+<span class="k">class</span> <span class="nc">MIN_SR_S</span><span class="p">(</span><span class="n">QDeltaGenerator</span><span class="p">):</span>
+    <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MIN-SR-S&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nNodes</span><span class="p">,</span> <span class="n">nodeType</span><span class="p">,</span> <span class="n">quadType</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nNodes</span> <span class="o">=</span> <span class="n">nNodes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodeType</span> <span class="o">=</span> <span class="n">nodeType</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quadType</span> <span class="o">=</span> <span class="n">quadType</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">QDelta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nNodes</span><span class="p">,</span> <span class="n">nNodes</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coll</span> <span class="o">=</span> <span class="n">Collocation</span><span class="p">(</span><span class="n">nNodes</span><span class="p">,</span> <span class="n">nodeType</span><span class="p">,</span> <span class="n">quadType</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MIN_SR_S.computeCoeffs">
+<a class="viewcode-back" href="../../../autoapi/qmat/qdelta/min/index.html#qmat.qdelta.min.MIN_SR_S.computeCoeffs">[docs]</a>
+    <span class="k">def</span> <span class="nf">computeCoeffs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute diagonal coefficients for a given number of nodes M.</span>
+<span class="sd">        If `a` and `b` are given, then it uses as initial guess:</span>
+
+<span class="sd">        &gt;&gt;&gt; a * nodes**b / M</span>
+
+<span class="sd">        If `a` is not given, then do not care about `b` and uses as initial guess:</span>
+
+<span class="sd">        &gt;&gt;&gt; nodes / M</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        M : int</span>
+<span class="sd">            Number of collocation nodes.</span>
+<span class="sd">        a : float, optional</span>
+<span class="sd">            `a` coefficient for the initial guess.</span>
+<span class="sd">        b : float, optional</span>
+<span class="sd">            `b` coefficient for the initial guess.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        coeffs : array</span>
+<span class="sd">            The diagonal coefficients.</span>
+<span class="sd">        nodes : array</span>
+<span class="sd">            The nodes associated to the current coefficients.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nodeType</span><span class="p">,</span> <span class="n">quadType</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodeType</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">quadType</span>
+        <span class="k">if</span> <span class="n">M</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nNodes</span><span class="p">:</span>
+            <span class="n">collM</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coll</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">collM</span> <span class="o">=</span> <span class="n">Collocation</span><span class="p">(</span><span class="n">nNodes</span><span class="o">=</span><span class="n">M</span><span class="p">,</span> <span class="n">nodeType</span><span class="o">=</span><span class="n">nodeType</span><span class="p">,</span> <span class="n">quadType</span><span class="o">=</span><span class="n">quadType</span><span class="p">)</span>
+        <span class="n">QM</span><span class="p">,</span> <span class="n">nodesM</span> <span class="o">=</span> <span class="n">collM</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span> <span class="n">collM</span><span class="o">.</span><span class="n">nodes</span>
+
+        <span class="k">if</span> <span class="n">quadType</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;LOBATTO&#39;</span><span class="p">,</span> <span class="s1">&#39;RADAU-LEFT&#39;</span><span class="p">]:</span>
+            <span class="n">QM</span> <span class="o">=</span> <span class="n">QM</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">1</span><span class="p">:]</span>
+            <span class="n">nodesM</span> <span class="o">=</span> <span class="n">nodesM</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">nCoeffs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">nodesM</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">nCoeffs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">QM</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">def</span> <span class="nf">nilpotency</span><span class="p">(</span><span class="n">coeffs</span><span class="p">):</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;Function verifying the nilpotency from given coefficients&quot;&quot;&quot;</span>
+                <span class="n">coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">coeffs</span><span class="p">)</span>
+                <span class="n">kMats</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nCoeffs</span><span class="p">)</span> <span class="o">+</span> <span class="n">z</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">coeffs</span><span class="p">)</span> <span class="o">@</span> <span class="n">QM</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">nodesM</span><span class="p">]</span>
+                <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">K</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="n">kMats</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">a</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">coeffs0</span> <span class="o">=</span> <span class="n">nodesM</span> <span class="o">/</span> <span class="n">M</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">coeffs0</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">nodesM</span><span class="o">**</span><span class="n">b</span> <span class="o">/</span> <span class="n">M</span>
+
+            <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+                <span class="n">coeffs</span> <span class="o">=</span> <span class="n">spo</span><span class="o">.</span><span class="n">fsolve</span><span class="p">(</span><span class="n">nilpotency</span><span class="p">,</span> <span class="n">coeffs0</span><span class="p">,</span> <span class="n">xtol</span><span class="o">=</span><span class="mf">1e-15</span><span class="p">)</span>
+
+        <span class="c1"># Handle first node equal to zero</span>
+        <span class="k">if</span> <span class="n">quadType</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;LOBATTO&#39;</span><span class="p">,</span> <span class="s1">&#39;RADAU-LEFT&#39;</span><span class="p">]:</span>
+            <span class="n">coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">coeffs</span><span class="p">))</span>
+            <span class="n">nodesM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">nodesM</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">coeffs</span><span class="p">,</span> <span class="n">nodesM</span></div>
+
+
+<div class="viewcode-block" id="MIN_SR_S.fit">
+<a class="viewcode-back" href="../../../autoapi/qmat/qdelta/min/index.html#qmat.qdelta.min.MIN_SR_S.fit">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">nodes</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function fitting given coefficients to a power law&quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">lawDiff</span><span class="p">(</span><span class="n">ab</span><span class="p">):</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">ab</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">nodes</span><span class="o">**</span><span class="n">b</span> <span class="o">-</span> <span class="n">coeffs</span><span class="p">)</span>
+
+        <span class="n">sol</span> <span class="o">=</span> <span class="n">spo</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">lawDiff</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nelder-mead&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sol</span><span class="o">.</span><span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="MIN_SR_S.getQDelta">
+<a class="viewcode-back" href="../../../autoapi/qmat/qdelta/min/index.html#qmat.qdelta.min.MIN_SR_S.getQDelta">[docs]</a>
+    <span class="k">def</span> <span class="nf">getQDelta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Compute coefficients incrementally</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="n">m0</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">quadType</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;LOBATTO&#39;</span><span class="p">,</span> <span class="s1">&#39;RADAU-LEFT&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nNodes</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">coeffs</span><span class="p">,</span> <span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">computeCoeffs</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">m</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">coeffs</span> <span class="o">*</span> <span class="n">m</span><span class="p">,</span> <span class="n">nodes</span><span class="p">)</span>
+
+        <span class="n">np</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">QDelta</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">coeffs</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">QDelta</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="MIN_SR_FLEX">
+<a class="viewcode-back" href="../../../autoapi/qmat/qdelta/min/index.html#qmat.qdelta.min.MIN_SR_FLEX">[docs]</a>
+<span class="nd">@register</span>
+<span class="k">class</span> <span class="nc">MIN_SR_FLEX</span><span class="p">(</span><span class="n">MIN_SR_S</span><span class="p">):</span>
+    <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MIN-SR-FLEX&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="MIN_SR_FLEX.getQDelta">
+<a class="viewcode-back" href="../../../autoapi/qmat/qdelta/min/index.html#qmat.qdelta.min.MIN_SR_FLEX.getQDelta">[docs]</a>
+    <span class="k">def</span> <span class="nf">getQDelta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;k must be greater than 0 (</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coll</span><span class="o">.</span><span class="n">nodes</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">QDelta</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span><span class="o">/</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">QDelta_MIN_SR_S</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">QDelta_MIN_SR_S</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">getQDelta</span><span class="p">()</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">QDelta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">QDelta_MIN_SR_S</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">QDelta</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024 PinT Community.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

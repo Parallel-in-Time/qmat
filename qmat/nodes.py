@@ -7,9 +7,10 @@ import numpy as np
 from scipy.linalg import eigh_tridiagonal
 
 NODE_TYPES = ['EQUID', 'LEGENDRE', 'CHEBY-1', 'CHEBY-2', 'CHEBY-3', 'CHEBY-4']
+"""Available types (distributions) for nodes"""
+
 QUAD_TYPES = ['GAUSS', 'RADAU-LEFT', 'RADAU-RIGHT', 'LOBATTO']
-
-
+"""Available quadrature type for each node distribution"""
 
 class NodesGenerator(object):
     """

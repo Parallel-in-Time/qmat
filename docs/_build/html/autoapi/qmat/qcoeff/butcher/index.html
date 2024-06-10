@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qmat.qcoeff.butcher &mdash; QMat Package  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=2e11fc30" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="qmat.qcoeff.collocation" href="../collocation/index.html" />
+    <link rel="prev" title="qmat.qcoeff" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            QMat Package
+              <img src="../../../../_static/sdc_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installing QMat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notebooks/README.html">Notebook Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notebooks/README.html#base-usage">Base usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/01_qCoeffs.html">Step 1 : generate <span class="math notranslate nohighlight">\(Q\)</span>-coefficients</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../notebooks/01_qCoeffs.html#Use-a-generic-function">Use a generic function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../notebooks/01_qCoeffs.html#Use-generator-objects">Use generator objects</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/02_rk.html">Step 2 : build a Runge-Kutta type time-stepper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/03_qDelta.html">Step 3 : generate <span class="math notranslate nohighlight">\(Q_\Delta\)</span> coefficients</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../notebooks/03_qDelta.html#Procedural-approach-:-use-a-generic-function">Procedural approach : use a generic function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../notebooks/03_qDelta.html#OOP-approach-:-use-generator-objects">OOP approach : use generator objects</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/04_sdc.html">Step 4 : build a Spectral Deferred Correction type time-stepper</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notebooks/README.html#advanced-usage">Advanced usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/11_prolongation.html">Step 5 : generalizing the prolongation for RK-type and SDC-type time-steppers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../notebooks/11_prolongation.html#Additional-coefficients-from-G-generators">Additional coefficients from <span class="math notranslate nohighlight">\(G\)</span>-generators</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/12_initialization.html">Step 6 : generalizing the initialization of SDC-type time-steppers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../contributing.html#general-rules">General rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../contributing.html#base-recipes">Base recipes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../devdoc/testing.html">Testing your changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../devdoc/addRK.html">Add a Runge-Kutta scheme</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../devdoc/updateDoc.html">Update this documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">QMat API reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.qcoeff</span></code></a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../qdelta/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.qdelta</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../qdelta/index.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../index.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../lagrange/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.lagrange</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../lagrange/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../nodes/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.nodes</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../nodes/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../sdc/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.sdc</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../sdc/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.utils</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">QMat Package</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat</span></code></a></li>
+          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.qcoeff</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.qcoeff.butcher</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/qmat/qcoeff/butcher/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-qmat.qcoeff.butcher">
+<span id="qmat-qcoeff-butcher"></span><h1><a class="reference internal" href="#module-qmat.qcoeff.butcher" title="qmat.qcoeff.butcher"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.qcoeff.butcher</span></code></a><a class="headerlink" href="#module-qmat.qcoeff.butcher" title="Link to this heading"></a></h1>
+<p>Submodule to generate Q matrices based on Butcher tables</p>
+<p class="rubric">References</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id1" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Wang, R., &amp; Spiteri, R. J. (2007). Linear instability of the fifth-order
+WENO method. SIAM Journal on Numerical Analysis, 45(5), 1871-1901.</p>
+</aside>
+<aside class="footnote brackets" id="id2" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<p>Alexander, R. (1977). Diagonally implicit Runge–Kutta methods for stiff
+ODE’s. SIAM Journal on Numerical Analysis, 14(6), 1006-1021.</p>
+</aside>
+<aside class="footnote brackets" id="id3" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<p>Wanner, G., &amp; Hairer, E. (1996). Solving ordinary differential equations
+II. Springer Berlin Heidelberg.</p>
+</aside>
+<aside class="footnote brackets" id="id4" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
+<p>Butcher, J.C. (2003). Numerical methods for Ordianry Differential
+Equations. John Wiley &amp; Sons.</p>
+</aside>
+</aside>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RK</span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#RK"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.RK" title="Link to this definition"></a></dt>
+<dd><dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK.nodes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nodes</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK.nodes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK.weights">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">weights</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK.weights" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK.Q">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Q</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK.Q" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK.A">
+<span class="sig-name descname"><span class="pre">A</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK.A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK.b">
+<span class="sig-name descname"><span class="pre">b</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK.b" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK.c">
+<span class="sig-name descname"><span class="pre">c</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK_SCHEMES">
+<span class="sig-name descname"><span class="pre">RK_SCHEMES</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK_SCHEMES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.checkAndStore">
+<span class="sig-name descname"><span class="pre">checkAndStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#qmat.qcoeff.butcher.RK" title="qmat.qcoeff.butcher.RK"><span class="pre">RK</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#qmat.qcoeff.butcher.RK" title="qmat.qcoeff.butcher.RK"><span class="pre">RK</span></a></span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#checkAndStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.checkAndStore" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.registerRK">
+<span class="sig-name descname"><span class="pre">registerRK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#qmat.qcoeff.butcher.RK" title="qmat.qcoeff.butcher.RK"><span class="pre">RK</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#qmat.qcoeff.butcher.RK" title="qmat.qcoeff.butcher.RK"><span class="pre">RK</span></a></span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#registerRK"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.registerRK" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.FE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FE</span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#FE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.FE" title="Link to this definition"></a></dt>
+<dd><p>Forward Euler method (cf Wikipedia)</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.FE.order">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.FE.order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.FE.aliases">
+<span class="sig-name descname"><span class="pre">aliases</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['EE']</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.FE.aliases" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.FE.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[[0]]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.FE.A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.FE.b">
+<span class="sig-name descname"><span class="pre">b</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[1]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.FE.b" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.FE.c">
+<span class="sig-name descname"><span class="pre">c</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[0]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.FE.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK4">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RK4</span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#RK4"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.RK4" title="Link to this definition"></a></dt>
+<dd><p>Classical Runge Kutta method of order 4 (cf Wikipedia)</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK4.order">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK4.order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK4.hCoeffs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hCoeffs</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK4.hCoeffs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK4.aliases">
+<span class="sig-name descname"><span class="pre">aliases</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['ERK4']</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.RK4.aliases" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK4.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[[0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0],</span> <span class="pre">[0.5,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0],</span> <span class="pre">[0,</span> <span class="pre">0.5,</span> <span class="pre">0,</span> <span class="pre">0],</span> <span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">1,</span> <span class="pre">0]]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.RK4.A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK4.b">
+<span class="sig-name descname"><span class="pre">b</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK4.b" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK4.c">
+<span class="sig-name descname"><span class="pre">c</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK4.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK4_38">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RK4_38</span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#RK4_38"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.RK4_38" title="Link to this definition"></a></dt>
+<dd><p>The 3/8-rule due to Kutta, order 4  (cf Wikipedia)</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK4_38.order">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK4_38.order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK4_38.aliases">
+<span class="sig-name descname"><span class="pre">aliases</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['ERK4_38']</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.RK4_38.aliases" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK4_38.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[[0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0],</span> <span class="pre">None,</span> <span class="pre">None,</span> <span class="pre">None]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.RK4_38.A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK4_38.b">
+<span class="sig-name descname"><span class="pre">b</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK4_38.b" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK4_38.c">
+<span class="sig-name descname"><span class="pre">c</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK4_38.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK53">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RK53</span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#RK53"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.RK53" title="Link to this definition"></a></dt>
+<dd><p>Explicit Runge-Kutta in 5 steps of order 3 from Wang &amp; Spiteri [1]</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK53.order">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK53.order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK53.aliases">
+<span class="sig-name descname"><span class="pre">aliases</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['ERK53']</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.RK53.aliases" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK53.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[[0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0],</span> <span class="pre">None,</span> <span class="pre">None,</span> <span class="pre">None,</span> <span class="pre">None]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.RK53.A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK53.b">
+<span class="sig-name descname"><span class="pre">b</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK53.b" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK53.c">
+<span class="sig-name descname"><span class="pre">c</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK53.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK21">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RK21</span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#RK21"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.RK21" title="Link to this definition"></a></dt>
+<dd><p>Explicit Runge-Kutta in 2 steps of order 1 from Wang &amp; Spiteri [1]</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK21.order">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK21.order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK21.aliases">
+<span class="sig-name descname"><span class="pre">aliases</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['ERK21']</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.RK21.aliases" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK21.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[[0,</span> <span class="pre">0],</span> <span class="pre">None]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.RK21.A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK21.b">
+<span class="sig-name descname"><span class="pre">b</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK21.b" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK21.c">
+<span class="sig-name descname"><span class="pre">c</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK21.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK2">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RK2</span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#RK2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.RK2" title="Link to this definition"></a></dt>
+<dd><p>Classical Runge Kutta method of order 2 (cf Wikipedia)</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK2.order">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK2.order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK2.aliases">
+<span class="sig-name descname"><span class="pre">aliases</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['ERK2']</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.RK2.aliases" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK2.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[[0,</span> <span class="pre">0],</span> <span class="pre">None]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.RK2.A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK2.b">
+<span class="sig-name descname"><span class="pre">b</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[0,</span> <span class="pre">1]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.RK2.b" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK2.c">
+<span class="sig-name descname"><span class="pre">c</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK2.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.HEUN2">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HEUN2</span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#HEUN2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.HEUN2" title="Link to this definition"></a></dt>
+<dd><p>Heun method of order 2 (cf Wikipedia)</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.HEUN2.order">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.HEUN2.order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.HEUN2.aliases">
+<span class="sig-name descname"><span class="pre">aliases</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['HEUN']</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.HEUN2.aliases" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.HEUN2.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[[0,</span> <span class="pre">0],</span> <span class="pre">[1,</span> <span class="pre">0]]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.HEUN2.A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.HEUN2.b">
+<span class="sig-name descname"><span class="pre">b</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.HEUN2.b" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.HEUN2.c">
+<span class="sig-name descname"><span class="pre">c</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[0,</span> <span class="pre">1.0]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.HEUN2.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK32">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RK32</span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#RK32"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.RK32" title="Link to this definition"></a></dt>
+<dd><p>Explicit Runge-Kutta in 3 steps of order 2 from Wang &amp; Spiteri [1]</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK32.order">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK32.order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK32.aliases">
+<span class="sig-name descname"><span class="pre">aliases</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['ERK32',</span> <span class="pre">'RK32-SSP']</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.RK32.aliases" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK32.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[[0,</span> <span class="pre">0,</span> <span class="pre">0],</span> <span class="pre">None,</span> <span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">0]]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.RK32.A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK32.b">
+<span class="sig-name descname"><span class="pre">b</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK32.b" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK32.c">
+<span class="sig-name descname"><span class="pre">c</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK32.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK33">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RK33</span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#RK33"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.RK33" title="Link to this definition"></a></dt>
+<dd><p>Explicit Runge-Kutta in 3 steps of order 3 from Wang &amp; Spiteri [1]</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK33.order">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK33.order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK33.aliases">
+<span class="sig-name descname"><span class="pre">aliases</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['ERK33',</span> <span class="pre">'RK33-SSP']</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.RK33.aliases" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK33.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[[0,</span> <span class="pre">0,</span> <span class="pre">0],</span> <span class="pre">[1,</span> <span class="pre">0,</span> <span class="pre">0],</span> <span class="pre">None]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.RK33.A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK33.b">
+<span class="sig-name descname"><span class="pre">b</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK33.b" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK33.c">
+<span class="sig-name descname"><span class="pre">c</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK33.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK65">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RK65</span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#RK65"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.RK65" title="Link to this definition"></a></dt>
+<dd><p>Explicit Runge-Kutta in 6 steps of order 5, (236a) from Butcher [4]</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK65.order">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK65.order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK65.hCoeffs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hCoeffs</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK65.hCoeffs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK65.aliases">
+<span class="sig-name descname"><span class="pre">aliases</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['ERK65']</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.RK65.aliases" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK65.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[[0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0],</span> <span class="pre">[0.25,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0],</span> <span class="pre">None,</span> <span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">0.5,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0],</span> <span class="pre">None,</span> <span class="pre">None]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.RK65.A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK65.b">
+<span class="sig-name descname"><span class="pre">b</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.RK65.b" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.RK65.c">
+<span class="sig-name descname"><span class="pre">c</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[0,</span> <span class="pre">0.25,</span> <span class="pre">0.25,</span> <span class="pre">0.5,</span> <span class="pre">0.75,</span> <span class="pre">1]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.RK65.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.BE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BE</span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#BE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.BE" title="Link to this definition"></a></dt>
+<dd><p>Backward Euler method (also SDIRK1, see [2])</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.BE.order">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.BE.order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.BE.aliases">
+<span class="sig-name descname"><span class="pre">aliases</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['IE']</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.BE.aliases" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.BE.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[[1]]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.BE.A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.BE.b">
+<span class="sig-name descname"><span class="pre">b</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[1]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.BE.b" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.BE.c">
+<span class="sig-name descname"><span class="pre">c</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[1]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.BE.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.TRAP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TRAP</span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#TRAP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.TRAP" title="Link to this definition"></a></dt>
+<dd><p>Trapeze method (cf Wikipedia)</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.TRAP.order">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.TRAP.order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.TRAP.aliases">
+<span class="sig-name descname"><span class="pre">aliases</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['TRAPZ',</span> <span class="pre">'CN']</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.TRAP.aliases" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.TRAP.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[[0,</span> <span class="pre">0],</span> <span class="pre">None]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.TRAP.A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.TRAP.b">
+<span class="sig-name descname"><span class="pre">b</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.TRAP.b" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.TRAP.c">
+<span class="sig-name descname"><span class="pre">c</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[0,</span> <span class="pre">1]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.TRAP.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.GAUSS_LG">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GAUSS_LG</span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#GAUSS_LG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.GAUSS_LG" title="Link to this definition"></a></dt>
+<dd><p>Gauss-Legendre method of order 4 (cf Wikipedia)</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.GAUSS_LG.order">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.GAUSS_LG.order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.GAUSS_LG.aliases">
+<span class="sig-name descname"><span class="pre">aliases</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['GAUSS-LG']</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.GAUSS_LG.aliases" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.GAUSS_LG.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[None,</span> <span class="pre">None]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.GAUSS_LG.A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.GAUSS_LG.b">
+<span class="sig-name descname"><span class="pre">b</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[0.5,</span> <span class="pre">0.5]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.GAUSS_LG.b" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.GAUSS_LG.c">
+<span class="sig-name descname"><span class="pre">c</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.GAUSS_LG.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK2">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SDIRK2</span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#SDIRK2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK2" title="Link to this definition"></a></dt>
+<dd><p>First S-stable Diagonally Implicit Runge Kutta method of order 2 in two stages,
+from Alexander [2]</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK2.order">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK2.order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK2.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[None,</span> <span class="pre">None]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK2.A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK2.b">
+<span class="sig-name descname"><span class="pre">b</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK2.b" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK2.c">
+<span class="sig-name descname"><span class="pre">c</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK2.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK2_2">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SDIRK2_2</span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#SDIRK2_2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK2_2" title="Link to this definition"></a></dt>
+<dd><p>Second S-stable Diagonally Implicit Runge Kutta method of order 2 in two stages,
+from Alexander [2]</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK2_2.order">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK2_2.order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK2_2.aliases">
+<span class="sig-name descname"><span class="pre">aliases</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['SDIRK2-2']</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK2_2.aliases" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK2_2.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[None,</span> <span class="pre">None]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK2_2.A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK2_2.b">
+<span class="sig-name descname"><span class="pre">b</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK2_2.b" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK2_2.c">
+<span class="sig-name descname"><span class="pre">c</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK2_2.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK2_2.CONV_TEST_NSTEPS">
+<span class="sig-name descname"><span class="pre">CONV_TEST_NSTEPS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[64,</span> <span class="pre">128,</span> <span class="pre">256]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK2_2.CONV_TEST_NSTEPS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK3">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SDIRK3</span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#SDIRK3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK3" title="Link to this definition"></a></dt>
+<dd><p>S-stable Diagonally Implicit Runge Kutta method of order 3 in three stages,
+from Alexander [2]</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK3.order">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK3.order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK3.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[[0.43586652150845967,</span> <span class="pre">0,</span> <span class="pre">0],</span> <span class="pre">[0.28206673924577014,</span> <span class="pre">0.43586652150845967,</span> <span class="pre">0],</span> <span class="pre">None]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK3.A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK3.b">
+<span class="sig-name descname"><span class="pre">b</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK3.b" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK3.c">
+<span class="sig-name descname"><span class="pre">c</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[0.43586652150845967,</span> <span class="pre">0.7179332607542298,</span> <span class="pre">1.0]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK3.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK54">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SDIRK54</span></span><a class="reference internal" href="../../../../_modules/qmat/qcoeff/butcher.html#SDIRK54"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK54" title="Link to this definition"></a></dt>
+<dd><p>S-stable Diagonally Implicit Runge Kutta method of order 4 in five stages,
+from Wanner and Hairer [3]</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK54.order">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK54.order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK54.A">
+<span class="sig-name descname"><span class="pre">A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[None,</span> <span class="pre">None,</span> <span class="pre">None,</span> <span class="pre">None,</span> <span class="pre">None]</span></em><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK54.A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK54.b">
+<span class="sig-name descname"><span class="pre">b</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK54.b" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmat.qcoeff.butcher.SDIRK54.c">
+<span class="sig-name descname"><span class="pre">c</span></span><a class="headerlink" href="#qmat.qcoeff.butcher.SDIRK54.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="qmat.qcoeff" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../collocation/index.html" class="btn btn-neutral float-right" title="qmat.qcoeff.collocation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024 PinT Community.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

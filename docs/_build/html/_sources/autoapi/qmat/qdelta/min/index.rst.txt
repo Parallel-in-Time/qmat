@@ -1,0 +1,142 @@
+:py:mod:`qmat.qdelta.min`
+=========================
+
+.. py:module:: qmat.qdelta.min
+
+.. autoapi-nested-parse::
+
+   Submodule for QDelta coefficients based on minimization approaches
+
+
+
+Module Contents
+---------------
+
+.. py:class:: MIN(Q, **kwargs)
+
+
+
+
+   .. py:attribute:: aliases
+      :value: ['MIN-Speck']
+
+      
+
+   .. py:method:: rho(x)
+
+
+   .. py:method:: getQDelta(k=None)
+
+
+
+.. py:class:: FromTable(nNodes, nodeType, quadType, **kwargs)
+
+
+
+
+   .. py:method:: getQDelta(k=None)
+
+
+   .. py:method:: check()
+
+
+
+.. py:function:: registerTable(cls: FromTable) -> FromTable
+
+
+.. py:class:: MIN3(nNodes, nodeType, quadType, **kwargs)
+
+
+
+
+   These values have been obtained using Indie Solver, a commercial solver for
+   black-box optimization which aggregates several state-of-the-art optimization
+   methods (free academic subscription plan).
+   Objective function :
+       sum over 17^2 values of lamdt, real and imaginary
+   (WORKS SURPRISINGLY WELL!)
+
+   .. py:attribute:: aliases
+      :value: ['Magic_Numbers']
+
+      
+
+
+.. py:class:: MIN_VDHS(nNodes, nodeType, quadType, **kwargs)
+
+
+
+
+   .. py:attribute:: aliases
+      :value: ['VDHS']
+
+      
+
+
+.. py:class:: MIN_SR_NS(nodes)
+
+
+
+
+   .. py:attribute:: aliases
+      :value: ['MIN-SR-NS', 'MIN_GT']
+
+      
+
+   .. py:method:: getQDelta(k=None)
+
+
+
+.. py:class:: MIN_SR_S(nNodes, nodeType, quadType, **kwargs)
+
+
+
+
+   .. py:attribute:: aliases
+      :value: ['MIN-SR-S']
+
+      
+
+   .. py:method:: computeCoeffs(M, a=None, b=None)
+
+      Compute diagonal coefficients for a given number of nodes M.
+      If `a` and `b` are given, then it uses as initial guess:
+
+      >>> a * nodes**b / M
+
+      If `a` is not given, then do not care about `b` and uses as initial guess:
+
+      >>> nodes / M
+
+      :Parameters: * **M** (*int*) -- Number of collocation nodes.
+                   * **a** (*float, optional*) -- `a` coefficient for the initial guess.
+                   * **b** (*float, optional*) -- `b` coefficient for the initial guess.
+
+      :returns: * **coeffs** (*array*) -- The diagonal coefficients.
+                * **nodes** (*array*) -- The nodes associated to the current coefficients.
+
+
+   .. py:method:: fit(coeffs, nodes)
+      :staticmethod:
+
+      Function fitting given coefficients to a power law
+
+
+   .. py:method:: getQDelta(k=None)
+
+
+
+.. py:class:: MIN_SR_FLEX(nNodes, nodeType, quadType, **kwargs)
+
+
+
+
+   .. py:attribute:: aliases
+      :value: ['MIN-SR-FLEX']
+
+      
+
+   .. py:method:: getQDelta(k=None)
+
+
+

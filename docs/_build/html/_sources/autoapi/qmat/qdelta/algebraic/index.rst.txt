@@ -1,0 +1,100 @@
+:py:mod:`qmat.qdelta.algebraic`
+===============================
+
+.. py:module:: qmat.qdelta.algebraic
+
+.. autoapi-nested-parse::
+
+   Submodule for QDelta coefficients based on algebraic approach
+
+
+
+Module Contents
+---------------
+
+.. py:class:: PIC(Q, **kwargs)
+
+
+
+
+   Picard approximation (zeros)
+
+   .. py:attribute:: aliases
+      :value: ['Picard']
+
+      
+
+   .. py:method:: getQDelta(k=None)
+
+
+
+.. py:class:: Exact(Q, **kwargs)
+
+
+
+
+   Takes Q (exact approximation)
+
+   .. py:attribute:: aliases
+      :value: ['EXACT']
+
+      
+
+   .. py:method:: getQDelta(k=None)
+
+
+
+.. py:class:: LU(Q, **kwargs)
+
+
+
+
+   LU approximation from Weiser
+
+   .. py:method:: getQDelta(k=None)
+
+
+
+.. py:class:: LU2(Q, **kwargs)
+
+
+
+
+   LU approximation from Weiser multiplied by 2
+
+   .. py:method:: getQDelta(k=None)
+
+
+
+.. py:class:: QPar(Q, **kwargs)
+
+
+
+
+   Approximation using diagonal of Q
+
+   .. py:attribute:: aliases
+      :value: ['Qpar', 'Qdiag']
+
+      
+
+   .. py:method:: getQDelta(k=None)
+
+
+
+.. py:class:: GS(Q, **kwargs)
+
+
+
+
+   Approximation using lower triangular part of Q
+
+   .. py:attribute:: aliases
+      :value: ['GaussSeidel']
+
+      
+
+   .. py:method:: getQDelta(k=None)
+
+
+

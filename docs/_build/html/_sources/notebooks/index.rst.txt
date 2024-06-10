@@ -1,0 +1,17 @@
+Base usage
+==========
+
+.. toctree::
+    :maxdepth: 1
+    :glob:
+
+    0*
+
+Advanced usage
+==============
+
+.. toctree::
+    :maxdepth: 1
+    :glob:
+
+    1*

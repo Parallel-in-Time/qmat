@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qmat.sdc &mdash; QMat Package  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=2e11fc30" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            QMat Package
+              <img src="../../_static/sdc_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installing QMat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/README.html">Notebook Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../notebooks/README.html#base-usage">Base usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../notebooks/01_qCoeffs.html">Step 1 : generate <span class="math notranslate nohighlight">\(Q\)</span>-coefficients</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../notebooks/01_qCoeffs.html#Use-a-generic-function">Use a generic function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../notebooks/01_qCoeffs.html#Use-generator-objects">Use generator objects</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../notebooks/02_rk.html">Step 2 : build a Runge-Kutta type time-stepper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../notebooks/03_qDelta.html">Step 3 : generate <span class="math notranslate nohighlight">\(Q_\Delta\)</span> coefficients</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../notebooks/03_qDelta.html#Procedural-approach-:-use-a-generic-function">Procedural approach : use a generic function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../notebooks/03_qDelta.html#OOP-approach-:-use-generator-objects">OOP approach : use generator objects</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../notebooks/04_sdc.html">Step 4 : build a Spectral Deferred Correction type time-stepper</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../notebooks/README.html#advanced-usage">Advanced usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../notebooks/11_prolongation.html">Step 5 : generalizing the prolongation for RK-type and SDC-type time-steppers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../notebooks/11_prolongation.html#Additional-coefficients-from-G-generators">Additional coefficients from <span class="math notranslate nohighlight">\(G\)</span>-generators</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../notebooks/12_initialization.html">Step 6 : generalizing the initialization of SDC-type time-steppers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#general-rules">General rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#base-recipes">Base recipes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../devdoc/testing.html">Testing your changes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/qmat/index.html">QMat API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../autoapi/qmat/index.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../autoapi/qmat/qcoeff/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.qcoeff</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../autoapi/qmat/qcoeff/index.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../autoapi/qmat/qdelta/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.qdelta</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../autoapi/qmat/qdelta/index.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../autoapi/qmat/index.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../autoapi/qmat/lagrange/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.lagrange</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../autoapi/qmat/lagrange/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../autoapi/qmat/nodes/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.nodes</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../autoapi/qmat/nodes/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../autoapi/qmat/sdc/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.sdc</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../autoapi/qmat/sdc/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../autoapi/qmat/utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.utils</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../autoapi/qmat/utils/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../autoapi/qmat/index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">QMat Package</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">qmat.sdc</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for qmat.sdc</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module with simple usage SDC type time-stepping solvers</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="solveDahlquistSDC">
+<a class="viewcode-back" href="../../autoapi/qmat/sdc/index.html#qmat.sdc.solveDahlquistSDC">[docs]</a>
+<span class="k">def</span> <span class="nf">solveDahlquistSDC</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="n">u0</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">nSteps</span><span class="p">,</span> <span class="n">nSweeps</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">QDelta</span><span class="p">,</span>
+                      <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">uNum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nSteps</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+    <span class="n">uNum</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">u0</span>
+
+    <span class="n">nNodes</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">T</span><span class="o">/</span><span class="n">nSteps</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nNodes</span><span class="p">)</span> <span class="o">-</span> <span class="n">lam</span><span class="o">*</span><span class="n">dt</span><span class="o">*</span><span class="n">QDelta</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nSteps</span><span class="p">):</span>
+
+        <span class="n">uNodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nNodes</span><span class="p">)</span><span class="o">*</span><span class="n">uNum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nSweeps</span><span class="p">):</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">uNum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">lam</span><span class="o">*</span><span class="n">dt</span><span class="o">*</span><span class="p">(</span><span class="n">Q</span><span class="o">-</span><span class="n">QDelta</span><span class="p">)</span> <span class="o">@</span> <span class="n">uNodes</span>
+            <span class="n">uNodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">uNum</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">uNodes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">uNum</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">uNum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">lam</span><span class="o">*</span><span class="n">dt</span><span class="o">*</span><span class="n">weights</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">uNodes</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">uNum</span></div>
+
+
+
+<div class="viewcode-block" id="errorDahlquistSDC">
+<a class="viewcode-back" href="../../autoapi/qmat/sdc/index.html#qmat.sdc.errorDahlquistSDC">[docs]</a>
+<span class="k">def</span> <span class="nf">errorDahlquistSDC</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="n">u0</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">nSteps</span><span class="p">,</span> <span class="n">nSweeps</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">QDelta</span><span class="p">,</span>
+                      <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">uNum</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">uNum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">uNum</span> <span class="o">=</span> <span class="n">solveDahlquistSDC</span><span class="p">(</span>
+            <span class="n">lam</span><span class="p">,</span> <span class="n">u0</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">nSteps</span><span class="p">,</span> <span class="n">nSweeps</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">QDelta</span><span class="p">,</span>
+            <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
+
+    <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">nSteps</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">uExact</span> <span class="o">=</span> <span class="n">u0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">lam</span><span class="o">*</span><span class="n">times</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">uNum</span><span class="o">-</span><span class="n">uExact</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="getOrderSDC">
+<a class="viewcode-back" href="../../autoapi/qmat/sdc/index.html#qmat.sdc.getOrderSDC">[docs]</a>
+<span class="k">def</span> <span class="nf">getOrderSDC</span><span class="p">(</span><span class="n">coll</span><span class="p">,</span> <span class="n">nSweeps</span><span class="p">,</span> <span class="n">qDelta</span><span class="p">,</span> <span class="n">prolongation</span><span class="p">):</span>
+    <span class="c1"># TODO : extend with additional results from</span>
+    <span class="c1"># https://gitlab.inria.fr/sweet/sweet/-/blob/main/mule_local/python/sdc/qmatrix.py#L596</span>
+
+    <span class="n">nNodes</span><span class="p">,</span> <span class="n">nodeType</span><span class="p">,</span> <span class="n">quadType</span> <span class="o">=</span> <span class="n">coll</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">coll</span><span class="o">.</span><span class="n">nodeType</span><span class="p">,</span> <span class="n">coll</span><span class="o">.</span><span class="n">quadType</span>
+
+    <span class="c1"># Maximum order from the collocation problem</span>
+    <span class="n">maxOrder</span> <span class="o">=</span> <span class="n">coll</span><span class="o">.</span><span class="n">order</span>
+
+    <span class="c1"># Order of SDC</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># first sweep</span>
+        <span class="k">if</span> <span class="n">qDelta</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;TRAPAR&#39;</span><span class="p">,</span> <span class="s1">&#39;TRAP&#39;</span><span class="p">]:</span>
+            <span class="n">order</span> <span class="o">+=</span> <span class="mi">2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># rest of sweeps</span>
+        <span class="n">order</span> <span class="o">+=</span> <span class="n">nSweeps</span><span class="o">-</span><span class="mi">1</span>
+    <span class="c1"># take into account prolongation</span>
+    <span class="k">if</span> <span class="n">prolongation</span> <span class="o">==</span> <span class="s2">&quot;QUADRATURE&quot;</span><span class="p">:</span>
+        <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">order</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">maxOrder</span><span class="p">,</span> <span class="n">order</span><span class="p">)</span>
+
+    <span class="c1"># Edge cases with bonus order (or malus some times ...)</span>
+    <span class="c1"># TODO: couple with the Butcher theory from Joscha to retrieve this theoretically ...</span>
+    <span class="k">if</span> <span class="n">prolongation</span> <span class="o">==</span> <span class="s2">&quot;QUADRATURE&quot;</span><span class="p">:</span>  <span class="c1"># COPY initialization</span>
+        <span class="k">if</span> <span class="n">qDelta</span> <span class="o">==</span> <span class="s2">&quot;TRAP&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;EQUID&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-LEFT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;CHEBY-2&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;LOBATTO&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;CHEBY-3&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-LEFT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;CHEBY-4&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;RADAU-RIGHT&quot;</span><span class="p">,</span> <span class="s2">&quot;LOBATTO&quot;</span><span class="p">]:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">qDelta</span> <span class="o">==</span> <span class="s2">&quot;TRAPAR&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;CHEBY-3&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-LEFT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;CHEBY-4&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-RIGHT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;CHEBY-3&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-LEFT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">qDelta</span> <span class="o">==</span> <span class="s2">&quot;BE&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;CHEBY-3&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-LEFT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;CHEBY-4&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-RIGHT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">qDelta</span> <span class="o">==</span> <span class="s2">&quot;FE&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;CHEBY-1&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-RIGHT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;CHEBY-3&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;RADAU-LEFT&quot;</span><span class="p">,</span> <span class="s2">&quot;LOBATTO&quot;</span><span class="p">]:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;CHEBY-4&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-RIGHT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">qDelta</span> <span class="o">==</span> <span class="s2">&quot;BEPAR&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;EQUID&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-LEFT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;CHEBY-1&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-2&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;RADAU-LEFT&quot;</span><span class="p">,</span> <span class="s2">&quot;RADAU-RIGHT&quot;</span><span class="p">]:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;CHEBY-3&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-4&quot;</span><span class="p">]:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">qDelta</span> <span class="o">==</span> <span class="s2">&quot;TRAPAR&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;EQUID&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;CHEBY-1&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-2&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-3&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-4&quot;</span><span class="p">]:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">prolongation</span> <span class="o">==</span> <span class="s2">&quot;LASTNODE&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">qDelta</span> <span class="o">==</span> <span class="s2">&quot;BE&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;CHEBY-4&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-RIGHT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">qDelta</span> <span class="o">==</span> <span class="s2">&quot;FE&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;EQUID&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-RIGHT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;CHEBY-4&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-RIGHT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">qDelta</span> <span class="o">==</span> <span class="s2">&quot;TRAP&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;EQUID&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-1&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-2&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;LOBATTO&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;LEGENDRE&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;EQUID&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;LOBATTO&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">2</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;EQUID&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-RIGHT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;LEGENDRE&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-1&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-2&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-3&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-4&quot;</span><span class="p">]:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;LEGENDRE&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-RIGHT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;LEGENDRE&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;LOBATTO&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;LEGENDRE&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-RIGHT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">qDelta</span> <span class="o">==</span> <span class="s2">&quot;BEPAR&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;CHEBY-2&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-RIGHT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;EQUID&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-1&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-2&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-3&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-4&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-RIGHT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;CHEBY-3&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-4&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;LOBATTO&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">qDelta</span> <span class="o">==</span> <span class="s2">&quot;TRAPAR&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;CHEBY-4&quot;</span> <span class="ow">and</span> <span class="n">quadType</span> <span class="o">==</span> <span class="s2">&quot;RADAU-RIGHT&quot;</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nSweeps</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">nNodes</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">nodeType</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;EQUID&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-1&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-2&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-3&quot;</span><span class="p">,</span> <span class="s2">&quot;CHEBY-4&quot;</span><span class="p">]:</span>
+                <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+    <span class="k">return</span> <span class="n">order</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024 PinT Community.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

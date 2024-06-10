@@ -1,0 +1,22 @@
+:py:mod:`qmat.qdelta.mincoeffs`
+===============================
+
+.. py:module:: qmat.qdelta.mincoeffs
+
+.. autoapi-nested-parse::
+
+   Submodule to store precomputed diagonal coefficients for min-type QDelta matrices
+
+
+
+Module Contents
+---------------
+
+.. py:data:: MIN3
+
+   
+
+.. py:data:: MIN_VDHS
+
+   
+

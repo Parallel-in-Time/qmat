@@ -1,0 +1,40 @@
+:py:mod:`qmat`
+==============
+
+.. py:module:: qmat
+
+.. autoapi-nested-parse::
+
+   Generation of Q-coefficients for Spectral Deferred Corrections (and other time-integration methods ...)
+
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   qcoeff/index.rst
+   qdelta/index.rst
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   lagrange/index.rst
+   nodes/index.rst
+   sdc/index.rst
+   utils/index.rst
+
+
+Package Contents
+----------------
+
+
+
+
+

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Step 4 : build a Spectral Deferred Correction type time-stepper &mdash; QMat Package  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=2e11fc30" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Step 5 : generalizing the prolongation for RK-type and SDC-type time-steppers" href="11_prolongation.html" />
+    <link rel="prev" title="Step 3 : generate \(Q_\Delta\) coefficients" href="03_qDelta.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            QMat Package
+              <img src="../_static/sdc_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing QMat</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="README.html">Notebook Tutorials</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="README.html#base-usage">Base usage</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01_qCoeffs.html">Step 1 : generate <span class="math notranslate nohighlight">\(Q\)</span>-coefficients</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="01_qCoeffs.html#Use-a-generic-function">Use a generic function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="01_qCoeffs.html#Use-generator-objects">Use generator objects</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="02_rk.html">Step 2 : build a Runge-Kutta type time-stepper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_qDelta.html">Step 3 : generate <span class="math notranslate nohighlight">\(Q_\Delta\)</span> coefficients</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="03_qDelta.html#Procedural-approach-:-use-a-generic-function">Procedural approach : use a generic function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="03_qDelta.html#OOP-approach-:-use-generator-objects">OOP approach : use generator objects</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Step 4 : build a Spectral Deferred Correction type time-stepper</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="README.html#advanced-usage">Advanced usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="11_prolongation.html">Step 5 : generalizing the prolongation for RK-type and SDC-type time-steppers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="11_prolongation.html#Additional-coefficients-from-G-generators">Additional coefficients from <span class="math notranslate nohighlight">\(G\)</span>-generators</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="12_initialization.html">Step 6 : generalizing the initialization of SDC-type time-steppers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#general-rules">General rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#base-recipes">Base recipes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../devdoc/testing.html">Testing your changes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/qmat/index.html">QMat API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../autoapi/qmat/index.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/qmat/qcoeff/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.qcoeff</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/qmat/qcoeff/index.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/qmat/qdelta/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.qdelta</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/qmat/qdelta/index.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../autoapi/qmat/index.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/qmat/lagrange/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.lagrange</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/qmat/lagrange/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/qmat/nodes/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.nodes</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/qmat/nodes/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/qmat/sdc/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.sdc</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/qmat/sdc/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/qmat/utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.utils</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/qmat/utils/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../autoapi/qmat/index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">QMat Package</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="README.html">Notebook Tutorials</a></li>
+      <li class="breadcrumb-item active">Step 4 : build a Spectral Deferred Correction type time-stepper</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/notebooks/04_sdc.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Step-4-:-build-a-Spectral-Deferred-Correction-type-time-stepper">
+<h1>Step 4 : build a Spectral Deferred Correction type time-stepper<a class="headerlink" href="#Step-4-:-build-a-Spectral-Deferred-Correction-type-time-stepper" title="Link to this heading"></a></h1>
+<dl class="field-list simple">
+<dt class="field-odd">scroll<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Now that we can approximate the :math:`Q` matrix from our time-stepping scheme :</em></p>
+</dd>
+</dl>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{array}
+    {c|c}
+    \tau &amp; Q \\
+    \hline\\[-1em]
+    &amp; w^\top
+\end{array}\end{split}\]</div>
+<p><em>with any :math:`Q_Delta` approximation, we can build a SDC-type time-stepper.</em></p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">mega<span class="colon">:</span></dt>
+<dd class="field-odd"><p>While SDC was originally built with a collocation method, nothing prevent to use exactly the same approach with any other type of <span class="math notranslate nohighlight">\(Q\)</span>-coefficients …</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>Consider (again) the <em>Dahlquist problem</em> :</p>
+<div class="math notranslate nohighlight">
+\[\frac{du}{dt} = \lambda u, \quad t \in [0, T], \quad u(0)=u_0,\]</div>
+<p>with <span class="math notranslate nohighlight">\(\lambda=i\)</span> (imaginary unit), <span class="math notranslate nohighlight">\(T=4\pi\)</span>, and <span class="math notranslate nohighlight">\(u_0=e^{\frac{i\pi}{6}}\)</span> :</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">lam</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+<span class="n">u0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Let say we want to solve it numerically, using <span class="math notranslate nohighlight">\(12\)</span> time-steps of the a SDC time-stepper using a <span class="math notranslate nohighlight">\(Q_\Delta\)</span> based on Backward Euler steps between the nodes. This is how we do it with <code class="docutils literal notranslate"><span class="pre">qmat</span></code> :</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmat</span> <span class="kn">import</span> <span class="n">Q_GENERATORS</span><span class="p">,</span> <span class="n">QDELTA_GENERATORS</span>
+
+<span class="n">coll</span> <span class="o">=</span> <span class="n">Q_GENERATORS</span><span class="p">[</span><span class="s2">&quot;coll&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">getInstance</span><span class="p">()</span>
+<span class="n">nodes</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">coll</span><span class="o">.</span><span class="n">genCoeffs</span><span class="p">()</span>
+<span class="n">QDelta</span> <span class="o">=</span> <span class="n">QDELTA_GENERATORS</span><span class="p">[</span><span class="s2">&quot;BE&quot;</span><span class="p">](</span><span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">)</span><span class="o">.</span><span class="n">getQDelta</span><span class="p">()</span>
+
+<span class="n">nSteps</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="n">uNum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nSteps</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+<span class="n">uNum</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">u0</span>
+
+<span class="n">dt</span> <span class="o">=</span> <span class="n">T</span><span class="o">/</span><span class="n">nSteps</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nodes</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">-</span> <span class="n">lam</span><span class="o">*</span><span class="n">dt</span><span class="o">*</span><span class="n">Q</span>       <span class="c1"># all-at-once system</span>
+<span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nodes</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">-</span> <span class="n">lam</span><span class="o">*</span><span class="n">dt</span><span class="o">*</span><span class="n">QDelta</span>  <span class="c1"># preconditioner</span>
+
+<span class="n">nSweeps</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nSteps</span><span class="p">):</span>
+
+    <span class="n">uNodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nodes</span><span class="o">.</span><span class="n">size</span><span class="p">)</span><span class="o">*</span><span class="n">uNum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="c1"># initial guess</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nSweeps</span><span class="p">):</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">uNum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">A</span> <span class="o">@</span> <span class="n">uNodes</span>   <span class="c1"># compute residuum</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>  <span class="c1"># solve with preconditioner</span>
+        <span class="n">uNodes</span> <span class="o">+=</span> <span class="n">d</span>                <span class="c1"># update solution</span>
+
+    <span class="n">uNum</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">uNum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">lam</span><span class="o">*</span><span class="n">dt</span><span class="o">*</span><span class="n">weights</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">uNodes</span><span class="p">)</span>  <span class="c1"># prolongation</span>
+<br/></pre></div>
+</div>
+</div>
+<p>Let’s explain a bit … as for a <a class="reference internal" href="02_rk.html"><span class="doc">RK-type time-stepper</span></a>, we build the all-at-once system <span class="math notranslate nohighlight">\(A := I - \lambda\Delta{t}Q\)</span>, then in addition its preconditioner <span class="math notranslate nohighlight">\(P:= I - \lambda\Delta{t}Q_\Delta\)</span>.</p>
+<p>Then for each time-step, we define a number of iterations or <strong>sweeps</strong> <span class="math notranslate nohighlight">\(K=4\)</span>, then</p>
+<ol class="arabic simple">
+<li><p>starts with <span class="math notranslate nohighlight">\(u^0 = [u_n, \dots, u_n]^T\)</span> as <strong>initial guess</strong> for the node solutions</p></li>
+<li><p>update the node solutions <span class="math notranslate nohighlight">\(u^k\)</span> to <span class="math notranslate nohighlight">\(u^{k+1}\)</span> for <span class="math notranslate nohighlight">\(k \in \{0, \dots, K-1\}\)</span>:</p>
+<ul class="simple">
+<li><p>compute the <strong>residuum</strong> <span class="math notranslate nohighlight">\(r = u_n - A u^k\)</span></p></li>
+<li><p>solve with the preconditioner to retrieve the <strong>defect</strong> <span class="math notranslate nohighlight">\(d = P^{-1}r\)</span></p></li>
+<li><p>update the node solution with the defect <span class="math notranslate nohighlight">\(u^{k+1} = u^k + d\)</span></p></li>
+</ul>
+</li>
+<li><p>update the step solution with the <strong>prolongation</strong> applied on <span class="math notranslate nohighlight">\(u^{K}\)</span></p></li>
+</ol>
+<p>And here is the obtained numerical solution and associated <span class="math notranslate nohighlight">\(L_\infty\)</span> error :</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">uNum</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">uNum</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="s1">&#39;o-&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+
+<span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">nSteps</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">uExact</span> <span class="o">=</span> <span class="n">u0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">lam</span><span class="o">*</span><span class="n">times</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">uExact</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">uExact</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;L_inf error : </span><span class="si">{:1.5f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">uNum</span><span class="o">-</span><span class="n">uExact</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+L_inf error : 0.00535
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_04_sdc_6_1.png" src="../_images/notebooks_04_sdc_6_1.png" />
+</div>
+</div>
+<p>While this is not as small as the <a class="reference internal" href="02_rk.html"><span class="doc">collocation solution in tutorial 2</span></a>, this is still more accurate compared to the RK4 method in the same tutorial.</p>
+<p>In fact, the SDC accuracy depends on the number of <strong>sweep</strong> performed within each steps … if we write the nodes solution update as one single iteration :</p>
+<div class="math notranslate nohighlight">
+\[u^{k+1} = u^{k} + P^{-1} \left[u_n - A u^{k}\right],\]</div>
+<p>we can see already that if this iteration converge to a fixed point solution <span class="math notranslate nohighlight">\(u^{\infty}\)</span> (which we assume for now), then its is simply the solution of the all-at-once system as <span class="math notranslate nohighlight">\(u_n - A u^{\infty} = 0\)</span> (here we abused the notation using <span class="math notranslate nohighlight">\(u_n\)</span> to represent the vector <span class="math notranslate nohighlight">\([u_n, \dots, u_n]^T\)</span>).</p>
+<p>And if we look at the structure of <span class="math notranslate nohighlight">\(P\)</span> here :</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P :&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+P :
+[[1.-0.09276909j 0.+0.j         0.+0.j         0.+0.j        ]
+ [0.-0.09276909j 1.-0.3360236j  0.+0.j         0.+0.j        ]
+ [0.-0.09276909j 0.-0.3360236j  1.-0.39604236j 0.+0.j        ]
+ [0.-0.09276909j 0.-0.3360236j  0.-0.39604236j 1.-0.22236249j]]
+</pre></div></div>
+</div>
+<p><span class="math notranslate nohighlight">\(\Rightarrow\)</span> this is a lower triangular matrix, which means that we don’t need to solve the system <em>all-at-once</em>, but we can solve it line by line as it is done for classical RK method (<em>c.f</em> <a class="reference internal" href="02_rk.html"><span class="doc">tutorial 2</span></a>).</p>
+<p>However, this comes with some drawback : since it’s an iterative process, one should do enough sweeps to retrieve a satisfying accuracy. Hence the need of investigate the accuracy with variable number of sweeps. Let us first simplify the node solution update … replacing in it <span class="math notranslate nohighlight">\(P\)</span> and <span class="math notranslate nohighlight">\(A\)</span> by their expression, we get :</p>
+<div class="math notranslate nohighlight">
+\[u^{k+1} - \lambda\Delta{t}Q_\Delta u^{k+1} = u_n + \lambda\Delta{t}(Q-Q_\Delta)u^k,\]</div>
+<p>which is more stable from a numerical perspective and simpler from an implementation perspective. So with <code class="docutils literal notranslate"><span class="pre">qmat</span></code>, the SDC time-steppers becomes :</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">nSweeps</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nSteps</span><span class="p">):</span>
+
+    <span class="n">uNodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nodes</span><span class="o">.</span><span class="n">size</span><span class="p">)</span><span class="o">*</span><span class="n">uNum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="c1"># initial guess</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nSweeps</span><span class="p">):</span>
+        <span class="c1"># nodes solution update</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">uNum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">lam</span><span class="o">*</span><span class="n">dt</span><span class="o">*</span><span class="p">(</span><span class="n">Q</span><span class="o">-</span><span class="n">QDelta</span><span class="p">)</span> <span class="o">@</span> <span class="n">uNodes</span>
+        <span class="n">uNodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+    <span class="n">uNum</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">uNum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">lam</span><span class="o">*</span><span class="n">dt</span><span class="o">*</span><span class="n">weights</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">uNodes</span><span class="p">)</span>  <span class="c1"># prolongation</span>
+</pre></div>
+</div>
+</div>
+<p>Of course, some convenience functions are provided by <code class="docutils literal notranslate"><span class="pre">qmat</span></code> to do the work directly, for instance to compute the SDC solution associated to one given <span class="math notranslate nohighlight">\(Q\)</span> and <span class="math notranslate nohighlight">\(Q_\Delta\)</span> matrices (and the weights) :</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmat.sdc</span> <span class="kn">import</span> <span class="n">solveDahlquistSDC</span>
+<span class="n">uNum</span> <span class="o">=</span> <span class="n">solveDahlquistSDC</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="n">u0</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">nSteps</span><span class="p">,</span> <span class="n">nSweeps</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">QDelta</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>We can use this to observe how the SDC solution evolve for different number of sweeps :</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">nSweeps</span><span class="p">,</span> <span class="n">sym</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">]):</span>
+    <span class="n">uNum</span> <span class="o">=</span> <span class="n">solveDahlquistSDC</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="n">u0</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">nSteps</span><span class="p">,</span> <span class="n">nSweeps</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">QDelta</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">uNum</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">uNum</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">sym</span><span class="o">+</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;K=</span><span class="si">{</span><span class="n">nSweeps</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">uExact</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">uExact</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_04_sdc_14_0.png" src="../_images/notebooks_04_sdc_14_0.png" />
+</div>
+</div>
+<p>For the first sweep, the numerical solution is very far from the exact solution. And as expected, doing more sweeps correct it toward the exact solution.</p>
+<p>This can be illustrated more rigorously looking at the <span class="math notranslate nohighlight">\(L_\infty\)</span> error :</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qmat.sdc</span> <span class="kn">import</span> <span class="n">errorDahlquistSDC</span>
+
+<span class="k">for</span> <span class="n">nSweeps</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]:</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">errorDahlquistSDC</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="n">u0</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">nSteps</span><span class="p">,</span> <span class="n">nSweeps</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">QDelta</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;nSweeps=</span><span class="si">{</span><span class="n">nSweeps</span><span class="si">}</span><span class="s2">, err=</span><span class="si">{</span><span class="n">err</span><span class="si">:</span><span class="s2">1.5f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+nSweeps=1, err=0.84538
+nSweeps=2, err=0.14365
+nSweeps=3, err=0.02750
+nSweeps=4, err=0.00535
+nSweeps=5, err=0.00106
+nSweeps=6, err=0.00021
+nSweeps=8, err=0.00002
+nSweeps=9, err=0.00001
+</pre></div></div>
+</div>
+<p>In particular, for the <span class="math notranslate nohighlight">\(Q_\Delta\)</span> based on Backward Euler, it takes <span class="math notranslate nohighlight">\(K=9\)</span> sweeps to reach a similar accuracy as this of the underlying collocation method (cf <a class="reference internal" href="02_rk.html"><span class="doc">tutorial 2</span></a>).</p>
+<p>The choice of <span class="math notranslate nohighlight">\(Q_\Delta\)</span> for the preconditioner has actually a big impact on how fast SDC converges to the solution of the all-at-once system, hence the different <span class="math notranslate nohighlight">\(Q_\Delta\)</span>-generators provided by <code class="docutils literal notranslate"><span class="pre">qmat</span></code>. For instance, using those <em>magical</em> <code class="docutils literal notranslate"><span class="pre">MIN3</span></code> coefficients introduced in <a class="reference internal" href="03_qDelta.html"><span class="doc">tutorial 2</span></a> …</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">QDelta</span> <span class="o">=</span> <span class="n">QDELTA_GENERATORS</span><span class="p">[</span><span class="s2">&quot;MIN3&quot;</span><span class="p">](</span><span class="n">nNodes</span><span class="o">=</span><span class="n">coll</span><span class="o">.</span><span class="n">nNodes</span><span class="p">,</span> <span class="n">nodeType</span><span class="o">=</span><span class="n">coll</span><span class="o">.</span><span class="n">nodeType</span><span class="p">,</span> <span class="n">quadType</span><span class="o">=</span><span class="n">coll</span><span class="o">.</span><span class="n">quadType</span><span class="p">)</span><span class="o">.</span><span class="n">getQDelta</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">nSweeps</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]:</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">errorDahlquistSDC</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="n">u0</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">nSteps</span><span class="p">,</span> <span class="n">nSweeps</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">QDelta</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;nSweeps=</span><span class="si">{</span><span class="n">nSweeps</span><span class="si">}</span><span class="s2">, err=</span><span class="si">{</span><span class="n">err</span><span class="si">:</span><span class="s2">1.5f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+nSweeps=1, err=1.62904
+nSweeps=2, err=0.05860
+nSweeps=3, err=0.00558
+nSweeps=4, err=0.00036
+nSweeps=5, err=0.00002
+nSweeps=6, err=0.00001
+nSweeps=8, err=0.00001
+nSweeps=9, err=0.00001
+</pre></div></div>
+</div>
+<p>… makes SDC converge way faster to the solution of the all-at-once system ! The reason behind this <em>magical behavior</em> will be covered in a later tutorial.</p>
+<p>But <span class="math notranslate nohighlight">\(Q_\Delta\)</span> and <span class="math notranslate nohighlight">\(K\)</span> are not the only parameters that impact the accuracy of SDC : the <strong>prolongation</strong> step, done after all sweeps, do play an important role that is covered in the <a class="reference internal" href="11_prolongation.html"><span class="doc">next tutorial on prolongation …</span></a></p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="03_qDelta.html" class="btn btn-neutral float-left" title="Step 3 : generate \(Q_\Delta\) coefficients" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="11_prolongation.html" class="btn btn-neutral float-right" title="Step 5 : generalizing the prolongation for RK-type and SDC-type time-steppers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024 PinT Community.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

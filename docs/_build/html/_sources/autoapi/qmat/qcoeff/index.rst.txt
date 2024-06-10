@@ -1,0 +1,21 @@
+:py:mod:`qmat.qcoeff`
+=====================
+
+.. py:module:: qmat.qcoeff
+
+.. autoapi-nested-parse::
+
+   Base module for Q coefficients generation
+
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   butcher/index.rst
+   collocation/index.rst
+
+

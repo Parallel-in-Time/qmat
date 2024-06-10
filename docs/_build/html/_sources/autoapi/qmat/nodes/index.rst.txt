@@ -1,0 +1,104 @@
+:py:mod:`qmat.nodes`
+====================
+
+.. py:module:: qmat.nodes
+
+.. autoapi-nested-parse::
+
+   Base module for nodes generation
+
+
+
+Module Contents
+---------------
+
+.. py:data:: NODE_TYPES
+   :value: ['EQUID', 'LEGENDRE', 'CHEBY-1', 'CHEBY-2', 'CHEBY-3', 'CHEBY-4']
+
+   Available types (distributions) for nodes
+
+.. py:data:: QUAD_TYPES
+   :value: ['GAUSS', 'RADAU-LEFT', 'RADAU-RIGHT', 'LOBATTO']
+
+   Available quadrature type for each node distribution
+
+.. py:class:: NodesGenerator(nodeType='LEGENDRE', quadType='LOBATTO')
+
+
+
+
+   Class that can be used to generate generic distribution of nodes derived
+   from Gauss quadrature rule.
+   Its implementation is fully inspired from a `book of W. Gautschi
+   <https://doi.org/10.1093/oso/9780198506720.001.0001>`_.
+
+   :ivar nodeType: The type of node distribution
+   :vartype nodeType: str
+   :ivar quadType: The quadrature type
+
+   :vartype quadType: str
+   :ivar :
+             - EQUID : equidistant nodes
+             - LEGENDRE : node distribution from Legendre polynomials
+             - CHEBY-1 : node distribution from Chebychev polynomials (1st kind)
+             - CHEBY-2 : node distribution from Chebychev polynomials (2nd kind)
+             - CHEBY-3 : node distribution from Chebychev polynomials (3rd kind)
+             - CHEBY-4 : node distribution from Chebychev polynomials (4th kind)
+
+             The default is 'LEGENDRE'.
+           * **quadType** (*str, optional*) -- The quadrature type, can be
+
+             - GAUSS : inner point only, no node at boundary
+             - RADAU-LEFT : only left boundary as node
+             - RADAU-RIGHT : only right boundary as node
+             - LOBATTO : left and right boundary as node
+
+             The default is 'LOBATTO'.
+
+   :vartype : Parameters: * **nodeType** (*str, optional*) -- The type of node distribution, can be
+
+   .. py:method:: getNodes(nNodes)
+
+      Computes a given number of quadrature nodes.
+
+      :Parameters: **nNodes** (*int*) -- Number of nodes to compute.
+
+      :returns: **nodes** -- Nodes located in [-1, 1], in increasing order.
+      :rtype: np.1darray
+
+
+   .. py:method:: getOrthogPolyCoefficients(num_coeff)
+
+      Produces a given number of analytic three-term recurrence coefficients.
+
+      :Parameters: **num_coeff** (*int*) -- Number of coefficients to compute.
+
+      :returns: * **alpha** (*np.1darray*) -- The alpha coefficients of the three-term recurrence.
+                * **beta** (*np.1darray*) -- The beta coefficients of the three-term recurrence.
+
+
+   .. py:method:: evalOrthogPoly(t, alpha, beta)
+
+      Evaluates the two higher order orthogonal polynomials corresponding
+      to the given (alpha,beta) coefficients.
+
+      :Parameters: * **t** (*float or np.1darray*) -- The point where to evaluate the orthogonal polynomials.
+                   * **alpha** (*np.1darray*) -- The alpha coefficients of the three-term recurrence.
+                   * **beta** (*np.1darray*) -- The beta coefficients of the three-term recurrence.
+
+      :returns: * **pi[0]** (*float or np.1darray*) -- The second higher order orthogonal polynomial evaluation.
+                * **pi[1]** (*float or np.1darray*) -- The higher oder orthogonal polynomial evaluation.
+
+
+   .. py:method:: getTridiagCoefficients(nNodes)
+
+      Computes recurrence coefficients for the tridiagonal Jacobian matrix,
+      taking into account the quadrature type.
+
+      :Parameters: **nNodes** (*int*) -- Number of nodes that should be computed from those coefficients.
+
+      :returns: * **alpha** (*np.1darray*) -- The modified alpha coefficients of the three-term recurrence.
+                * **beta** (*np.1darray*) -- The modified beta coefficients of the three-term recurrence.
+
+
+

@@ -1,0 +1,104 @@
+:py:mod:`qmat.qdelta.timestepping`
+==================================
+
+.. py:module:: qmat.qdelta.timestepping
+
+.. autoapi-nested-parse::
+
+   Submodule for QDelta coefficients based on time-stepping scheme
+
+
+
+Module Contents
+---------------
+
+.. py:class:: TimeStepping(nodes, **kwargs)
+
+
+
+
+
+.. py:class:: BE(nodes, **kwargs)
+
+
+
+
+   Approximation based on Backward Euler steps between the nodes
+
+   .. py:attribute:: aliases
+      :value: ['IE']
+
+      
+
+   .. py:method:: getQDelta(k=None)
+
+
+
+.. py:class:: FE(nodes, **kwargs)
+
+
+
+
+   Approximation based on Forward Euler steps between the nodes
+
+   .. py:property:: dTau
+
+
+   .. py:attribute:: aliases
+      :value: ['EE']
+
+      
+
+   .. py:method:: getQDelta(k=None)
+
+
+
+.. py:class:: TRAP(nodes, **kwargs)
+
+
+
+
+   Approximation based on Trapezoidal Rule between the nodes
+
+   .. py:property:: dTau
+
+
+   .. py:attribute:: aliases
+      :value: ['CN']
+
+      
+
+   .. py:method:: getQDelta(k=None)
+
+
+
+.. py:class:: BEPAR(nodes, **kwargs)
+
+
+
+
+   Approximation based on parallel Backward Euler steps from zero to nodes
+
+   .. py:attribute:: aliases
+      :value: ['IEpar']
+
+      
+
+   .. py:method:: getQDelta(k=None)
+
+
+
+.. py:class:: TRAPAR(nodes, **kwargs)
+
+
+
+
+   Approximation based on parallel Trapezoidal Rule from zero to nodes
+
+   .. py:property:: dTau
+
+
+   .. py:method:: getQDelta(k=None)
+
+
+

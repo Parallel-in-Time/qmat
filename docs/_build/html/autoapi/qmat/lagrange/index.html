@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qmat.lagrange &mdash; QMat Package  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=2e11fc30" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="qmat.nodes" href="../nodes/index.html" />
+    <link rel="prev" title="qmat.qdelta.timestepping" href="../qdelta/timestepping/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            QMat Package
+              <img src="../../../_static/sdc_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing QMat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/README.html">Notebook Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../notebooks/README.html#base-usage">Base usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../notebooks/01_qCoeffs.html">Step 1 : generate <span class="math notranslate nohighlight">\(Q\)</span>-coefficients</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../notebooks/01_qCoeffs.html#Use-a-generic-function">Use a generic function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../notebooks/01_qCoeffs.html#Use-generator-objects">Use generator objects</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../notebooks/02_rk.html">Step 2 : build a Runge-Kutta type time-stepper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../notebooks/03_qDelta.html">Step 3 : generate <span class="math notranslate nohighlight">\(Q_\Delta\)</span> coefficients</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../notebooks/03_qDelta.html#Procedural-approach-:-use-a-generic-function">Procedural approach : use a generic function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../notebooks/03_qDelta.html#OOP-approach-:-use-generator-objects">OOP approach : use generator objects</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../notebooks/04_sdc.html">Step 4 : build a Spectral Deferred Correction type time-stepper</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notebooks/README.html#advanced-usage">Advanced usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../notebooks/11_prolongation.html">Step 5 : generalizing the prolongation for RK-type and SDC-type time-steppers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../notebooks/11_prolongation.html#Additional-coefficients-from-G-generators">Additional coefficients from <span class="math notranslate nohighlight">\(G\)</span>-generators</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../notebooks/12_initialization.html">Step 6 : generalizing the initialization of SDC-type time-steppers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#general-rules">General rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#base-recipes">Base recipes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../devdoc/testing.html">Testing your changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../devdoc/addRK.html">Add a Runge-Kutta scheme</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../devdoc/updateDoc.html">Update this documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">QMat API reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../qcoeff/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.qcoeff</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../qcoeff/index.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../qdelta/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.qdelta</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../qdelta/index.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.lagrange</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-contents">Module Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../nodes/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.nodes</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../nodes/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../sdc/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.sdc</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../sdc/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.utils</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../utils/index.html#module-contents">Module Contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">QMat Package</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.lagrange</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/autoapi/qmat/lagrange/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-qmat.lagrange">
+<span id="qmat-lagrange"></span><h1><a class="reference internal" href="#module-qmat.lagrange" title="qmat.lagrange"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qmat.lagrange</span></code></a><a class="headerlink" href="#module-qmat.lagrange" title="Link to this heading"></a></h1>
+<p>Base module for Barycentric Lagrange Approximation</p>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="qmat.lagrange.computeFejerRule">
+<span class="sig-name descname"><span class="pre">computeFejerRule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/qmat/lagrange.html#computeFejerRule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.lagrange.computeFejerRule" title="Link to this definition"></a></dt>
+<dd><p>Compute a Fejer rule of the first kind, using DFT (Waldvogel 2006)
+Inspired from quadpy (<a class="reference external" href="https://github.com/nschloe/quadpy">https://github.com/nschloe/quadpy</a> &#64;Nico_Schlömer)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – Number of points for the quadrature rule.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>nodes</strong> (<em>np.1darray(n)</em>) – The nodes of the quadrature rule</p></li>
+<li><p><strong>weights</strong> (<em>np.1darray(n)</em>) – The weights of the quadrature rule.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="qmat.lagrange.LagrangeApproximation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LagrangeApproximation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weightComputation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'AUTO'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaleRef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MAX'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/qmat/lagrange.html#LagrangeApproximation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.lagrange.LagrangeApproximation" title="Link to this definition"></a></dt>
+<dd><p>Class approximating any function on a given set of points using barycentric
+Lagrange interpolation.</p>
+<p>Let note <span class="math notranslate nohighlight">\((t_j)_{0\leq j&lt;n}\)</span> the set of points, then any scalar
+function <span class="math notranslate nohighlight">\(f\)</span> can be approximated by the barycentric formula :</p>
+<div class="math notranslate nohighlight">
+\[p(x) =
+\frac{\displaystyle \sum_{j=0}^{n-1}\frac{w_j}{x-x_j}f_j}
+{\displaystyle \sum_{j=0}^{n-1}\frac{w_j}{x-x_j}},\]</div>
+<p>where <span class="math notranslate nohighlight">\(f_j=f(t_j)\)</span> and</p>
+<div class="math notranslate nohighlight">
+\[w_j = \frac{1}{\prod_{k\neq j}(x_j-x_k)}\]</div>
+<p>are the barycentric weights.
+The theory and implementation is inspired from <a href="#id2"><span class="problematic" id="id1">[1]_</span></a>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul>
+<li><p><strong>points</strong> (<em>list, tuple or np.1darray</em>) – The given interpolation points, no specific scaling, but must be
+ordered in increasing order.</p></li>
+<li><p><strong>weightComputation</strong> (<em>str, optional</em>) – Algorithm used to compute the barycentric weights. Can be :</p>
+<ul class="simple">
+<li><p>‘FAST’ : uses the analytic formula (unstable for large number of points)</p></li>
+<li><p>‘STABLE’ : uses logarithmic difference and scaling of the weights</p></li>
+<li><p>‘CHEBFUN’ : uses the same approach as in the chebfun package</p></li>
+</ul>
+<p>The default is ‘AUTO’ : it tries the ‘FAST’ algorithm, and if an
+overflow is detected, it switches to the ‘STABLE’ algorithm.</p>
+</li>
+<li><p><strong>scaleRef</strong> (<em>str, optional</em>) – Scaling used in the ‘STABLE’ algorithm for weight computation.
+Can be :</p>
+<ul class="simple">
+<li><p>‘ZERO’ : scaling based on the weight for the value closest to <span class="math notranslate nohighlight">\(t=0\)</span>.</p></li>
+<li><p>‘MAX’ : scaling based on the maximum weight value.</p></li>
+</ul>
+<p>The default is ‘MAX’.</p>
+</li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>points</strong> (<em>np.1darray</em>) – The interpolating points</p></li>
+<li><p><strong>weights</strong> (<em>np.1darray</em>) – The associated barycentric weights</p></li>
+<li><p><strong>n</strong> (<em>int</em><em> (</em><em>property</em><em>)</em>) – The number of points</p></li>
+<li><p><strong>(</strong><strong>2004</strong><strong>)</strong><strong>.</strong> (<em>..</em><em> [</em><em>1</em><em>] </em><em>Berrut</em><em>, </em><em>J. P.</em><em>, </em><em>&amp; Trefethen</em><em>, </em><em>L. N.</em>) – “Barycentric Lagrange interpolation.” SIAM review, 46(3), 501-517.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="qmat.lagrange.LagrangeApproximation.n">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n</span></span><a class="headerlink" href="#qmat.lagrange.LagrangeApproximation.n" title="Link to this definition"></a></dt>
+<dd><p>The number of points</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qmat.lagrange.LagrangeApproximation.getInterpolationMatrix">
+<span class="sig-name descname"><span class="pre">getInterpolationMatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">times</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/qmat/lagrange.html#LagrangeApproximation.getInterpolationMatrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.lagrange.LagrangeApproximation.getInterpolationMatrix" title="Link to this definition"></a></dt>
+<dd><p>Compute the interpolation matrix for a given set of discrete “time”
+points.</p>
+<p>For instance, if we note <span class="math notranslate nohighlight">\(\vec{f}\)</span> the vector containing the
+<span class="math notranslate nohighlight">\(f_j=f(t_j)\)</span> values, and <span class="math notranslate nohighlight">\((\tau_m)_{0\leq m&lt;M}\)</span>
+the “time” points where to interpolate.
+Then <span class="math notranslate nohighlight">\(I[\vec{f}]\)</span>, the vector containing the interpolated
+<span class="math notranslate nohighlight">\(f(\tau_m)\)</span> values, can be obtained using :</p>
+<div class="math notranslate nohighlight">
+\[I[\vec{f}] = P_{Inter} \vec{f},\]</div>
+<p>where <span class="math notranslate nohighlight">\(P_{Inter}\)</span> is the interpolation matrix returned by this
+method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>times</strong> (<em>list-like or np.1darray</em>) – The discrete “time” points where to interpolate the function.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>PInter</strong> – The interpolation matrix, with <span class="math notranslate nohighlight">\(M\)</span> rows (size of the <strong>times</strong>
+parameter) and <span class="math notranslate nohighlight">\(n\)</span> columns.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.2darray(M, n)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qmat.lagrange.LagrangeApproximation.getIntegrationMatrix">
+<span class="sig-name descname"><span class="pre">getIntegrationMatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intervals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numQuad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'LEGENDRE_NUMPY'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/qmat/lagrange.html#LagrangeApproximation.getIntegrationMatrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmat.lagrange.LagrangeApproximation.getIntegrationMatrix" title="Link to this definition"></a></dt>
+<dd><p>Compute the integration matrix for a given set of intervals.</p>
+<p>For instance, if we note <span class="math notranslate nohighlight">\(\vec{f}\)</span> the vector containing the
+<span class="math notranslate nohighlight">\(f_j=f(t_j)\)</span> values, and
+<span class="math notranslate nohighlight">\((\tau_{m,left}, \tau_{m,right})_{0\leq m&lt;M}\)</span> the different
+interval where the function should be integrated using the barycentric
+interpolant polynomial.
+Then <span class="math notranslate nohighlight">\(\Delta[\vec{f}]\)</span>, the vector containing the approximations
+of</p>
+<div class="math notranslate nohighlight">
+\[\int_{\tau_{m,left}}^{\tau_{m,right}} f(t)dt,\]</div>
+<p>can be obtained using :</p>
+<div class="math notranslate nohighlight">
+\[\Delta[\vec{f}] = P_{Integ} \vec{f},\]</div>
+<p>where <span class="math notranslate nohighlight">\(P_{Integ}\)</span> is the interpolation matrix returned by this
+method.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul>
+<li><p><strong>intervals</strong> (<em>list of pairs</em>) – A list of all integration intervals.</p></li>
+<li><p><strong>numQuad</strong> (<em>str, optional</em>) – Quadrature rule used to integrate the interpolant barycentric
+polynomial. Can be :</p>
+<ul class="simple">
+<li><p>‘LEGENDRE_NUMPY’ : Gauss-Legendre rule from Numpy</p></li>
+<li><p>‘LEGENDRE_SCIPY’ : Gauss-Legendre rule from Scipy</p></li>
+<li><p>‘FEJER’ : internaly implemented Fejer-I rule</p></li>
+</ul>
+<p>The default is ‘LEGENDRE_NUMPY’.</p>
+</li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>PInter</strong> – The integration matrix, with <span class="math notranslate nohighlight">\(M\)</span> rows (number of intervals)
+and <span class="math notranslate nohighlight">\(n\)</span> columns.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.2darray(M, n)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../qdelta/timestepping/index.html" class="btn btn-neutral float-left" title="qmat.qdelta.timestepping" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../nodes/index.html" class="btn btn-neutral float-right" title="qmat.nodes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024 PinT Community.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

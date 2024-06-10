@@ -82,6 +82,29 @@ class LagrangeApproximation(object):
     are the barycentric weights.
     The theory and implementation is inspired from [1]_.
 
+    Parameters
+    ----------
+    points : list, tuple or np.1darray
+        The given interpolation points, no specific scaling, but must be
+        ordered in increasing order.
+    weightComputation : str, optional
+        Algorithm used to compute the barycentric weights. Can be :
+
+        - 'FAST' : uses the analytic formula (unstable for large number of points)
+        - 'STABLE' : uses logarithmic difference and scaling of the weights
+        - 'CHEBFUN' : uses the same approach as in the chebfun package
+
+        The default is 'AUTO' : it tries the 'FAST' algorithm, and if an
+        overflow is detected, it switches to the 'STABLE' algorithm.
+    scaleRef : str, optional
+        Scaling used in the 'STABLE' algorithm for weight computation.
+        Can be :
+
+        - 'ZERO' : scaling based on the weight for the value closest to :math:`t=0`.
+        - 'MAX' : scaling based on the maximum weight value.
+
+        The default is 'MAX'.
+
     Attributes
     ----------
     points : np.1darray
@@ -91,43 +114,11 @@ class LagrangeApproximation(object):
     n : int (property)
         The number of points
 
-    Methods
-    -------
-    __init__(self, points, weightComputation='AUTO', scaleRef='MAX')
-        Instanciate the LagrangeApproximation object.
-    getInterpolationMatrix(self, times):
-        Compute the interpolation matrix for a given set of discrete "time" points.
-    getIntegrationMatrix(self, intervals, numQuad='LEGENDRE_NUMPY')
-        Compute the integration matrix for a given set of intervals.
-
     .. [1] Berrut, J. P., & Trefethen, L. N. (2004).
            "Barycentric Lagrange interpolation." SIAM review, 46(3), 501-517.
     """
+
     def __init__(self, points, weightComputation='AUTO', scaleRef='MAX'):
-        """
-        Parameters
-        ----------
-        points : list, tuple or np.1darray
-            The given interpolation points, no specific scaling, but must be
-            ordered in increasing order.
-        weightComputation : str, optional
-            Algorithm used to compute the barycentric weights. Can be :
-
-            - 'FAST' : uses the analytic formula (unstable for large number of points)
-            - 'STABLE' : uses logarithmic difference and scaling of the weights
-            - 'CHEBFUN' : uses the same approach as in the chebfun package
-
-            The default is 'AUTO' : it tries the 'FAST' algorithm, and if an
-            overflow is detected, it switches to the 'STABLE' algorithm.
-        scaleRef : str, optional
-            Scaling used in the 'STABLE' algorithm for weight computation.
-            Can be :
-
-            - 'ZERO' : scaling based on the weight for the value closest to :math:`t=0`.
-            - 'MAX' : scaling based on the maximum weight value.
-
-            The default is 'MAX'.
-        """
         points = np.asarray(points).ravel()
 
         diffs = points[:, None] - points[None, :]
@@ -189,6 +180,7 @@ class LagrangeApproximation(object):
 
     @property
     def n(self):
+        """The number of points"""
         return self.points.size
 
 
