@@ -3,6 +3,8 @@
 📜 *Most of the user guide is organized into jupyter notebooks,*
 *that can be either read online (documentation or github interface) or downloaded and played with.*
 
+All tutorials are located in the [notebook folder](./notebooks).
+
 ```{eval-rst}
 Base usage
 ==========
@@ -11,7 +13,7 @@ Base usage
     :maxdepth: 1
     :glob:
 
-    0*
+    notebooks/0*
 
 Advanced usage
 ==============
@@ -20,5 +22,5 @@ Advanced usage
     :maxdepth: 1
     :glob:
 
-    1*
+    notebooks/1*
 ```

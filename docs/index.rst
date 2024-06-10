@@ -54,7 +54,7 @@ Doc Contents
     :maxdepth: 1
 
     installation
-    notebooks/README
+    notebooks
     contributing
     QMat API reference <autoapi/qmat/index>
 
