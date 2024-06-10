@@ -30,3 +30,6 @@ build
 .coverage*
 htmlcov
 sitecustomize.py
+
+# Doc
+docs/_build
