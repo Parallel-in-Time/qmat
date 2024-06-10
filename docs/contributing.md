@@ -23,7 +23,6 @@ Current coverage is at 100%, so no untested line will be accepted 😇.
 
 > 📣 Know that no fascist code styling formatter (like `black`, or else ...) will ever be used, as long as I'm still breathing !
 
-
 ## Base recipes
 
 _A few base memo on how to develop this code ..._
