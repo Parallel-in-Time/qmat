@@ -1,4 +1,4 @@
 
-# Installing QMat
+# Installation
 
 🛠️ ... in construction

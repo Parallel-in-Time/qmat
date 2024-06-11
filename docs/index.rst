@@ -56,7 +56,7 @@ Doc Contents
     installation
     notebooks
     contributing
-    QMat API reference <autoapi/qmat/index>
+    API reference <autoapi/qmat/index>
 
 Links
 =====

@@ -21,7 +21,7 @@ p {
 }
 
 .rst-content {
-h1, h2, ol {
+h1, h2, ol, ul {
     margin-bottom: 12px !important;
     }
 }
