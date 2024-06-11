@@ -11,14 +11,14 @@ from qmat.lagrange import LagrangeApproximation
 
 @register
 class Collocation(QGenerator):
+    aliases = ["coll"]
 
     DEFAULT_PARAMS = {
         "nNodes": 4,
         "nodeType": "LEGENDRE",
         "quadType": "RADAU-RIGHT",
         }
-    aliases = ["coll"]
-
+    
     def __init__(self, nNodes, nodeType, quadType):
         self.nodeType, self.quadType = nodeType, quadType
 

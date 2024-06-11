@@ -17,18 +17,19 @@ This will automatically trigger the CI pipeline that :
 
 1. check linting with `flake8`
 2. run all the tests defined in the `tests` folder, and upload a coverage report to `codecov`
-3. test all the notebook tutorials
+3. test all the tutorials located in the [notebook folder](https://github.com/Parallel-in-Time/qmat/tree/main/docs/notebooks) 
 
 Current coverage is at 100%, so no untested line will be accepted 😇.
 
-> 📣 Know that no fascist code styling formatter (like `black`, or else ...) will ever be used, as long as I'm still breathing !
+> 📣 Know that no fascist code styling formatter (like `black`, or else ...) will ever be imposed in CI, as long as I'm still breathing !
 
 ## Base recipes
 
 _A few base memo on how to develop this code ..._
 
-- [Testing your changes](./devdoc/testing.md)
+- [General code structure](./devdoc/structure.md)
 - [Add a Runge-Kutta scheme](./devdoc/addRK.md)
+- [Testing your changes](./devdoc/testing.md)
 - [Update this documentation](./devdoc/updateDoc.md)
 
 ```{eval-rst}
@@ -36,7 +37,8 @@ _A few base memo on how to develop this code ..._
     :maxdepth: 1
     :hidden:
 
-    devdoc/testing
+    devdoc/structure
     devdoc/addRK
-    devdoc/updateDoc.md
+    devdoc/testing
+    devdoc/updateDoc
 ```

@@ -1,7 +1,13 @@
 # Tutorials
 
-📜 *Most of the user guide is organized into jupyter notebooks,*
-*that can be either read online (documentation or github interface) or downloaded and played with.*
+📜 *Extended user guide, mostly based on step-by-step tutorials ...*
+
+All tutorials are written in jupyter notebooks, that can be :
+
+- read using the [online documentation](https://qmat.readthedocs.io/en/latest/notebooks.html)
+- downloaded from the [notebook folder](https://github.com/Parallel-in-Time/qmat/tree/main/docs/notebooks) and played with 
+
+> 📣 Basic usage tutorials are finalized and polished, but the extended usage tutorials are still in construction ... 
 
 ```{eval-rst}
 Basic usage

@@ -28,12 +28,11 @@ jobs:
         pip install .[test]
     - name: Lint with flake8
       run: |
-        # stop the build if there are Python syntax errors or undefined names
+        # stop if there are Python syntax errors or undefined names
         flake8 ./qmat ./tests --count --select=E9,F63,F7,F82 --show-source --statistics
     - name: Run pytest with coverage
       run: |
-        echo "print('Loading sitecustomize.py...');import coverage;coverage.process_startup()" > sitecustomize.py
-        coverage run -m pytest --continue-on-collection-errors -v --durations=0 ./tests
+        ./test.sh
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4
       if: github.repository_owner == 'Parallel-in-Time' && matrix.python == '3.11'

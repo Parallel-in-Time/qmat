@@ -51,6 +51,11 @@ extensions = [
     'myst_parser',
 ]
 
+myst_enable_extensions = [
+    "amsmath",
+    "dollarmath",
+]
+
 add_module_names = False
 autoapi_type = 'python'
 autoapi_dirs = ['../qmat']
