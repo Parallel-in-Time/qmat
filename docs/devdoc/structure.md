@@ -35,6 +35,60 @@ A similar mechanism is used for $Q_\Delta$ generators. The `register` function i
 
 ## $Q$-generators implementation
 
+To implement a new $Q$-generator (in an existing or new category) new classes must at least follow this template :
+
+```python
+from qmat.qcoeff import QGenerator, register
+
+@register
+class MyGenerator(QGenerator):
+
+    @property
+    def nodes(self):
+        # TODO : implementation
+
+    @property
+    def weights(self):
+        # TODO : implementation
+
+    @property
+    def Q(self):
+        # TODO : implementation
+```
+
+The `nodes`, `weights`, and `Q` properties have to be overridden 
+(`register` actually raises an error if not) and return 
+the expected arrays in `numpy.ndarray` format :
+
+1. `nodes` : 1D vector of size `nNodes`
+2. `weights` : 1D vector of size `nNides`
+3. `Q` : 2D matrix of size `(nNodes,nNodes)`
+
+While `nNodes` is a variable depending on the generator instance, later on the tests checks if the for each $Q$-generators, dimensions of `nodes`, `weights` and `Q` are consistent.
+
+Even if not it's not mandatory, $Q$-generators can implement a constructor to store parameters, _e.g_ :
+
+```python
+from qmat.qcoeff import QGenerator, register
+
+@register
+class MyGenerator(QGenerator):
+
+    DEFAULT_PARAMS = {
+        "param1": 0.5,
+    }
+
+    def __init__(self, param1, param2=1):
+        self.param1 = param1
+        self.param2 = param2
+
+    # Implementation of nodes, weights and Q properties
+```
+
+
+
+
+
 🛠️ ... in construction
 
 ## $Q_\Delta$-generators implementation
