@@ -7,7 +7,7 @@ For now, you can only install the package locally by downloading the sources :
 git clone https://github.com/Parallel-in-Time/qmat.git
 ```
 
-And then, either add the code folder to your `PYTHONPATH` manually, _e.g_ :
+Then add the code folder to your `PYTHONPATH` manually, _e.g_ :
 
 ```bash
 cd qmat     # go into the local git repo
