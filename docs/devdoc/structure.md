@@ -33,7 +33,7 @@ A similar mechanism is used for $Q_\Delta$ generators. The `register` function i
     - `qmat.Q_GENERATORS` for $Q$-coefficients 
     - `qmat.QDELTA_GENERATORS` for the $Q_\Delta$ approximations
 
-> 💡 Different aliases for the generator can be provided with the `aliases` class attribute, but are not mandatory (the class must not have a `aliases` attribute).
+> 💡 Different aliases for the generator can be provided with the `aliases` class attribute, but are not mandatory (defining the class attribute is optional).
 
 ## $Q$-generators implementation
 
