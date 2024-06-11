@@ -7,7 +7,7 @@ All tutorials are written in jupyter notebooks, that can be :
 - read using the [online documentation](https://qmat.readthedocs.io/en/latest/notebooks.html)
 - downloaded from the [notebook folder](https://github.com/Parallel-in-Time/qmat/tree/main/docs/notebooks) and played with 
 
-> 📣 Basic usage tutorials are finalized and polished, but the extended usage tutorials are still in construction ... 
+> 🛠️ Basic usage tutorials are finalized and polished, the rest is still in construction ... 
 
 ```{eval-rst}
 Basic usage
@@ -27,4 +27,13 @@ Extended usage
     :glob:
 
     notebooks/1*
+
+Advanced usage
+==============
+
+.. toctree::
+    :maxdepth: 1
+    :glob:
+
+    notebooks/2*
 ```

@@ -1,6 +1,6 @@
 # Contributing
 
-📜 _Package is currently developed with an open-source philosophy, so any contribution is welcome_
+📜 _Package is currently developed with an open-source philosophy, so any relevant contribution is welcome_
 
 ## General rules
 
@@ -25,7 +25,7 @@ Current coverage is at 100%, so no untested line will be accepted 😇.
 
 ## Base recipes
 
-_A few base memo on how to develop this code ..._
+_A few base memo on how to develop this package ..._
 
 - [General code structure](./devdoc/structure.md)
 - [Add a Runge-Kutta scheme](./devdoc/addRK.md)
