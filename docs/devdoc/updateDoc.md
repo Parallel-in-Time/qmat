@@ -11,8 +11,8 @@ You can install those using your favorite python package manager (`pip`, `conda`
 Then to generate the documentation website locally, simply run (from the root `qmat` repo) :
 
 ```bash
-cd docs
-make html
+$ cd docs
+$ make html
 ```
 
 This builds the sphinx documentation automatically in a `_build` folder, 
@@ -24,22 +24,22 @@ When changing a [notebook tutorial](../notebooks), you should also regenerate it
 You can do that by running :
 
 ```bash
-cd notebooks
-./run.sh $NOTEBOOK_FILE
+$ cd notebooks
+$ ./run.sh $NOTEBOOK_FILE
 ```
 
 If you modified several notebooks, and as a safety, it is also possible to regenerate all doing :
 
 ```bash
-./run.sh --all
+$ ./run.sh --all
 ```
 
 > 📣 When modifying only the markdown text in the notebook, it is not necessary to regenerate the notebook(s).
 
-
 ## Adding a tutorial
 
-Feel free to add new notebooks in the "Advanced Tutorial" section.
-Just name the notebook like this : `2{idx}_{shortName}.ipynb` when `idx` corresponds to its index in category (start at 0).
+Feel free to add new notebooks in the "Advanced Tutorial" section, for a specific application that is not covered by the current tutorials.
+Just name the notebook like this : `2{idx}_{shortName}.ipynb` when `idx` corresponds to its index in category (starts at 1),
+and use the `Tuto A{idx}` prefix for the notebook title. 
 
 > 💡 Don't hesitate to look at the other notebooks to use a common and consistent formatting ...
