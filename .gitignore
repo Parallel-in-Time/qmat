@@ -33,3 +33,4 @@ sitecustomize.py
 
 # Doc
 docs/_build
+docs/site.webmanifest

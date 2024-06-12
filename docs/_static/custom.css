@@ -4,7 +4,6 @@
     max-width: 1000px;
 }
 
-
 p {
     line-height: 24px;
     font-size: 16px;
@@ -66,4 +65,12 @@ q:after,
 blockquote:before,
 blockquote:after {
     content: "";
+}
+
+.rst-content div[class^="highlight"] {
+    margin: 1px 0 16px;
+}
+
+blockquote > div > div[class^="highlight"] {
+    margin: 8px 3px !important;
 }

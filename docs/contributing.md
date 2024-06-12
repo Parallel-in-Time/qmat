@@ -1,6 +1,6 @@
 # Contributing
 
-📜 _Package is currently developed with an open-source philosophy, so any contribution is welcome_
+📜 _Package is currently developed with an open-source philosophy, so any relevant contribution is welcome_
 
 ## General rules
 
@@ -21,11 +21,11 @@ This will automatically trigger the CI pipeline that :
 
 Current coverage is at 100%, so no untested line will be accepted 😇.
 
-> 📣 Know that no fascist code styling formatter (like `black`, or else ...) will ever be imposed in CI, as long as I'm still breathing !
+> 📣 Know that no code styling formatter (like `black`, or else ...) will ever be imposed in CI, as long as I'm still breathing !
 
 ## Base recipes
 
-_A few base memo on how to develop this code ..._
+_A few base memo on how to develop this package ..._
 
 - [General code structure](./devdoc/structure.md)
 - [Add a Runge-Kutta scheme](./devdoc/addRK.md)
