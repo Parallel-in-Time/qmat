@@ -1,26 +1,32 @@
 
 # Installation
 
-For now, you can only install the package locally by downloading the sources :
+For now, you can only install the package locally by downloading the sources.
 
 ```bash
-git clone https://github.com/Parallel-in-Time/qmat.git
+$ git clone https://github.com/Parallel-in-Time/qmat.git
 ```
 
-And then, either add the code folder to your `PYTHONPATH` manually, _e.g_ :
+If you **want to use the package only**, simply use the `pip` local installer directly :
 
 ```bash
-cd qmat     # go into the local git repo
-export PYTHONPATH=$PYTHONPATH:$(pwd)
-```
-
-> 🔔 This is the recommended approach for developers, as any modification of your local `qmat` will be automatically taken into account
-
-If you **only want to use the package**, you can simply use the `pip` local installer directly :
-
-```bash
-cd qmat     # go into the local git repo (if not already there ...)
-pip install .
+$ cd qmat     # go into the local git repo
+$ pip install .
 ```
 
 > 🛠️ Upload to `pypi` and `conda-forge` is still in construction ...
+
+For **developers who want to contribute**, recommended approach is to add 
+the code folder to your `PYTHONPATH` (if not done already by your IDE), _e.g_ :
+
+```bash
+$ cd qmat     # go into the local git repo (if not already there)
+$ export PYTHONPATH=$PYTHONPATH:$(pwd)
+```
+
+> 🔔 Using `$ pip install -e .` is also possible for developments, but then you have a persistent installation that you should be aware of ...
+
+
+
+
+
