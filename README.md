@@ -8,7 +8,21 @@ and more general multi-stages time-integration methods (like Runge-Kutta, etc ..
 
 It allows to generate $Q$-coefficients for multi-stages methods (equivalent to Butcher tables) :
 
-![formula](https://qmat.readthedocs.io/en/latest/_static/formula.png)
+$$
+Q\text{-coefficients : }
+\begin{array}{c|c}
+\tau & Q \\ 
+\hline
+& w^\top
+\end{array}
+\quad \Leftrightarrow \quad
+\begin{array}{c|c}
+c & A \\ 
+\hline
+& b^\top
+\end{array}
+\quad\text{(Butcher table)}
+$$
 
 and many different **lower-triangular** approximation of the $Q$ matrix, named $Q_\Delta$,
 which are key elements for Spectral Deferred Correction (SDC), or more general Iterated Runge-Kutta Methods.
