@@ -10,18 +10,16 @@ It allows to generate $Q$-coefficients for multi-stages methods (equivalent to B
 
 $$
 Q\text{-coefficients : }
-\begin{array}
-    {c|c}
-    \tau & Q \\
-    \hline
-    & w^\top
+\begin{array}{c|c}
+\tau & Q \\
+\hline
+& w^\top
 \end{array}
 \quad \Leftrightarrow \quad
-\begin{array}
-    {c|c}
-    c & A \\
-    \hline
-    & b^\top
+\begin{array}{c|c}
+c & A \\
+\hline
+& b^\top
 \end{array}
 \quad\text{(Butcher table)}
 $$
