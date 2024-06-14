@@ -1,6 +1,6 @@
 # QMat Package
 
-[![Read the Docs](https://img.shields.io/readthedocs/qmat)](https://qmat.readthedocs.io/)
+[![Read the Docs](https://img.shields.io/readthedocs/qmat?logo=readthedocs)](https://qmat.readthedocs.io/)
 [![CI pipeline for qmat](https://github.com/Parallel-in-Time/qmat/actions/workflows/ci_pipeline.yml/badge.svg)](https://github.com/Parallel-in-Time/qmat/actions/workflows/ci_pipeline.yml)
 [![codecov](https://codecov.io/gh/Parallel-in-Time/qmat/graph/badge.svg?token=MO0LDVH5NN)](https://codecov.io/gh/Parallel-in-Time/qmat)
 [![PyPI - Package](https://img.shields.io/pypi/v/qmat)](https://pypi.org/project/qmat)
