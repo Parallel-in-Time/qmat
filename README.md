@@ -2,9 +2,7 @@
 
 [![CI pipeline for qmat](https://github.com/Parallel-in-Time/qmat/actions/workflows/ci_pipeline.yml/badge.svg)](https://github.com/Parallel-in-Time/qmat/actions/workflows/ci_pipeline.yml)
 [![codecov](https://codecov.io/gh/Parallel-in-Time/qmat/graph/badge.svg?token=MO0LDVH5NN)](https://codecov.io/gh/Parallel-in-Time/qmat)
-<a href="https://pypi.org/project/qmat/">
-    <img alt="PyPI - Package" src="https://img.shields.io/pypi/v/qmat">
-</a>
+<a href="https://pypi.org/project/qmat/"><img alt="PyPI - Package" src="https://img.shields.io/pypi/v/qmat"></a>
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/qmat)
 
 
