@@ -36,7 +36,8 @@ which are key elements for Spectral Deferred Correction (SDC), or more general I
     from qmat import genQCoeffs, genQDeltaCoeffs
 
     # Coefficients or specific collocation method
-    nodes, weights, Q = genQCoeffs("Collocation", nNodes=4, nodeType="LEGENDRE", quadType="RADAU-RIGHT")
+    nodes, weights, Q = genQCoeffs(
+        "Collocation", nNodes=4, nodeType="LEGENDRE", quadType="RADAU-RIGHT")
 
     # QDelta matrix from Implicit-Euler based SDC
     QDelta = genQDeltaCoeffs("IE", nodes=nodes)
