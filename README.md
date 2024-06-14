@@ -34,7 +34,11 @@ which are key elements for Spectral Deferred Correction (SDC), or more general I
 
 ## Installation
 
-🛠️ Still in construction, only installation from source is enable yet, see [current instructions ...](https://qmat.readthedocs.io/en/latest/installation.html)
+```bash
+$ pip install qmat
+```
+
+🔍 See more [detailed instructions for conda environment, development, ...](https://qmat.readthedocs.io/en/latest/installation.html)
 
 ## Basic usage
 
@@ -62,9 +66,9 @@ For any contribution, please checkout out (very cool) [Contribution Guidelines](
 
 ## Links
 
-Documentation : https://qmat.readthedocs.io/
-Issues Tracker : https://github.com/Parallel-in-Time/qmat/issues
-Q & A : https://github.com/Parallel-in-Time/qmat/discussions/categories/q-a
-Project Proposals : https://github.com/Parallel-in-Time/qmat/discussions/categories/project-proposals
+- Documentation : https://qmat.readthedocs.io/
+- Issues Tracker : https://github.com/Parallel-in-Time/qmat/issues
+- Q & A : https://github.com/Parallel-in-Time/qmat/discussions/categories/q-a
+- Project Proposals : https://github.com/Parallel-in-Time/qmat/discussions/categories/project-proposals
 
 
