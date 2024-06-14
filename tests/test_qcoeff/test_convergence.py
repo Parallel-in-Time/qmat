@@ -4,8 +4,10 @@ import numpy as np
 from qmat.utils import getClasses, numericalOrder
 from qmat.qcoeff import Q_GENERATORS
 from qmat.nodes import NODE_TYPES, QUAD_TYPES
+from qmat.qcoeff.butcher import RKEmbedded
 
 SCHEMES = getClasses(Q_GENERATORS)
+EMBEDDED_SCHEMES = {k: v for k, v in SCHEMES.items() if issubclass(v, RKEmbedded)}
 
 def nStepsForTest(scheme):
     try:
@@ -58,3 +60,29 @@ def testDahlquistCollocation(nNodes, nodesType, quadType):
     else:
         eps = 0.25  # less constraining conditions for higher order
     assert abs(order-gen.order) < eps, f"wrong numerical order ({order}) for {scheme} : {err}"
+
+
+@pytest.mark.parametrize("scheme", EMBEDDED_SCHEMES)
+def testEmbeddedMethodsSecondaryOrder(scheme):
+    from qmat.qcoeff.butcher import RK, checkAndStore
+
+    method = EMBEDDED_SCHEMES[scheme]
+    gen_primary = method.getInstance()
+
+    class SecondaryMethod(RK):
+        A = method.A
+        b = gen_primary.weightsSecondary
+        c = method.c
+
+        @property
+        def order(self): return gen_primary.orderSecondary
+
+    if hasattr(gen_primary, 'CONV_TEST_NSTEPS'):
+        SecondaryMethod.CONV_TEST_NSTEPS = gen_primary.CONV_TEST_NSTEPS
+
+    gen = SecondaryMethod.getInstance()
+    nSteps = nStepsForTest(gen)
+    err = [gen.errorDahlquist(lam, u0, T, nS) for nS in nSteps]
+    order, rmse = numericalOrder(nSteps, err)
+    assert rmse < 0.02, f"rmse to high ({rmse}) for {scheme}"
+    assert abs(order-gen.order) < 0.1, f"wrong numerical order ({order}) for {scheme}"

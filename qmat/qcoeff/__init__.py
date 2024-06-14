@@ -35,7 +35,7 @@ class QGenerator(object):
 
     @property
     def T(self):
-        """Transfert matrix from zero-to-nodes to node-to-node"""
+        """Transfer matrix from zero-to-nodes to node-to-node"""
         M = self.Q.shape[0]
         T = np.eye(M)
         T[1:,:-1][np.diag_indices(M-1)] = -1
@@ -51,7 +51,7 @@ class QGenerator(object):
 
     @property
     def Tinv(self):
-        """Transfert matrix from node-to-node to zero-to-node"""
+        """Transfer matrix from node-to-node to zero-to-node"""
         M = self.Q.shape[0]
         return np.tri(M)
 

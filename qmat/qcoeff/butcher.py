@@ -35,13 +35,37 @@ class RK(QGenerator):
     def Q(self): return self.A
 
 
+class RKEmbedded(RK):
+    """
+    Embedded Runge-Kutta methods assemble the same stages twice to generate solutions of different order. The difference
+    can be used as an estimate of the error of the lower order method.
+    """
+    @property
+    def weights(self): return self.b[0]
+
+    @property
+    def weightsSecondary(self): return self.b[1]
+
+    @property
+    def orderSecondary(self):
+        raise NotImplementedError(f'Don\'t know the order of the lower order scheme in {type(self).__name__}!')
+    
+
+
 RK_SCHEMES = {}
 
 def checkAndStore(cls:RK)->RK:
     cls.A = np.array(cls.A, dtype=float)
     cls.b = np.array(cls.b, dtype=float)
     cls.c = np.array(cls.c, dtype=float)
-    assert cls.b.size == cls.c.size, \
+
+    if issubclass(cls, RKEmbedded):
+        b_size = cls.b.shape[1]
+        assert cls.b.shape[0] == 2, f'Expect 2 sets of weights, not {cls.b.shape[0]} in {cls.__name__}'
+    else:
+        b_size = cls.b.size
+        
+    assert b_size == cls.c.size, \
         f"b (size {cls.b.size}) and c (size {cls.b.size})" + \
         f" have not the same size in {cls.__name__}"
     assert cls.A.shape == (cls.c.size, cls.c.size), \
@@ -132,7 +156,7 @@ class RK21(RK):
 
 @registerRK
 class RK2(RK):
-    """Classical Runge Kutta method of order 2 (cf Wikipedia)"""
+    """Classical Runge-Kutta method of order 2 (cf Wikipedia)"""
     aliases = ["ERK2"]
     A = [[0, 0],
          [1/2, 0]]
@@ -300,3 +324,44 @@ class SDIRK54(RK):
 
     @property
     def order(self): return 4
+
+@registerRK
+class Heun_Euler(RKEmbedded):
+    """
+    Second order explicit embedded Runge-Kutta method.
+    """
+    A = [[0, 0],
+         [1, 0]]
+    b = [[0.5, 0.5], [1, 0]]
+    c = [0, 1]
+
+    @property
+    def order(self): return 2
+
+    @property
+    def orderSecondary(self): return 1
+
+@registerRK
+class Cash_Karp(RKEmbedded):
+    """
+    Fifth order explicit embedded Runge-Kutta. See [here](https://doi.org/10.1145/79505.79507).
+    """
+    c = [0, 0.2, 0.3, 0.6, 1.0, 7.0 / 8.0]
+    b = [
+            [37.0 / 378.0, 0.0, 250.0 / 621.0, 125.0 / 594.0, 0.0, 512.0 / 1771.0],
+            [2825.0 / 27648.0, 0.0, 18575.0 / 48384.0, 13525.0 / 55296.0, 277.0 / 14336.0, 1.0 / 4.0],
+        ]
+    A = np.zeros((6, 6))
+    A[1, 0] = 1.0 / 5.0
+    A[2, :2] = [3.0 / 40.0, 9.0 / 40.0]
+    A[3, :3] = [0.3, -0.9, 1.2]
+    A[4, :4] = [-11.0 / 54.0, 5.0 / 2.0, -70.0 / 27.0, 35.0 / 27.0]
+    A[5, :5] = [1631.0 / 55296.0, 175.0 / 512.0, 575.0 / 13824.0, 44275.0 / 110592.0, 253.0 / 4096.0]
+
+    @property
+    def order(self): return 5
+
+    @property
+    def orderSecondary(self): return 4
+
+    CONV_TEST_NSTEPS = [32, 64, 128]
