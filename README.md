@@ -11,15 +11,13 @@ It allows to generate $Q$-coefficients for multi-stages methods (equivalent to B
 $$
 Q\text{-coefficients : }
 \begin{array}{c|c}
-\tau & Q \\
-\hline
-\; & w^\top
+\tau & Q \\ \hline
+& w^\top
 \end{array}
 \quad \Leftrightarrow \quad
 \begin{array}{c|c}
-c & A \\
-\hline
-\; & b^\top
+c & A \\ \hline
+& b^\top
 \end{array}
 \quad\text{(Butcher table)}
 $$
@@ -31,7 +29,7 @@ which are key elements for Spectral Deferred Correction (SDC), or more general I
 
 ## Installation
 
-🛠️ Still in construction, only installation from source is enable yet, see [current instructions ...](./docs/installation.md)
+🛠️ Still in construction, only installation from source is enable yet, see [current instructions ...](https://qmat.readthedocs.io/en/latest/installation.html)
 
 ## Basic usage
 
@@ -55,5 +53,5 @@ c, b, A = genQCoeffs("ERK4")
 in particular the [**step by step tutorials**](https://qmat.readthedocs.io/en/latest/notebooks.html)_
 
 
-For any contribution, please checkout out (very cool) [Contribution Guidelines](./docs/contributing.md)
+For any contribution, please checkout out (very cool) [Contribution Guidelines](https://qmat.readthedocs.io/en/latest/contributing.html)
 

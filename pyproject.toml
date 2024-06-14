@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "qmat"
-version = "0.0.4"
+version = "0.0.5"
 description = "Generation of Q-coefficients for Spectral Deferred Corrections (and other time-integration methods ...)"
 dependencies = [
     "numpy",
@@ -44,6 +44,7 @@ test = [
 
 [project.urls]
 Homepage = "https://github.com/Parallel-in-Time/qmat"
+Documentation = "https://qmat.readthedocs.io/"
 Tracker = "https://github.com/Parallel-in-Time/qmat/issues"
 
 [tool.pytest.ini_options]
