@@ -13,13 +13,13 @@ Q\text{-coefficients : }
 \begin{array}{c|c}
 \tau & Q \\
 \hline
-\phantom{\tau} & w^\top
+\; & w^\top
 \end{array}
 \quad \Leftrightarrow \quad
 \begin{array}{c|c}
 c & A \\
 \hline
-\phantom{\tau} & b^\top
+\; & b^\top
 \end{array}
 \quad\text{(Butcher table)}
 $$
