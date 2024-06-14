@@ -47,6 +47,9 @@ Homepage = "https://github.com/Parallel-in-Time/qmat"
 Documentation = "https://qmat.readthedocs.io/"
 Tracker = "https://github.com/Parallel-in-Time/qmat/issues"
 
+[project.scripts]
+qmat-stability = "qmat.scripts.stability:main"
+
 [tool.pytest.ini_options]
 nb_diff_ignore = [
     "/metadata/",
@@ -67,4 +70,7 @@ exclude_lines = [
     # Don't complain if tests don't hit defensive assertion code:
     'raise',
     'except',
+
+    # Ignore footer of scripts
+    'if __name__ == "__main__":',
     ]
