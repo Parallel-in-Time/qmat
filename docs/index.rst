@@ -63,6 +63,9 @@ Links
 
 * Code repository: https://github.com/Parallel-in-Time/qmat
 * Documentation: http://qmat.readthedocs.org
+* Issues Tracker : https://github.com/Parallel-in-Time/qmat/issues
+* Q & A : https://github.com/Parallel-in-Time/qmat/discussions/categories/q-a
+* Project Proposals : https://github.com/Parallel-in-Time/qmat/discussions/categories/project-proposals
 
 Developer
 =========
