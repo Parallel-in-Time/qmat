@@ -56,6 +56,7 @@ Doc Contents
     installation
     notebooks
     contributing
+    misc/index
     API reference <autoapi/qmat/index>
 
 Links
