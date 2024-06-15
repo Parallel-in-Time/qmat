@@ -9,6 +9,9 @@ QMat Package
     <a href="https://pypistats.org/packages/qmat">
         <img alt="PyPI - Download" src="https://img.shields.io/pypi/dm/qmat?logo=pypi">
     </a>
+    <a href="https://github.com/Parallel-in-Time/qmat">
+        <img alt="Repo status" src="https://www.repostatus.org/badges/latest/active.svg" />
+    </a>
     <a href="https://github.com/Parallel-in-Time/qmat/actions/workflows/ci_pipeline.yml">
         <img alt="CI pipeline" src="https://github.com/Parallel-in-Time/qmat/actions/workflows/ci_pipeline.yml/badge.svg">
     </a>
@@ -78,7 +81,6 @@ Links
 =====
 
 * Code repository: https://github.com/Parallel-in-Time/qmat
-* Documentation: http://qmat.readthedocs.org
 * Issues Tracker : https://github.com/Parallel-in-Time/qmat/issues
 * Q & A : https://github.com/Parallel-in-Time/qmat/discussions/categories/q-a
 * Project Proposals : https://github.com/Parallel-in-Time/qmat/discussions/categories/project-proposals
