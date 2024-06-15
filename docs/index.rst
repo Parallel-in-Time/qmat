@@ -1,6 +1,21 @@
 QMat Package
 ************
 
+.. raw:: html
+
+    <a href="https://pypi.org/project/qmat/">
+        <img alt="PyPI - Package" src="https://img.shields.io/pypi/v/qmat?logo=python">
+    </a>
+    <a href="https://pypistats.org/packages/qmat">
+        <img alt="PyPI - Download" src="https://img.shields.io/pypi/dm/qmat?logo=pypi">
+    </a>
+    <a href="https://github.com/Parallel-in-Time/qmat/actions/workflows/ci_pipeline.yml">
+        <img alt="CI pipeline" src="https://github.com/Parallel-in-Time/qmat/actions/workflows/ci_pipeline.yml/badge.svg">
+    </a>
+    <a href="https://codecov.io/gh/Parallel-in-Time/qmat">
+        <img alt="Codecov" src="https://codecov.io/gh/Parallel-in-Time/qmat/graph/badge.svg?token=MO0LDVH5NN">
+    </a>
+
 `qmat` is a python package to generate matrix coefficients related to Collocation methods, Spectral Deferred Corrections (SDC), 
 and more general multi-stages time-integration methods (like Runge-Kutta, etc ...).
 
