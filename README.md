@@ -4,7 +4,7 @@
 [![CI pipeline for qmat](https://github.com/Parallel-in-Time/qmat/actions/workflows/ci_pipeline.yml/badge.svg)](https://github.com/Parallel-in-Time/qmat/actions/workflows/ci_pipeline.yml)
 [![codecov](https://codecov.io/gh/Parallel-in-Time/qmat/graph/badge.svg?token=MO0LDVH5NN)](https://codecov.io/gh/Parallel-in-Time/qmat)
 [![PyPI - Package](https://img.shields.io/pypi/v/qmat?logo=python)](https://pypi.org/project/qmat)
-[![PyPI - Downloads](https://img.shields.io/pypi/dm/qmat?logo=pypi)](https://pypistats.org/search/qmat)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/qmat?logo=pypi)](https://pypistats.org/packages/qmat)
 
 
 `qmat` is a python package to generate matrix coefficients related to Collocation methods, Spectral Deferred Corrections (SDC), 
