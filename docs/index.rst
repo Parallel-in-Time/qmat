@@ -10,7 +10,7 @@ QMat Package
         <img alt="PyPI - Download" src="https://img.shields.io/pypi/dm/qmat?logo=pypi">
     </a>
     <a href="https://github.com/Parallel-in-Time/qmat">
-        <img alt="Repo status" src="https://www.repostatus.org/badges/latest/active.svg" />
+        <img alt="Last Commit" src="https://img.shields.io/github/last-commit/parallel-in-time/qmat/main" />
     </a>
     <a href="https://github.com/Parallel-in-Time/qmat/actions/workflows/ci_pipeline.yml">
         <img alt="CI pipeline" src="https://github.com/Parallel-in-Time/qmat/actions/workflows/ci_pipeline.yml/badge.svg">
