@@ -23,6 +23,8 @@ Current coverage is at 100%, so no untested line will be accepted 😇.
 
 > 📣 Know that no code styling formatter (like `black`, or else ...) will ever be imposed in CI, as long as I'm still breathing !
 
+In case you are interested in contributing, checkout out [current development roadmap 🎯](./devdoc/roadmap.md)
+
 ## Base recipes
 
 _A few base memo on how to develop this package ..._
@@ -41,4 +43,5 @@ _A few base memo on how to develop this package ..._
     devdoc/addRK
     devdoc/testing
     devdoc/updateDoc
+    devdoc/roadmap
 ```
