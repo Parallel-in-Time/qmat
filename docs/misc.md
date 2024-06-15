@@ -6,6 +6,6 @@
 .. toctree::
     :maxdepth: 1
 
-    codeOfConduct
-    security
+    CODE_OF_CONDUCT
+    SECURITY
 ```
