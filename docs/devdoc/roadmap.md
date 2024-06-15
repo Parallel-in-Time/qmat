@@ -19,6 +19,7 @@
 - integration of `qmat` into [pySDC](https://github.com/Parallel-in-Time/pySDC)
 - full documentation of classes and functions
 - finalization of extended usage tutorials ($S$-matrix, `dTau` coefficient for initial sweep, prolongation)
+- full definition and documentation of the version update pipeline
 
 **Status 5 - Production/Stable** : `v1.0.*`
 
