@@ -4,10 +4,8 @@ import numpy as np
 from qmat.utils import getClasses, numericalOrder
 from qmat.qcoeff import Q_GENERATORS
 from qmat.nodes import NODE_TYPES, QUAD_TYPES
-from qmat.qcoeff.butcher import RKEmbedded
 
 SCHEMES = getClasses(Q_GENERATORS)
-EMBEDDED_SCHEMES = {k: v for k, v in SCHEMES.items() if issubclass(v, RKEmbedded)}
 
 def nStepsForTest(scheme):
     try:
@@ -62,12 +60,18 @@ def testDahlquistCollocation(nNodes, nodesType, quadType):
     assert abs(order-gen.order) < eps, f"wrong numerical order ({order}) for {scheme} : {err}"
 
 
-@pytest.mark.parametrize("scheme", EMBEDDED_SCHEMES)
+@pytest.mark.parametrize("scheme", SCHEMES)
 def testEmbeddedMethodsSecondaryOrder(scheme):
-    from qmat.qcoeff.butcher import RK, checkAndStore
+    from qmat.qcoeff.butcher import RK
 
-    method = EMBEDDED_SCHEMES[scheme]
+    method = SCHEMES[scheme]
     gen_primary = method.getInstance()
+
+    # check if the scheme has a secondary method
+    try:
+        gen_primary.weightsSecondary
+    except NotImplementedError:
+        return None
 
     class SecondaryMethod(RK):
         A = method.A

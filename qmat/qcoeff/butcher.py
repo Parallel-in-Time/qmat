@@ -17,13 +17,14 @@ References
 import numpy as np
 
 from qmat.qcoeff import QGenerator, register
-from qmat.utils import storeClass
+from qmat.utils import storeClass, checkOverriding
 
 
 class RK(QGenerator):
     A = None
     b = None
     c = None
+    b2 = None  # for embedded methods
 
     @property
     def nodes(self): return self.c
@@ -32,24 +33,14 @@ class RK(QGenerator):
     def weights(self): return self.b
 
     @property
+    def weightsSecondary(self):
+        if self.b2 is None:
+            raise NotImplementedError(f'Kindly direct your request for an embedded version of {type(self).__name__!r} to the Mermathematicians on Europa.')
+        else:
+            return self.b2
+
+    @property
     def Q(self): return self.A
-
-
-class RKEmbedded(RK):
-    """
-    Embedded Runge-Kutta methods assemble the same stages twice to generate solutions of different order. The difference
-    can be used as an estimate of the error of the lower order method.
-    """
-    @property
-    def weights(self): return self.b[0]
-
-    @property
-    def weightsSecondary(self): return self.b[1]
-
-    @property
-    def orderSecondary(self):
-        raise NotImplementedError(f'Don\'t know the order of the lower order scheme in {type(self).__name__}!')
-    
 
 
 RK_SCHEMES = {}
@@ -59,14 +50,12 @@ def checkAndStore(cls:RK)->RK:
     cls.b = np.array(cls.b, dtype=float)
     cls.c = np.array(cls.c, dtype=float)
 
-    if issubclass(cls, RKEmbedded):
-        b_size = cls.b.shape[1]
-        assert cls.b.shape[0] == 2, f'Expect 2 sets of weights, not {cls.b.shape[0]} in {cls.__name__}'
-    else:
-        b_size = cls.b.size
-        
-    assert b_size == cls.c.size, \
-        f"b (size {cls.b.size}) and c (size {cls.b.size})" + \
+    if cls.b2 is not None:
+        checkOverriding(cls, 'orderSecondary')
+        cls.b2 = np.array(cls.b2, dtype=float)
+
+    assert cls.b.shape[-1] == cls.c.size, \
+        f"b (size {cls.b.shape[-1]}) and c (size {cls.c.size})" + \
         f" have not the same size in {cls.__name__}"
     assert cls.A.shape == (cls.c.size, cls.c.size), \
         f"A (shape {cls.A.shape}) and c (size {cls.b.size})" + \
@@ -326,14 +315,15 @@ class SDIRK54(RK):
     def order(self): return 4
 
 @registerRK
-class Heun_Euler(RKEmbedded):
+class HeunEuler(RK):
     """
     Second order explicit embedded Runge-Kutta method.
     """
     A = [[0, 0],
          [1, 0]]
-    b = [[0.5, 0.5], [1, 0]]
+    b = [0.5, 0.5]
     c = [0, 1]
+    b2 = [1, 0]
 
     @property
     def order(self): return 2
@@ -342,15 +332,13 @@ class Heun_Euler(RKEmbedded):
     def orderSecondary(self): return 1
 
 @registerRK
-class Cash_Karp(RKEmbedded):
+class CashKarp(RK):
     """
     Fifth order explicit embedded Runge-Kutta. See [here](https://doi.org/10.1145/79505.79507).
     """
     c = [0, 0.2, 0.3, 0.6, 1.0, 7.0 / 8.0]
-    b = [
-            [37.0 / 378.0, 0.0, 250.0 / 621.0, 125.0 / 594.0, 0.0, 512.0 / 1771.0],
-            [2825.0 / 27648.0, 0.0, 18575.0 / 48384.0, 13525.0 / 55296.0, 277.0 / 14336.0, 1.0 / 4.0],
-        ]
+    b = [37.0 / 378.0, 0.0, 250.0 / 621.0, 125.0 / 594.0, 0.0, 512.0 / 1771.0]
+    b2 = [2825.0 / 27648.0, 0.0, 18575.0 / 48384.0, 13525.0 / 55296.0, 277.0 / 14336.0, 1.0 / 4.0]
     A = np.zeros((6, 6))
     A[1, 0] = 1.0 / 5.0
     A[2, :2] = [3.0 / 40.0, 9.0 / 40.0]

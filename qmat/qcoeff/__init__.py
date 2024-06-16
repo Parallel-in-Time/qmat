@@ -30,6 +30,13 @@ class QGenerator(object):
         raise NotImplementedError("mouahahah")
 
     @property
+    def weightsSecondary(self):
+        """
+        These weights can be used to construct a secondary lower order method from the same stages.
+        """
+        raise NotImplementedError("Maybe the Merpeople on Europa know this.")
+
+    @property
     def nNodes(self):
         return self.nodes.size
 
@@ -68,10 +75,13 @@ class QGenerator(object):
             out.append(self.hCoeffs)
         return out
 
-
     @property
     def order(self):
         raise NotImplementedError("mouahahah")
+
+    @property
+    def orderSecondary(self):
+        raise NotImplementedError("Maybe the Merpeople on Europa know this.")
 
     def solveDahlquist(self, lam, u0, T, nSteps):
         nodes, weights, Q = self.nodes, self.weights, self.Q
@@ -116,7 +126,7 @@ def register(cls:QGenerator)->QGenerator:
             cls(**params)
         except:
             raise TypeError(
-                f"{cls.__name__} could not be instanciated with DEFAULT_PARAMS")
+                f"{cls.__name__} could not be instantiated with DEFAULT_PARAMS")
     # Store class (and aliases)
     storeClass(cls, Q_GENERATORS)
     return cls
