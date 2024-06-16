@@ -1,26 +1,58 @@
 
 # Installation
 
-For now, you can only install the package locally by downloading the sources :
+## Using PyPI
+
+You can download the latest version from [`pypi`](https://pypi.org/) :
 
 ```bash
-git clone https://github.com/Parallel-in-Time/qmat.git
+pip install qmat
 ```
 
-And then, either add the code folder to your `PYTHONPATH` manually, _e.g_ :
+## Using conda
+
+Currently, no version is distributed on conda-forge. However using `pip` from `conda` will install `qmat` in your conda environment.
+
+If you are using a `environment.yml` file with conda, then you can add it as a dependency like this :
+
+```yaml
+name: yourEnv
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  ...
+  - pip
+  - pip:
+    qmat
+```
+
+## Install from source
+
+In case you want the latest revision (or a specific branch), you can directly clone the sources from `github` :
 
 ```bash
-cd qmat     # go into the local git repo
-export PYTHONPATH=$PYTHONPATH:$(pwd)
+$ git clone https://github.com/Parallel-in-Time/qmat.git
 ```
 
-> 🔔 This is the recommended approach for developers, as any modification of your local `qmat` will be automatically taken into account
-
-If you **only want to use the package**, you can simply use the `pip` local installer directly :
+If you **want to use the package only**, simply use the `pip` local installer directly :
 
 ```bash
-cd qmat     # go into the local git repo (if not already there ...)
-pip install .
+$ cd qmat     # go into the local git repo
+$ pip install .
 ```
 
-> 🛠️ Upload to `pypi` and `conda-forge` is still in construction ...
+For **developers who want to contribute**, recommended approach is to add 
+the code folder to your `PYTHONPATH` (if not done already by your IDE), _e.g_ :
+
+```bash
+$ cd qmat     # go into the local git repo (if not already there)
+$ export PYTHONPATH=$PYTHONPATH:$(pwd)
+```
+
+> 🔔 Using `$ pip install -e .` is also possible for developments, but then you have a persistent installation that you should be aware of ...
+
+
+
+
+

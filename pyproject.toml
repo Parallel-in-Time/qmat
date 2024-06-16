@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "qmat"
-version = "0.0.1"
+version = "0.0.8"
 description = "Generation of Q-coefficients for Spectral Deferred Corrections (and other time-integration methods ...)"
 dependencies = [
     "numpy",
@@ -44,7 +44,11 @@ test = [
 
 [project.urls]
 Homepage = "https://github.com/Parallel-in-Time/qmat"
+Documentation = "https://qmat.readthedocs.io/"
 Tracker = "https://github.com/Parallel-in-Time/qmat/issues"
+
+[project.scripts]
+qmat-stability = "qmat.scripts.stability:main"
 
 [tool.pytest.ini_options]
 nb_diff_ignore = [
@@ -66,4 +70,7 @@ exclude_lines = [
     # Don't complain if tests don't hit defensive assertion code:
     'raise',
     'except',
+
+    # Ignore footer of scripts
+    'if __name__ == "__main__":',
     ]

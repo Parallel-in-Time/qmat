@@ -59,7 +59,7 @@ class MyGenerator(QGenerator):
 
     @property
     def order(self):
-        raise NotImplementedError("mouahahah")
+        # TODO : implementation
 ```
 
 The `nodes`, `weights`, and `Q` properties have to be overridden 

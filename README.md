@@ -1,7 +1,12 @@
 # QMat Package
 
-[![CI pipeline for qmat](https://github.com/Parallel-in-Time/qmat/actions/workflows/ci_pipeline.yml/badge.svg)](https://github.com/Parallel-in-Time/qmat/actions/workflows/ci_pipeline.yml)
+[![Read the Docs](https://img.shields.io/readthedocs/qmat?logo=readthedocs)](https://qmat.readthedocs.io/)
+[![Repo status](https://www.repostatus.org/badges/latest/active.svg)](https://github.com/Parallel-in-Time/qmat)
+[![CI pipeline](https://github.com/Parallel-in-Time/qmat/actions/workflows/ci_pipeline.yml/badge.svg)](https://github.com/Parallel-in-Time/qmat/actions/workflows/ci_pipeline.yml)
 [![codecov](https://codecov.io/gh/Parallel-in-Time/qmat/graph/badge.svg?token=MO0LDVH5NN)](https://codecov.io/gh/Parallel-in-Time/qmat)
+[![PyPI - Package](https://img.shields.io/pypi/v/qmat?logo=python)](https://pypi.org/project/qmat)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/qmat?logo=pypi)](https://pypistats.org/packages/qmat)
+
 
 `qmat` is a python package to generate matrix coefficients related to Collocation methods, Spectral Deferred Corrections (SDC), 
 and more general multi-stages time-integration methods (like Runge-Kutta, etc ...).
@@ -10,18 +15,16 @@ It allows to generate $Q$-coefficients for multi-stages methods (equivalent to B
 
 $$
 Q\text{-coefficients : }
-\begin{array}
-    {c|c}
-    \tau & Q \\
-    \hline
-    & w^\top
+\begin{array}{c|c}
+\tau & Q \\ 
+\hline
+& w^\top
 \end{array}
 \quad \Leftrightarrow \quad
-\begin{array}
-    {c|c}
-    c & A \\
-    \hline
-    & b^\top
+\begin{array}{c|c}
+c & A \\ 
+\hline
+& b^\top
 \end{array}
 \quad\text{(Butcher table)}
 $$
@@ -33,7 +36,11 @@ which are key elements for Spectral Deferred Correction (SDC), or more general I
 
 ## Installation
 
-🛠️ Still in construction, only installation from source is enable yet, see [current instructions ...](./docs/installation.md)
+```bash
+$ pip install qmat
+```
+
+🔍 See more [detailed instructions for conda environment, development, ...](https://qmat.readthedocs.io/en/latest/installation.html)
 
 ## Basic usage
 
@@ -43,7 +50,8 @@ which are key elements for Spectral Deferred Correction (SDC), or more general I
 from qmat import genQCoeffs, genQDeltaCoeffs
 
 # Coefficients or specific collocation method
-nodes, weights, Q = genQCoeffs("Collocation", nNodes=4, nodeType="LEGENDRE", quadType="RADAU-RIGHT")
+nodes, weights, Q = genQCoeffs(
+    "Collocation", nNodes=4, nodeType="LEGENDRE", quadType="RADAU-RIGHT")
 
 # QDelta matrix from Implicit-Euler based SDC
 QDelta = genQDeltaCoeffs("IE", nodes=nodes)
@@ -57,5 +65,13 @@ c, b, A = genQCoeffs("ERK4")
 in particular the [**step by step tutorials**](https://qmat.readthedocs.io/en/latest/notebooks.html)_
 
 
-For any contribution, please checkout out (very cool) [Contribution Guidelines](./docs/contributing.md)
+For any contribution, please checkout out (very cool) [Contribution Guidelines](https://qmat.readthedocs.io/en/latest/contributing.html)
+
+## Links
+
+- Documentation : https://qmat.readthedocs.io/
+- Issues Tracker : https://github.com/Parallel-in-Time/qmat/issues
+- Q & A : https://github.com/Parallel-in-Time/qmat/discussions/categories/q-a
+- Project Proposals : https://github.com/Parallel-in-Time/qmat/discussions/categories/project-proposals
+
 
