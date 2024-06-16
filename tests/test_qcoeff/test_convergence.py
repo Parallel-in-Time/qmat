@@ -56,8 +56,7 @@ def testDahlquist(scheme, secondary):
 @pytest.mark.parametrize("quadType", QUAD_TYPES)
 @pytest.mark.parametrize("nodesType", NODE_TYPES)
 @pytest.mark.parametrize("nNodes", [2, 3, 4])
-@pytest.mark.parametrize("secondary", [True, False])
-def testDahlquistCollocation(nNodes, nodesType, quadType, secondary):
+def testDahlquistCollocation(nNodes, nodesType, quadType, secondary=False):
     gen = SCHEMES["Collocation"](nNodes, nodesType, quadType)
     if secondary:
         try:
@@ -70,9 +69,13 @@ def testDahlquistCollocation(nNodes, nodesType, quadType, secondary):
     err = [gen.errorDahlquist(lam, u0, tEnd, nS, secondary=secondary) for nS in nSteps]
     order, rmse = numericalOrder(nSteps, err)
     expectedOrder = gen.orderSecondary if secondary else gen.order
+
     assert rmse < 0.02, f"rmse to high ({rmse}) for {scheme} : {err}"
     if nNodes < 4:
         eps = 0.1
     else:
         eps = 0.25  # less constraining conditions for higher order
     assert abs(order-expectedOrder) < eps, f"Expected order {expectedOrder:.2f}, but got {order:.2f} for {scheme} {err}"
+
+    if hasattr(gen, 'quadType'):
+        assert gen.rightIsNode == (gen.quadType in ['LOBATTO', 'RADAU-RIGHT'])

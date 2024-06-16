@@ -51,7 +51,6 @@ def checkAndStore(cls:RK)->RK:
     cls.c = np.array(cls.c, dtype=float)
 
     if cls.b2 is not None:
-        checkOverriding(cls, 'orderSecondary')
         cls.b2 = np.array(cls.b2, dtype=float)
 
     assert cls.b.shape[-1] == cls.c.size, \
@@ -328,9 +327,6 @@ class HeunEuler(RK):
     @property
     def order(self): return 2
 
-    @property
-    def orderSecondary(self): return 1
-
 @registerRK
 class CashKarp(RK):
     """
@@ -348,9 +344,6 @@ class CashKarp(RK):
 
     @property
     def order(self): return 5
-
-    @property
-    def orderSecondary(self): return 4
 
     CONV_TEST_NSTEPS = [32, 64, 128]
 

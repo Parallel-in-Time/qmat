@@ -66,6 +66,7 @@ def testAdditionalCoeffs(name):
     assert np.allclose(h1, h2), \
         f"OOP hCoeffs {h1} and PP hCoeffs {h2} are not equals for {name}"
 
+
     try:
         try:
             _, b, _  = genQCoeffs(name, embedded=True)

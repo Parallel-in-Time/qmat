@@ -41,6 +41,10 @@ class QGenerator(object):
         return self.nodes.size
 
     @property
+    def rightIsNode(self):
+        return self.nodes[-1] == 1.
+
+    @property
     def T(self):
         """Transfer matrix from zero-to-nodes to node-to-node"""
         M = self.Q.shape[0]
@@ -84,7 +88,7 @@ class QGenerator(object):
 
     @property
     def orderSecondary(self):
-        raise NotImplementedError("Maybe the Merpeople on Europa know this.")
+        return self.order - 1
 
     def solveDahlquist(self, lam, u0, T, nSteps, secondary=False):
         nodes, weights, Q = self.nodes, self.weights, self.Q
