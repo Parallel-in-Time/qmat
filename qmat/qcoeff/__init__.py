@@ -67,8 +67,11 @@ class QGenerator(object):
         approx = LagrangeApproximation(self.nodes)
         return approx.getInterpolationMatrix([1]).ravel()
 
-    def genCoeffs(self, withS=False, hCoeffs=False):
+    def genCoeffs(self, withS=False, hCoeffs=False, embedded=False):
         out = [self.nodes, self.weights, self.Q]
+
+        if embedded:
+            out[1] = np.vstack([out[1], self.weightsSecondary])
         if withS:
             out.append(self.S)
         if hCoeffs:
@@ -83,8 +86,11 @@ class QGenerator(object):
     def orderSecondary(self):
         raise NotImplementedError("Maybe the Merpeople on Europa know this.")
 
-    def solveDahlquist(self, lam, u0, T, nSteps):
+    def solveDahlquist(self, lam, u0, T, nSteps, secondary=False):
         nodes, weights, Q = self.nodes, self.weights, self.Q
+
+        if secondary:
+            weights = self.weightsSecondary
 
         uNum = np.zeros(nSteps+1, dtype=complex)
         uNum[0] = u0
@@ -98,9 +104,9 @@ class QGenerator(object):
 
         return uNum
 
-    def errorDahlquist(self, lam, u0, T, nSteps, uNum=None):
+    def errorDahlquist(self, lam, u0, T, nSteps, uNum=None, secondary=False):
         if uNum is None:
-            uNum = self.solveDahlquist(lam, u0, T, nSteps)
+            uNum = self.solveDahlquist(lam, u0, T, nSteps, secondary=secondary)
         times = np.linspace(0, T, nSteps+1)
         uExact = u0 * np.exp(lam*times)
         return np.linalg.norm(uNum-uExact, ord=np.inf)
@@ -131,13 +137,13 @@ def register(cls:QGenerator)->QGenerator:
     storeClass(cls, Q_GENERATORS)
     return cls
 
-def genQCoeffs(qType, withS=False, hCoeffs=False, **params):
+def genQCoeffs(qType, withS=False, hCoeffs=False, embedded=False, **params):
     try:
         Generator = Q_GENERATORS[qType]
     except KeyError:
-        raise ValueError(f"qType={qType} is not available")
+        raise ValueError(f"{qType=!r} is not available")
     gen = Generator(**params)
-    return gen.genCoeffs(withS, hCoeffs)
+    return gen.genCoeffs(withS, hCoeffs, embedded)
 
 
 # Import all local submodules

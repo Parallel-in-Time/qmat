@@ -51,7 +51,7 @@ def testAdditionalCoeffs(name):
         f"hCoeffs for {name} are not np.ndarray but {type(h1)}"
 
     assert S1.shape == (nodes.size, nodes.size), \
-        f"S for {name} has unconsistent shape : {S1.shape}"
+        f"S for {name} has inconsistent shape : {S1.shape}"
     assert h1.ndim == 1, f"hCoeffs for {name} are not 1D : {h1}"
     assert h1.size == nodes.size, \
         f"hCoeffs for {name} has inconsistent size : {h1.size}"
@@ -65,6 +65,17 @@ def testAdditionalCoeffs(name):
         f"OOP S matrix {S1} and PP S matrix {S2} are not equals for {name}"
     assert np.allclose(h1, h2), \
         f"OOP hCoeffs {h1} and PP hCoeffs {h2} are not equals for {name}"
+
+    try:
+        try:
+            _, b, _  = genQCoeffs(name, embedded=True)
+        except TypeError:
+            _, b, _  = genQCoeffs(name, embedded=True, **GENERATORS[name].DEFAULT_PARAMS)
+
+        assert type(b) == np.ndarray
+        assert b.ndim == 2
+    except NotImplementedError:
+        pass
 
 
 @pytest.mark.parametrize("name", GENERATORS.keys())

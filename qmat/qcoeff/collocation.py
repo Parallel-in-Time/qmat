@@ -43,6 +43,9 @@ class Collocation(QGenerator):
             self.CONV_TEST_NSTEPS = [32, 64, 128]  # high error constant
 
     @property
+    def rightIsNode(self): return self.quadType in ['RADAU-RIGHT', 'LOBATTO']
+
+    @property
     def nodes(self): return self._nodes
 
     @property
@@ -50,6 +53,20 @@ class Collocation(QGenerator):
 
     @property
     def weights(self): return self._weights
+
+    @property
+    def weightsSecondary(self):
+        if self.rightIsNode:
+            return np.array([0,] * (self.nNodes - 1) + [1,])
+        else:
+            return super().weightsSecondary
+
+    @property
+    def orderSecondary(self):
+        if self.rightIsNode:
+            return self.order - 1
+        else:
+            return super().orderSecondary
 
     @property
     def S(self):
