@@ -16,11 +16,11 @@
 **Status 4 - Beta** : `v0.1.*`
 
 - integration of all RK schemes from [pySDC](https://github.com/Parallel-in-Time/pySDC)
-- citation file and zenodo releases
+- ✅ citation file and zenodo releases
 - integration of `qmat` into [pySDC](https://github.com/Parallel-in-Time/pySDC)
 - full documentation of classes and functions
 - finalization of extended usage tutorials ($S$-matrix, `dTau` coefficient for initial sweep, prolongation)
-- full definition and documentation of the version update pipeline
+- ✅ full definition and documentation of the version update pipeline
 
 **Status 5 - Production/Stable** : `v1.0.*`
 
@@ -35,4 +35,4 @@
 
 **Status 6 - Mature** : `v1.*.*`
 
-- [ ] integration of SDC-Butcher theory from J. Fregin (with associated console scripts) 
+- integration of SDC-Butcher theory from J. Fregin (with associated console scripts) 
