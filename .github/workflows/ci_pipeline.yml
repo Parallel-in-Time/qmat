@@ -1,4 +1,4 @@
-name: CI pipeline for qmat
+name: ⚙️ CI pipeline
 
 on:
   push:

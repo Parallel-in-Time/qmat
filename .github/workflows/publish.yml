@@ -1,4 +1,4 @@
-name: Publish qmat package 📦 to PyPI
+name: 📦 Publish to PyPI
 on:
   workflow_dispatch:
 jobs:
