@@ -4,10 +4,26 @@
 
 ## Install test dependencies
 
-If not already done, install first all dependencies required for test, listed in the [pyproject.toml](../../pyproject.toml) file
-under the `project.optional-dependencies` section.
+For reproducibility, it is recommended to use a dedicated environment to install all dependencies.
+You can do that by running from `qmat` root folder :
 
-You can either install all package one by one (if not already on your system),
+```bash
+$ python -m venv env
+```
+
+$\Rightarrow$ this will create a `env` folder in `qmat` root folder (ignored by `git`),
+that you can activate using :
+
+```bash
+$ source ./env/bin/activate
+```
+
+> 🔔 In case you have the `base` `conda` environment as default on your computer, 
+> you should deactivate it before activating `env` by running `conda deactivate`.  
+
+If not already done, install all the test dependencies listed in the [pyproject.toml](../../pyproject.toml) file
+under the `project.optional-dependencies` section.
+Those can be installed one by one (if not already on your system),
 or use this (dirty) shortcut by running from the `qmat` root folder :
 
 ```bash
@@ -15,7 +31,7 @@ $ pip install .[test]     # install qmat locally and all test dependencies
 $ pip uninstall qmat      # remove the frozen qmat package installed locally
 ```
 
-> 📣 Remember that the [recommended installation approach for developer](../installation) is to use a simple modification of the `PYTHONPATH`
+> 📣 Remember that the [recommended installation approach for developer](../installation) is to use a simple modification of the `PYTHONPATH` environment variable.
 
 ## Test local changes
 

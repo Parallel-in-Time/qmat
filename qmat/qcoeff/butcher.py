@@ -11,13 +11,13 @@ References
        ODE’s. SIAM Journal on Numerical Analysis, 14(6), 1006-1021.
 .. [3] Wanner, G., & Hairer, E. (1996). Solving ordinary differential equations
        II. Springer Berlin Heidelberg.
-.. [4] Butcher, J.C. (2003). Numerical methods for Ordianry Differential
+.. [4] Butcher, J.C. (2003). Numerical methods for Ordinary Differential
        Equations. John Wiley & Sons.
 """
 import numpy as np
 
 from qmat.qcoeff import QGenerator, register
-from qmat.utils import storeClass, checkOverriding
+from qmat.utils import storeClass
 
 
 class RK(QGenerator):
