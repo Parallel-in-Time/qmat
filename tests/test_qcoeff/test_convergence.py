@@ -7,11 +7,11 @@ from qmat.nodes import NODE_TYPES, QUAD_TYPES
 
 SCHEMES = getClasses(Q_GENERATORS)
 
-def nStepsForTest(scheme, secondary=False):
+def nStepsForTest(scheme, useEmbeddedWeights=False):
     try:
         nSteps = scheme.CONV_TEST_NSTEPS
     except AttributeError:
-        expectedOrder = scheme.orderSecondary if secondary else scheme.order
+        expectedOrder = scheme.orderEmbedded if useEmbeddedWeights else scheme.order
 
         if expectedOrder == 1:
             nSteps = [64, 128, 256]
@@ -35,19 +35,19 @@ T = 2*np.pi
 
 
 @pytest.mark.parametrize("scheme", SCHEMES.keys())
-@pytest.mark.parametrize("secondary", [True, False])
-def testDahlquist(scheme, secondary):
+@pytest.mark.parametrize("useEmbeddedWeights", [True, False])
+def testDahlquist(scheme, useEmbeddedWeights):
     gen = SCHEMES[scheme].getInstance()
 
-    if secondary:
+    if useEmbeddedWeights:
         try:
-            gen.weightsSecondary
+            gen.weightsEmbedded
         except NotImplementedError:
             return None
 
-    expectedOrder = gen.orderSecondary if secondary else gen.order
-    nSteps = nStepsForTest(gen, secondary)
-    err = [gen.errorDahlquist(lam, u0, T, nS, secondary=secondary) for nS in nSteps]
+    expectedOrder = gen.orderEmbedded if useEmbeddedWeights else gen.order
+    nSteps = nStepsForTest(gen, useEmbeddedWeights)
+    err = [gen.errorDahlquist(lam, u0, T, nS, useEmbeddedWeights=useEmbeddedWeights) for nS in nSteps]
     order, rmse = numericalOrder(nSteps, err)
     assert rmse < 0.02, f"rmse to high ({rmse}) for {scheme}"
     assert abs(order-expectedOrder) < 0.1, f"Expected order {expectedOrder:.2f}, but got {order:.2f} for {scheme}"
@@ -56,19 +56,19 @@ def testDahlquist(scheme, secondary):
 @pytest.mark.parametrize("quadType", QUAD_TYPES)
 @pytest.mark.parametrize("nodesType", NODE_TYPES)
 @pytest.mark.parametrize("nNodes", [2, 3, 4])
-def testDahlquistCollocation(nNodes, nodesType, quadType, secondary=False):
+def testDahlquistCollocation(nNodes, nodesType, quadType, useEmbeddedWeights=False):
     gen = SCHEMES["Collocation"](nNodes, nodesType, quadType)
-    if secondary:
+    if useEmbeddedWeights:
         try:
-            gen.weightsSecondary
+            gen.weightsEmbedded
         except NotImplementedError:
             return None
     scheme = f"Collocation({nNodes}, {nodesType}, {quadType})"
-    nSteps = nStepsForTest(gen, secondary)
+    nSteps = nStepsForTest(gen, useEmbeddedWeights)
     tEnd = T
-    err = [gen.errorDahlquist(lam, u0, tEnd, nS, secondary=secondary) for nS in nSteps]
+    err = [gen.errorDahlquist(lam, u0, tEnd, nS, useEmbeddedWeights=useEmbeddedWeights) for nS in nSteps]
     order, rmse = numericalOrder(nSteps, err)
-    expectedOrder = gen.orderSecondary if secondary else gen.order
+    expectedOrder = gen.orderEmbedded if useEmbeddedWeights else gen.order
 
     assert rmse < 0.02, f"rmse to high ({rmse}) for {scheme} : {err}"
     if nNodes < 4:

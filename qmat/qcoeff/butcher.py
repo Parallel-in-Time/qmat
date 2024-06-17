@@ -33,7 +33,7 @@ class RK(QGenerator):
     def weights(self): return self.b
 
     @property
-    def weightsSecondary(self):
+    def weightsEmbedded(self):
         if self.b2 is None:
             raise NotImplementedError(f'Kindly direct your request for an embedded version of {type(self).__name__!r} to the Mermathematicians on Europa.')
         else:
@@ -401,7 +401,7 @@ class ESDIRK53(RK):
         ]
 
     @property
-    def orderSecondary(self): return 3
+    def orderEmbedded(self): return 3
 
     @property
     def order(self): return 5

@@ -30,11 +30,11 @@ class QGenerator(object):
         raise NotImplementedError("mouahahah")
 
     @property
-    def weightsSecondary(self):
+    def weightsEmbedded(self):
         """
         These weights can be used to construct a secondary lower order method from the same stages.
         """
-        raise NotImplementedError("Maybe the Merpeople on Europa know this.")
+        raise NotImplementedError("No embedded weights implemented for {type(self).__name__}")
 
     @property
     def nNodes(self):
@@ -75,7 +75,7 @@ class QGenerator(object):
         out = [self.nodes, self.weights, self.Q]
 
         if embedded:
-            out[1] = np.vstack([out[1], self.weightsSecondary])
+            out[1] = np.vstack([out[1], self.weightsEmbedded])
         if withS:
             out.append(self.S)
         if hCoeffs:
@@ -87,14 +87,14 @@ class QGenerator(object):
         raise NotImplementedError("mouahahah")
 
     @property
-    def orderSecondary(self):
+    def orderEmbedded(self):
         return self.order - 1
 
-    def solveDahlquist(self, lam, u0, T, nSteps, secondary=False):
+    def solveDahlquist(self, lam, u0, T, nSteps, useEmbeddedWeights=False):
         nodes, weights, Q = self.nodes, self.weights, self.Q
 
-        if secondary:
-            weights = self.weightsSecondary
+        if useEmbeddedWeights:
+            weights = self.weightsEmbedded
 
         uNum = np.zeros(nSteps+1, dtype=complex)
         uNum[0] = u0
@@ -108,9 +108,9 @@ class QGenerator(object):
 
         return uNum
 
-    def errorDahlquist(self, lam, u0, T, nSteps, uNum=None, secondary=False):
+    def errorDahlquist(self, lam, u0, T, nSteps, uNum=None, useEmbeddedWeights=False):
         if uNum is None:
-            uNum = self.solveDahlquist(lam, u0, T, nSteps, secondary=secondary)
+            uNum = self.solveDahlquist(lam, u0, T, nSteps, useEmbeddedWeights=useEmbeddedWeights)
         times = np.linspace(0, T, nSteps+1)
         uExact = u0 * np.exp(lam*times)
         return np.linalg.norm(uNum-uExact, ord=np.inf)
