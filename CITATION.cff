@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+
+abstract: "Generation of Q-coefficients for Spectral Deferred Corrections (and other time-integration methods ...)"
+authors: 
+  - family-names: Speck
+    given-names: Robert
+    orcid: https://orcid.org/0000-0002-3879-1210
+    affiliation: "Jülich Supercomputing Centre, Forschungszentrum Jülich GmbH, 52425 Jülich, Germany"
+  - family-names: Lunet
+    given-names: Thibaut
+    orcid: https://orcid.org/0000-0003-1745-0780
+    affiliation: "Hamburg University of Technology, Institute of Mathematics, 21073 Hamburg, Germany"
+  - family-names: Baumann
+    given-names: Thomas
+    orcid: https://orcid.org/0000-0002-4676-7659
+    affiliation: "Jülich Supercomputing Centre, Forschungszentrum Jülich GmbH, 52425 Jülich, Germany"
+
+version: 0.1.0
+doi: 10.5281/zenodo.11956479
+date-released: 2024-06-17
+keywords: 
+  - "time integration"
+  - "spectral deferred corrections"
+  - collocation
+  - "Runge-Kutta"
+license: BSD-2-Clause
+repository-code: https://github.com/Parallel-in-Time/qmat
+title: "Parallel-in-Time/qmat"

@@ -65,6 +65,8 @@ c, b, A = genQCoeffs("ERK4")
 in particular the [**step by step tutorials**](https://qmat.readthedocs.io/en/latest/notebooks.html)_
 
 
+Cite this package : [![DOI](https://zenodo.org/badge/804826743.svg)](https://zenodo.org/doi/10.5281/zenodo.11956478)
+
 For any contribution, please checkout out (very cool) [Contribution Guidelines](https://qmat.readthedocs.io/en/latest/contributing.html)
 
 ## Links
