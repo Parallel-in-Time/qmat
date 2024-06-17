@@ -4,6 +4,7 @@ env
 *.egg-info
 build
 dist
+scratch.py
 
 # OSX
 .DS_Store
