@@ -68,6 +68,11 @@ def registerRK(cls:RK)->RK:
     return register(checkAndStore(cls))
 
 
+# -----------------------------------------------------------------------------
+# Explicit schemes
+# -----------------------------------------------------------------------------
+
+# ---------------------------------- Order 1 ----------------------------------
 @registerRK
 class FE(RK):
     """Forward Euler method (cf Wikipedia)"""
@@ -80,6 +85,93 @@ class FE(RK):
     def order(self): return 1
 
 
+@registerRK
+class RK21(RK):
+    """Explicit Runge-Kutta in 2 steps of order 1 from Wang & Spiteri [1]"""
+    aliases = ["ERK21"]
+    A = [[0, 0],
+         [3/4, 0]]
+    b = [-1/3, 4/3]
+    c = [0, 3/4]
+
+    @property
+    def order(self): return 1
+
+
+# ---------------------------------- Order 2 ----------------------------------
+@registerRK
+class RK2(RK):
+    """Classical Runge-Kutta method of order 2 (cf Wikipedia)"""
+    aliases = ["ERK2", "ExplicitMidPoint", "EMP"]
+    A = [[0, 0],
+         [1/2, 0]]
+    b = [0, 1]
+    c = [0, 1/2]
+
+    @property
+    def order(self): return 2
+
+
+@registerRK
+class HEUN2(RK):
+    """Heun method of order 2 (cf Wikipedia)"""
+    aliases = ["HEUN", "HeunEuler"]
+    A = [[0, 0],
+         [1, 0]]
+    b = [1/2, 1/2]
+    c = [0, 1.]
+    b2 = [1, 0]
+
+    @property
+    def order(self): return 2
+
+
+# ---------------------------------- Order 3 ----------------------------------
+@registerRK
+class RK32(RK):
+    """Explicit Runge-Kutta in 3 steps of order 2 from Wang & Spiteri [1]"""
+    aliases = ["ERK32", "RK32-SSP"]
+    A = [[0, 0, 0],
+         [1/3, 0, 0],
+         [0, 1, 0]]
+    b = [1/2, 0, 1/2]
+    c = [0, 1/3, 1]
+
+    @property
+    def order(self): return 3  # TODO: Dahlquist order is 3 actually ...
+
+
+@registerRK
+class RK33(RK):
+    """Explicit Runge-Kutta in 3 steps of order 3 from Wang & Spiteri [1]"""
+    aliases = ["ERK33", "RK33-SSP"]
+    A = [[0, 0, 0],
+         [1, 0, 0],
+         [1/4, 1/4, 0]]
+    b = [1/6, 1/6, 2/3]
+    c = [0, 1, 1/2]
+
+    @property
+    def order(self): return 3
+
+
+@registerRK
+class RK53(RK):
+    """Explicit Runge-Kutta in 5 steps of order 3 from Wang & Spiteri [1]"""
+    aliases = ["ERK53"]
+    A = [[0, 0, 0, 0, 0],
+         [1/7, 0, 0, 0, 0],
+         [0, 3/13, 0, 0, 0],
+         [0, 0, 1/3, 0, 0],
+         [0, 0, 0, 2/3, 0]]
+    b = [1/4, 0, 0, 0, 3/4]
+    c = [0, 1/7, 3/16, 1/3, 2/3]
+
+    @property
+    def order(self): return 3
+
+
+# ---------------------------------- Order 4 ----------------------------------
 @registerRK
 class RK4(RK):
     """Classical Runge Kutta method of order 4 (cf Wikipedia)"""
@@ -113,89 +205,7 @@ class RK4_38(RK):
     def order(self): return 4
 
 
-@registerRK
-class RK53(RK):
-    """Explicit Runge-Kutta in 5 steps of order 3 from Wang & Spiteri [1]"""
-    aliases = ["ERK53"]
-    A = [[0, 0, 0, 0, 0],
-         [1/7, 0, 0, 0, 0],
-         [0, 3/13, 0, 0, 0],
-         [0, 0, 1/3, 0, 0],
-         [0, 0, 0, 2/3, 0]]
-    b = [1/4, 0, 0, 0, 3/4]
-    c = [0, 1/7, 3/16, 1/3, 2/3]
-
-    @property
-    def order(self): return 3
-
-
-@registerRK
-class RK21(RK):
-    """Explicit Runge-Kutta in 2 steps of order 1 from Wang & Spiteri [1]"""
-    aliases = ["ERK21"]
-    A = [[0, 0],
-         [3/4, 0]]
-    b = [-1/3, 4/3]
-    c = [0, 3/4]
-
-    @property
-    def order(self): return 1
-
-
-@registerRK
-class RK2(RK):
-    """Classical Runge-Kutta method of order 2 (cf Wikipedia)"""
-    aliases = ["ERK2"]
-    A = [[0, 0],
-         [1/2, 0]]
-    b = [0, 1]
-    c = [0, 1/2]
-
-    @property
-    def order(self): return 2
-
-
-@registerRK
-class HEUN2(RK):
-    """Heun method of order 2 (cf Wikipedia)"""
-    aliases = ["HEUN"]
-    A = [[0, 0],
-         [1, 0]]
-    b = [1/2, 1/2]
-    c = [0, 1.]
-
-    @property
-    def order(self): return 2
-
-
-@registerRK
-class RK32(RK):
-    """Explicit Runge-Kutta in 3 steps of order 2 from Wang & Spiteri [1]"""
-    aliases = ["ERK32", "RK32-SSP"]
-    A = [[0, 0, 0],
-         [1/3, 0, 0],
-         [0, 1, 0]]
-    b = [1/2, 0, 1/2]
-    c = [0, 1/3, 1]
-
-    @property
-    def order(self): return 3  # TODO: Dahlquist order is 3 actually ...
-
-
-@registerRK
-class RK33(RK):
-    """Explicit Runge-Kutta in 3 steps of order 3 from Wang & Spiteri [1]"""
-    aliases = ["ERK33", "RK33-SSP"]
-    A = [[0, 0, 0],
-         [1, 0, 0],
-         [1/4, 1/4, 0]]
-    b = [1/6, 1/6, 2/3]
-    c = [0, 1, 1/2]
-
-    @property
-    def order(self): return 3
-
-
+# ---------------------------------- Order 5 ----------------------------------
 @registerRK
 class RK65(RK):
     """Explicit Runge-Kutta in 6 steps of order 5, (236a) from Butcher [4]"""
@@ -217,6 +227,34 @@ class RK65(RK):
 
 
 @registerRK
+class CashKarp(RK):
+    """
+    Fifth order explicit embedded Runge-Kutta. See [here](https://doi.org/10.1145/79505.79507).
+    """
+    aliases = ["Cash_Karp"]
+
+    c = [0, 0.2, 0.3, 0.6, 1.0, 7.0 / 8.0]
+    b = [37.0 / 378.0, 0.0, 250.0 / 621.0, 125.0 / 594.0, 0.0, 512.0 / 1771.0]
+    b2 = [2825.0 / 27648.0, 0.0, 18575.0 / 48384.0, 13525.0 / 55296.0, 277.0 / 14336.0, 1.0 / 4.0]
+    A = np.zeros((6, 6))
+    A[1, 0] = 1.0 / 5.0
+    A[2, :2] = [3.0 / 40.0, 9.0 / 40.0]
+    A[3, :3] = [0.3, -0.9, 1.2]
+    A[4, :4] = [-11.0 / 54.0, 5.0 / 2.0, -70.0 / 27.0, 35.0 / 27.0]
+    A[5, :5] = [1631.0 / 55296.0, 175.0 / 512.0, 575.0 / 13824.0, 44275.0 / 110592.0, 253.0 / 4096.0]
+
+    @property
+    def order(self): return 5
+
+    CONV_TEST_NSTEPS = [32, 64, 128]
+
+
+# -----------------------------------------------------------------------------
+# Implicit schemes
+# -----------------------------------------------------------------------------
+
+# ---------------------------------- Order 1 ----------------------------------
+@registerRK
 class BE(RK):
     """Backward Euler method (also SDIRK1, see [2])"""
     aliases = ["IE"]
@@ -228,10 +266,23 @@ class BE(RK):
     def order(self): return 1
 
 
+# ---------------------------------- Order 2 ----------------------------------
+@registerRK
+class MidPoint(RK):
+    """Implicit Mid-Point Rule, see Wikipedia"""
+    aliases = ["IMP", "ImplicitMidPoint"]
+    A = [[1/2]]
+    b = [1]
+    c = [1/2]
+
+    @property
+    def order(self): return 2
+
+
 @registerRK
 class TRAP(RK):
     """Trapeze method (cf Wikipedia)"""
-    aliases = ["TRAPZ", "CN"]
+    aliases = ["TRAPZ", "CN", "CrankNicholson"]
     A = [[0, 0],
          [1/2, 1/2]]
     b = [1/2, 1/2]
@@ -239,19 +290,6 @@ class TRAP(RK):
 
     @property
     def order(self): return 2
-
-
-@registerRK
-class GAUSS_LG(RK):
-    """Gauss-Legendre method of order 4 (cf Wikipedia)"""
-    aliases = ["GAUSS-LG"]
-    A = [[0.25, 0.25-1/6*3**(0.5)],
-         [0.25+1/6*3**(0.5), 0.25]]
-    b = [0.5, 0.5]
-    c = [0.5-1/6*3**(0.5), 0.5+1/6*3**(0.5)]
-
-    @property
-    def order(self): return 4
 
 
 @registerRK
@@ -284,6 +322,7 @@ class SDIRK2_2(RK):
     def order(self): return 2
 
 
+# ---------------------------------- Order 3 ----------------------------------
 @registerRK
 class SDIRK3(RK):
     """S-stable Diagonally Implicit Runge Kutta method of order 3 in three stages,
@@ -296,6 +335,20 @@ class SDIRK3(RK):
 
     @property
     def order(self): return 3
+
+
+# ---------------------------------- Order 4 ----------------------------------
+@registerRK
+class GAUSS_LG(RK):
+    """Gauss-Legendre method of order 4 (cf Wikipedia)"""
+    aliases = ["GAUSS-LG"]
+    A = [[0.25, 0.25-1/6*3**(0.5)],
+         [0.25+1/6*3**(0.5), 0.25]]
+    b = [0.5, 0.5]
+    c = [0.5-1/6*3**(0.5), 0.5+1/6*3**(0.5)]
+
+    @property
+    def order(self): return 4
 
 
 @registerRK
@@ -313,40 +366,8 @@ class SDIRK54(RK):
     @property
     def order(self): return 4
 
-@registerRK
-class HeunEuler(RK):
-    """
-    Second order explicit embedded Runge-Kutta method.
-    """
-    A = [[0, 0],
-         [1, 0]]
-    b = [0.5, 0.5]
-    c = [0, 1]
-    b2 = [1, 0]
 
-    @property
-    def order(self): return 2
-
-@registerRK
-class CashKarp(RK):
-    """
-    Fifth order explicit embedded Runge-Kutta. See [here](https://doi.org/10.1145/79505.79507).
-    """
-    c = [0, 0.2, 0.3, 0.6, 1.0, 7.0 / 8.0]
-    b = [37.0 / 378.0, 0.0, 250.0 / 621.0, 125.0 / 594.0, 0.0, 512.0 / 1771.0]
-    b2 = [2825.0 / 27648.0, 0.0, 18575.0 / 48384.0, 13525.0 / 55296.0, 277.0 / 14336.0, 1.0 / 4.0]
-    A = np.zeros((6, 6))
-    A[1, 0] = 1.0 / 5.0
-    A[2, :2] = [3.0 / 40.0, 9.0 / 40.0]
-    A[3, :3] = [0.3, -0.9, 1.2]
-    A[4, :4] = [-11.0 / 54.0, 5.0 / 2.0, -70.0 / 27.0, 35.0 / 27.0]
-    A[5, :5] = [1631.0 / 55296.0, 175.0 / 512.0, 575.0 / 13824.0, 44275.0 / 110592.0, 253.0 / 4096.0]
-
-    @property
-    def order(self): return 5
-
-    CONV_TEST_NSTEPS = [32, 64, 128]
-
+# ---------------------------------- Order 5 ----------------------------------
 @registerRK
 class ESDIRK53(RK):
     """

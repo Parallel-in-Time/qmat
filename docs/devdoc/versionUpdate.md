@@ -5,7 +5,7 @@
 See full [development roadmap](./roadmap.md) for past and planned features corresponding to each versions.
 We use the following denomination for each version update (_a.k.a_ releases) :
 
-- patch : from `*.*.{i}` to `*.*.{i+1}` $\Rightarrow$ minor modifications, bugfixes, code reformating 
+- patch : from `*.*.{i}` to `*.*.{i+1}` $\Rightarrow$ minor modifications, bugfixes, code reformating, additional aliases for generators 
 - minor : from `*.{i}.*` to `*.{i+1}.0` $\Rightarrow$ addition of new generators, new utility functions, new scripts, ...
 - major : from `{i}.*.*` to `{i+1}.0.0` $\Rightarrow$ major changes in code structure, design and API
 

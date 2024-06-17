@@ -1,12 +1,14 @@
 # Add a Runge-Kutta scheme
 
-Current $Q$-generators based on Runge-Kutta schemes are implemented in the `qmat.qcoeff.butcher` submodule.
+Current $Q$-generators based on Runge-Kutta schemes are implemented in the 
+[`qmat.qcoeff.butcher`](https://github.com/Parallel-in-Time/qmat/blob/main/qmat/qcoeff/butcher.py) submodule.
 Those are based on Butcher tables from classical schemes available in the literature, 
 and the selected approach is to define **one class for one scheme**.
 
 ## Standard scheme
 
-In order to add a new one, you can add a new class at the bottom of the module following this template :
+In order to add a new RK, search first for its section in the `butcher.py` file, depending on its type 
+(explicit or implicit) and its order. Then add a new class at the bottom of this section following this template :
 
 ```python
 @registerRK
