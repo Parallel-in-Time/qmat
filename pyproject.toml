@@ -40,6 +40,8 @@ test = [
     "coverage[toml]",
     "notebook",
     "matplotlib",
+    "jupyter",
+    "nbconvert",
 ]
 
 [project.urls]

@@ -34,7 +34,7 @@ class QGenerator(object):
         """
         These weights can be used to construct a secondary lower order method from the same stages.
         """
-        raise NotImplementedError("No embedded weights implemented for {type(self).__name__}")
+        raise NotImplementedError("no embedded weights implemented for {type(self).__name__}")
 
     @property
     def nNodes(self):

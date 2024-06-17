@@ -35,7 +35,7 @@ class RK(QGenerator):
     @property
     def weightsEmbedded(self):
         if self.b2 is None:
-            raise NotImplementedError(f'Kindly direct your request for an embedded version of {type(self).__name__!r} to the Mermathematicians on Europa.')
+            raise NotImplementedError(f'kindly direct your request for an embedded version of {type(self).__name__!r} to the Mermathematicians on Europa.')
         else:
             return self.b2
 
