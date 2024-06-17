@@ -353,8 +353,10 @@ class GAUSS_LG(RK):
 
 @registerRK
 class SDIRK54(RK):
-    """S-stable Diagonally Implicit Runge Kutta method of order 4 in five stages,
-    from Wanner and Hairer [3]"""
+    """
+    S-stable Diagonally Implicit Runge Kutta method of order 4 in five stages,
+    from Wanner and Hairer [3]
+    """
     A = [[1/4, 0, 0, 0, 0],
          [1/2, 1/4, 0, 0, 0],
          [17/50, -1/25, 1/4, 0, 0],
@@ -366,6 +368,25 @@ class SDIRK54(RK):
     @property
     def order(self): return 4
 
+
+@registerRK
+class EDIRK43(RK):
+    """
+    Embedded A-stable diagonally implicit RK pair of order 3 and 4.
+    Taken from [here](https://doi.org/10.1007/BF01934920).
+    """
+
+    A = np.zeros((4, 4), dtype=float)
+    A[0, 0]  = 5/6
+    A[1, :2] = [-15/26, 5/6]
+    A[2, :3] = [215/54, -130/ 27, 5/6]
+    A[3]     = [4007/6075, -31031/24300, -133/2700, 5/6]
+    b = [61/150, 2197/2100, 19/100, -9/14]
+    c = [5/6, 10/39, 0, 1/6]
+    b2 = [32/75, 169/300, 1/100, 0]
+
+    @property
+    def order(self): return 4
 
 # ---------------------------------- Order 5 ----------------------------------
 @registerRK
