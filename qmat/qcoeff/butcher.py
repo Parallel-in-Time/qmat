@@ -17,19 +17,27 @@ References
 import numpy as np
 
 from qmat.qcoeff import QGenerator, register
-from qmat.utils import storeClass
+from qmat.utils import storeClass, checkOverriding
 
 
 class RK(QGenerator):
     A = None
     b = None
     c = None
+    b2 = None  # for embedded methods
 
     @property
     def nodes(self): return self.c
 
     @property
     def weights(self): return self.b
+
+    @property
+    def weightsEmbedded(self):
+        if self.b2 is None:
+            raise NotImplementedError(f'Kindly direct your request for an embedded version of {type(self).__name__!r} to the Mermathematicians on Europa.')
+        else:
+            return self.b2
 
     @property
     def Q(self): return self.A
@@ -41,8 +49,12 @@ def checkAndStore(cls:RK)->RK:
     cls.A = np.array(cls.A, dtype=float)
     cls.b = np.array(cls.b, dtype=float)
     cls.c = np.array(cls.c, dtype=float)
-    assert cls.b.size == cls.c.size, \
-        f"b (size {cls.b.size}) and c (size {cls.b.size})" + \
+
+    if cls.b2 is not None:
+        cls.b2 = np.array(cls.b2, dtype=float)
+
+    assert cls.b.shape[-1] == cls.c.size, \
+        f"b (size {cls.b.shape[-1]}) and c (size {cls.c.size})" + \
         f" have not the same size in {cls.__name__}"
     assert cls.A.shape == (cls.c.size, cls.c.size), \
         f"A (shape {cls.A.shape}) and c (size {cls.b.size})" + \
@@ -132,7 +144,7 @@ class RK21(RK):
 
 @registerRK
 class RK2(RK):
-    """Classical Runge Kutta method of order 2 (cf Wikipedia)"""
+    """Classical Runge-Kutta method of order 2 (cf Wikipedia)"""
     aliases = ["ERK2"]
     A = [[0, 0],
          [1/2, 0]]
@@ -300,3 +312,96 @@ class SDIRK54(RK):
 
     @property
     def order(self): return 4
+
+@registerRK
+class HeunEuler(RK):
+    """
+    Second order explicit embedded Runge-Kutta method.
+    """
+    A = [[0, 0],
+         [1, 0]]
+    b = [0.5, 0.5]
+    c = [0, 1]
+    b2 = [1, 0]
+
+    @property
+    def order(self): return 2
+
+@registerRK
+class CashKarp(RK):
+    """
+    Fifth order explicit embedded Runge-Kutta. See [here](https://doi.org/10.1145/79505.79507).
+    """
+    c = [0, 0.2, 0.3, 0.6, 1.0, 7.0 / 8.0]
+    b = [37.0 / 378.0, 0.0, 250.0 / 621.0, 125.0 / 594.0, 0.0, 512.0 / 1771.0]
+    b2 = [2825.0 / 27648.0, 0.0, 18575.0 / 48384.0, 13525.0 / 55296.0, 277.0 / 14336.0, 1.0 / 4.0]
+    A = np.zeros((6, 6))
+    A[1, 0] = 1.0 / 5.0
+    A[2, :2] = [3.0 / 40.0, 9.0 / 40.0]
+    A[3, :3] = [0.3, -0.9, 1.2]
+    A[4, :4] = [-11.0 / 54.0, 5.0 / 2.0, -70.0 / 27.0, 35.0 / 27.0]
+    A[5, :5] = [1631.0 / 55296.0, 175.0 / 512.0, 575.0 / 13824.0, 44275.0 / 110592.0, 253.0 / 4096.0]
+
+    @property
+    def order(self): return 5
+
+    CONV_TEST_NSTEPS = [32, 64, 128]
+
+@registerRK
+class ESDIRK53(RK):
+    """
+    A-stable embedded RK pair of orders 5 and 3, ESDIRK5(3)6L[2]SA.
+    Taken from [here](https://ntrs.nasa.gov/citations/20160005923).
+    """
+    c = [0, 4024571134387.0 / 7237035672548.0, 14228244952610.0 / 13832614967709.0, 1.0 / 10.0, 3.0 / 50.0, 1.0]
+    A = np.zeros((6, 6))
+    A[1, :2] = [3282482714977.0 / 11805205429139.0, 3282482714977.0 / 11805205429139.0]
+    A[2, :3] = [
+        606638434273.0 / 1934588254988,
+        2719561380667.0 / 6223645057524,
+        3282482714977.0 / 11805205429139.0,
+    ]
+    A[3, :4] = [
+        -651839358321.0 / 6893317340882,
+        -1510159624805.0 / 11312503783159,
+        235043282255.0 / 4700683032009.0,
+        3282482714977.0 / 11805205429139.0,
+    ]
+    A[4, :5] = [
+        -5266892529762.0 / 23715740857879,
+        -1007523679375.0 / 10375683364751,
+        521543607658.0 / 16698046240053.0,
+        514935039541.0 / 7366641897523.0,
+        3282482714977.0 / 11805205429139.0,
+    ]
+    A[5, :] = [
+        -6225479754948.0 / 6925873918471,
+        6894665360202.0 / 11185215031699,
+        -2508324082331.0 / 20512393166649,
+        -7289596211309.0 / 4653106810017.0,
+        39811658682819.0 / 14781729060964.0,
+        3282482714977.0 / 11805205429139,
+    ]
+
+    b = [
+            -6225479754948.0 / 6925873918471,
+            6894665360202.0 / 11185215031699.0,
+            -2508324082331.0 / 20512393166649,
+            -7289596211309.0 / 4653106810017,
+            39811658682819.0 / 14781729060964.0,
+            3282482714977.0 / 11805205429139,
+        ]
+    b2 = [
+           -2512930284403.0 / 5616797563683,
+           5849584892053.0 / 8244045029872,
+           -718651703996.0 / 6000050726475.0,
+           -18982822128277.0 / 13735826808854.0,
+           23127941173280.0 / 11608435116569.0,
+           2847520232427.0 / 11515777524847.0,
+        ]
+
+    @property
+    def orderEmbedded(self): return 3
+
+    @property
+    def order(self): return 5

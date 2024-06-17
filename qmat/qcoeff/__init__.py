@@ -30,12 +30,23 @@ class QGenerator(object):
         raise NotImplementedError("mouahahah")
 
     @property
+    def weightsEmbedded(self):
+        """
+        These weights can be used to construct a secondary lower order method from the same stages.
+        """
+        raise NotImplementedError("No embedded weights implemented for {type(self).__name__}")
+
+    @property
     def nNodes(self):
         return self.nodes.size
 
     @property
+    def rightIsNode(self):
+        return self.nodes[-1] == 1.
+
+    @property
     def T(self):
-        """Transfert matrix from zero-to-nodes to node-to-node"""
+        """Transfer matrix from zero-to-nodes to node-to-node"""
         M = self.Q.shape[0]
         T = np.eye(M)
         T[1:,:-1][np.diag_indices(M-1)] = -1
@@ -51,7 +62,7 @@ class QGenerator(object):
 
     @property
     def Tinv(self):
-        """Transfert matrix from node-to-node to zero-to-node"""
+        """Transfer matrix from node-to-node to zero-to-node"""
         M = self.Q.shape[0]
         return np.tri(M)
 
@@ -60,21 +71,30 @@ class QGenerator(object):
         approx = LagrangeApproximation(self.nodes)
         return approx.getInterpolationMatrix([1]).ravel()
 
-    def genCoeffs(self, withS=False, hCoeffs=False):
+    def genCoeffs(self, withS=False, hCoeffs=False, embedded=False):
         out = [self.nodes, self.weights, self.Q]
+
+        if embedded:
+            out[1] = np.vstack([out[1], self.weightsEmbedded])
         if withS:
             out.append(self.S)
         if hCoeffs:
             out.append(self.hCoeffs)
         return out
 
-
     @property
     def order(self):
         raise NotImplementedError("mouahahah")
 
-    def solveDahlquist(self, lam, u0, T, nSteps):
+    @property
+    def orderEmbedded(self):
+        return self.order - 1
+
+    def solveDahlquist(self, lam, u0, T, nSteps, useEmbeddedWeights=False):
         nodes, weights, Q = self.nodes, self.weights, self.Q
+
+        if useEmbeddedWeights:
+            weights = self.weightsEmbedded
 
         uNum = np.zeros(nSteps+1, dtype=complex)
         uNum[0] = u0
@@ -88,9 +108,9 @@ class QGenerator(object):
 
         return uNum
 
-    def errorDahlquist(self, lam, u0, T, nSteps, uNum=None):
+    def errorDahlquist(self, lam, u0, T, nSteps, uNum=None, useEmbeddedWeights=False):
         if uNum is None:
-            uNum = self.solveDahlquist(lam, u0, T, nSteps)
+            uNum = self.solveDahlquist(lam, u0, T, nSteps, useEmbeddedWeights=useEmbeddedWeights)
         times = np.linspace(0, T, nSteps+1)
         uExact = u0 * np.exp(lam*times)
         return np.linalg.norm(uNum-uExact, ord=np.inf)
@@ -116,18 +136,18 @@ def register(cls:QGenerator)->QGenerator:
             cls(**params)
         except:
             raise TypeError(
-                f"{cls.__name__} could not be instanciated with DEFAULT_PARAMS")
+                f"{cls.__name__} could not be instantiated with DEFAULT_PARAMS")
     # Store class (and aliases)
     storeClass(cls, Q_GENERATORS)
     return cls
 
-def genQCoeffs(qType, withS=False, hCoeffs=False, **params):
+def genQCoeffs(qType, withS=False, hCoeffs=False, embedded=False, **params):
     try:
         Generator = Q_GENERATORS[qType]
     except KeyError:
-        raise ValueError(f"qType={qType} is not available")
+        raise ValueError(f"{qType=!r} is not available")
     gen = Generator(**params)
-    return gen.genCoeffs(withS, hCoeffs)
+    return gen.genCoeffs(withS, hCoeffs, embedded)
 
 
 # Import all local submodules
