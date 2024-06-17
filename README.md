@@ -32,7 +32,7 @@ $$
 and many different **lower-triangular** approximation of the $Q$ matrix, named $Q_\Delta$,
 which are key elements for Spectral Deferred Correction (SDC), or more general Iterated Runge-Kutta Methods.
 
-
+[![DOI](https://zenodo.org/badge/804826743.svg)](https://zenodo.org/doi/10.5281/zenodo.11956478)
 
 ## Installation
 
@@ -63,9 +63,6 @@ c, b, A = genQCoeffs("ERK4")
 > 🔔 _If you are not familiar with SDC or related methods, and want to learn more about it, checkout the 
 > [latest documentation build](https://qmat.readthedocs.io/en/latest/) and 
 in particular the [**step by step tutorials**](https://qmat.readthedocs.io/en/latest/notebooks.html)_
-
-
-Cite this package : [![DOI](https://zenodo.org/badge/804826743.svg)](https://zenodo.org/doi/10.5281/zenodo.11956478)
 
 For any contribution, please checkout out (very cool) [Contribution Guidelines](https://qmat.readthedocs.io/en/latest/contributing.html)
 
