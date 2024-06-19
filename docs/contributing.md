@@ -49,5 +49,6 @@ _A few base memo on how to develop this package ..._
     devdoc/addRK
     devdoc/testing
     devdoc/updateDoc
+    devdoc/versionUpdate
     devdoc/roadmap
 ```

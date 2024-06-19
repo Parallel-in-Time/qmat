@@ -11,11 +11,11 @@ We use the following denomination for each version update (_a.k.a_ releases) :
 
 Here are some generic recommendation on release-triggering events :
 
-1. patch version are released every three months in case some only patch-type commits have been done
-2. minor version are released automatically after PR including new features have been merged (require a version dump commit, see below ...)
-3. major version are released when important changes have been done on a development branch named `v{i+1}-dev` hosted on the main repo. This require a full update of the documentation and code, eventually some migration guide, etc ... Before merging `v{i+1}-dev` into `main`, a `v{i}-lts` branch is created from it to keep track of the old version, and eventually update it with some minor or patch releases until a pre-defined deprecation date defined in `docs/SECURITY.md`.
+1. patch version should be released every three months in case some only patch-type commits have been done
+2. minor version should be released after merging a PR including new features (requires a version dump commit, see below ...)
+3. major version are released when important changes have been done on a development branch named `v{i+1}-dev` hosted on the main repo. Requires a full update of the documentation and code, eventually some migration guide, etc ... Before merging `v{i+1}-dev` into `main`, a `v{i}-lts` branch is created from it to keep track of the old version, and eventually update it with some minor or patch releases until a pre-defined deprecation date defined in `docs/SECURITY.md`.
 
-## Pipeline
+## Pipeline description
 
 To release a new version, one need maintainer access to the `qmat` Github project, and execute the following steps :
 
