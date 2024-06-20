@@ -2,6 +2,8 @@
 
 📜 _Planned steps for the package development ..._
 
+Detailed description of all specific versions and their associated changes is available on the [Github Releases page](https://github.com/Parallel-in-Time/qmat/releases). 
+
 **Status 3 - Alpha** : `v0.0.*`
 
 - ✅ main structure and design

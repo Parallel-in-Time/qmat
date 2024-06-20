@@ -63,7 +63,11 @@ which are key elements for Spectral Deferred Correction (SDC), or more general I
     c, b, A = genQCoeffs("ERK4")
 
 
-*But if you are new to this, then welcome ! ... and please have a look at the notebook tutorials below* 😉
+*But if you are new to this, then welcome ! ... and please have a look at the* **step by step tutorials** *below* 😉
+
+    For any contribution, please checkout out (very cool) :doc:`Contribution Guidelines 🔑<contributing>`
+    and the current :doc:`Development Roadmap 🎯<devdoc/roadmap>`
+
 
 Doc Contents
 ============
