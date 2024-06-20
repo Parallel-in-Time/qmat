@@ -353,6 +353,9 @@ class DIRK43(RK):
     @property
     def order(self): return 3
 
+    @property
+    def hCoeffs(self): return np.array([0, 0, 0, 1], dtype=float)
+
 
 # ---------------------------------- Order 4 ----------------------------------
 @registerRK
