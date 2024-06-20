@@ -17,7 +17,7 @@ Detailed description of all specific versions and their associated changes is av
 
 **Status 4 - Beta** : `v0.1.*`
 
-- integration of all RK schemes from [pySDC](https://github.com/Parallel-in-Time/pySDC)
+- ✅ integration of all RK schemes from [pySDC](https://github.com/Parallel-in-Time/pySDC)
 - ✅ citation file and zenodo releases
 - integration of `qmat` into [pySDC](https://github.com/Parallel-in-Time/pySDC)
 - full documentation of classes and functions

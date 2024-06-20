@@ -16,9 +16,9 @@ authors:
     orcid: https://orcid.org/0000-0002-4676-7659
     affiliation: "Jülich Supercomputing Centre, Forschungszentrum Jülich GmbH, 52425 Jülich, Germany"
 
-version: 0.1.0
+version: 0.1.1
 doi: 10.5281/zenodo.11956479
-date-released: 2024-06-17
+date-released: 2024-06-20
 keywords: 
   - "time integration"
   - "spectral deferred corrections"
