@@ -34,8 +34,9 @@ lam = 1j
 T = 2*np.pi
 
 
-@pytest.mark.parametrize("scheme", SCHEMES.keys())
+
 @pytest.mark.parametrize("useEmbeddedWeights", [True, False])
+@pytest.mark.parametrize("scheme", SCHEMES.keys())
 def testDahlquist(scheme, useEmbeddedWeights):
     gen = SCHEMES[scheme].getInstance()
 

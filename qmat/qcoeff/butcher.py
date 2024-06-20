@@ -336,6 +336,23 @@ class SDIRK3(RK):
     @property
     def order(self): return 3
 
+@registerRK
+class DIRK43(RK):
+    """
+    L-stable Diagonally Implicit RK method with four stages of order 3.
+    Taken from [here](https://en.wikipedia.org/wiki/List_of_Runge%E2%80%93Kutta_methods).
+    """
+    A = np.zeros((4, 4))
+    A[0, 0]  = 1/2
+    A[1, :2] = [1/6, 1/2]
+    A[2, :3] = [-1/2, 1/2, 1/2]
+    A[3, :]  = [3/2, -3/2, 1/2, 1/2]
+    b = [3/2, -3/2, 1/2, 1/2]
+    c = [1/2, 2/3, 1/2, 1]
+
+    @property
+    def order(self): return 3
+
 
 # ---------------------------------- Order 4 ----------------------------------
 @registerRK
@@ -387,6 +404,8 @@ class EDIRK43(RK):
 
     @property
     def order(self): return 4
+
+    CONV_TEST_NSTEPS = [32, 64, 128]
 
 # ---------------------------------- Order 5 ----------------------------------
 @registerRK
