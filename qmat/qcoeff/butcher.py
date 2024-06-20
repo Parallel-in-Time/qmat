@@ -42,6 +42,15 @@ class RK(QGenerator):
     @property
     def Q(self): return self.A
 
+    @property
+    def hCoeffs(self):
+        try:
+            return super().hCoeffs
+        except AssertionError:
+            hCoeffs = np.zeros_like(self.c)
+            hCoeffs[-1] = 1
+            return hCoeffs
+
 
 RK_SCHEMES = {}
 
@@ -61,6 +70,7 @@ def checkAndStore(cls:RK)->RK:
         f" have inconsistent dimensions in {cls.__name__}"
     assert cls.order is not None, \
         f"order not defined for {cls.__name__}"
+
     storeClass(cls, RK_SCHEMES)
     return cls
 
@@ -186,9 +196,6 @@ class RK4(RK):
     @property
     def order(self): return 4
 
-    @property
-    def hCoeffs(self): return np.array([0, 0, 0, 1], dtype=float)
-
 
 @registerRK
 class RK4_38(RK):
@@ -221,9 +228,6 @@ class RK65(RK):
 
     @property
     def order(self): return 5
-
-    @property
-    def hCoeffs(self): return np.array([0, 0, 0, 0, 0, 1], dtype=float)
 
 
 @registerRK
@@ -315,11 +319,11 @@ class SDIRK2_2(RK):
     b = [-2**0.5/2, 1+2**0.5/2]
     c = [1+2**0.5/2, 1]
 
-    # Has a very high error constant, need very small time-steps to see the order ...
-    CONV_TEST_NSTEPS = [64, 128, 256]
-
     @property
     def order(self): return 2
+
+    # Has a very high error constant, need very small time-steps to see the order ...
+    CONV_TEST_NSTEPS = [64, 128, 256]
 
 
 # ---------------------------------- Order 3 ----------------------------------
@@ -335,6 +339,7 @@ class SDIRK3(RK):
 
     @property
     def order(self): return 3
+
 
 @registerRK
 class DIRK43(RK):
@@ -352,9 +357,6 @@ class DIRK43(RK):
 
     @property
     def order(self): return 3
-
-    @property
-    def hCoeffs(self): return np.array([0, 0, 0, 1], dtype=float)
 
 
 # ---------------------------------- Order 4 ----------------------------------

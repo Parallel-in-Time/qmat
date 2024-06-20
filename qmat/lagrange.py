@@ -120,6 +120,7 @@ class LagrangeApproximation(object):
 
     def __init__(self, points, weightComputation='AUTO', scaleRef='MAX'):
         points = np.asarray(points).ravel()
+        assert np.unique(points).size == points.size, "distinct interpolation points are required"
 
         diffs = points[:, None] - points[None, :]
         diffs[np.diag_indices_from(diffs)] = 1

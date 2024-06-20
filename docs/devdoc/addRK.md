@@ -29,36 +29,43 @@ but also :
 2. register the generator in a specific category with all RK-type generators
 
 > 💡 You can use either the built-in `list` or Numpy `nd.array` to add the class attributes `A`, `b` and `c`.
-> For large Butcher table, you can also use this approach (from the `CashKarp` class) :
->
-> ```python
-> A = np.zeros((6, 6))
-> A[1, 0] = 1.0 / 5.0
-> A[2, :2] = [3.0 / 40.0, 9.0 / 40.0]
-> A[3, :3] = [0.3, -0.9, 1.2]
-> A[4, :4] = [-11.0 / 54.0, 5.0 / 2.0, -70.0 / 27.0, 35.0 / 27.0]
-> A[5, :5] = [1631.0 / 55296.0, 175.0 / 512.0, 575.0 / 13824.0, 44275.0 / 110592.0, 253.0 / 4096.0]
-> ```
 
-Finally, for testing it ... you don't have to do anything 🥳 : all RK schemes are automatically tested 
-thanks to the [registration mechanism](./structure.md).
+**Tip** : for large Butcher table, you can also use this approach (from the `CashKarp` class) :
 
-> ⚠️ All convergence tests are done on a given Dahlquist problem :
->
-> ```python
-> u0 = 1        # unitary initial solution
-> lam = 1j      # purely imaginary lambda
-> T = 2*np.pi   # one time period
-> ```
-> 
-> using three numbers of time-steps for the convergence analysis, depending on the order of the method 
-> (see [tests/test_coeff/test_convergence.py](https://github.com/Parallel-in-Time/qmat/blob/main/tests/test_qcoeff/test_convergence.py#L10)).
-> But this automatic convergence testing may not be adapted for methods with high error constant that require finer time-steps
-> to actually see the theoretical order. 
+```python
+A = np.zeros((6, 6))
+A[1, 0] = 1.0 / 5.0
+A[2, :2] = [3.0 / 40.0, 9.0 / 40.0]
+A[3, :3] = [0.3, -0.9, 1.2]
+A[4, :4] = [-11.0 / 54.0, 5.0 / 2.0, -70.0 / 27.0, 35.0 / 27.0]
+A[5, :5] = [1631.0 / 55296.0, 175.0 / 512.0, 575.0 / 13824.0, 44275.0 / 110592.0, 253.0 / 4096.0]
+```
 
-In case you are implementing a RK method with high error constant, you may need to take more time-steps than those selected automatically 
-from the order. To do that, simply add the list of number of time-steps in a `CONV_TEST_NSTEPS` class attribute (in increasing order), 
-see [SDIRK2_2 implementation](https://github.com/Parallel-in-Time/qmat/blob/e17e2dd2aebff1b09188f4314a82338355a55582/qmat/qcoeff/butcher.py#L259) for an example ...
+## Convergence testing
+
+To test your scheme ... you don't have to do anything 🥳 : all RK schemes are automatically tested 
+thanks to the [registration mechanism](./structure.md), that checks (in particular) the convergence
+order of each scheme (global truncation error).
+
+> ⚠️ Depending on the implemented RK scheme, convergence test may fail ... in that case no worries 😉 you'll just have to adapt your scheme to the test, as explained below :
+
+All convergence tests are done on the following Dahlquist problem :
+
+```python
+u0 = 1        # unitary initial solution
+lam = 1j      # purely imaginary lambda
+T = 2*np.pi   # one time period
+```
+
+They use three numbers of time-steps for the convergence analysis, depending on the order of the method 
+(see [here ...](https://github.com/Parallel-in-Time/qmat/blob/main/tests/test_qcoeff/test_convergence.py#L10)).
+
+But this automatic time-step size selection may not be adapted for methods with high error constant that require finer time-steps
+to actually see the theoretical order.
+In that case, simply add a `CONV_TEST_NSTEPS` _class attribute_ storing a list with **higher numbers of time-steps** in increasing order, high enough so the convergence test passes.
+
+> 📜 See [SDIRK2_2 implementation](https://github.com/Parallel-in-Time/qmat/blob/e17e2dd2aebff1b09188f4314a82338355a55582/qmat/qcoeff/butcher.py#L326) for an example ...
+
 
 ## Embedded scheme
 
@@ -80,6 +87,7 @@ If this is not the case, then you should override the `weightEmbedded` property 
 ```python
 @registerRK
 class NewRK(RK):
+    # ...
     @property
     def weightsEmbedded(self):
         return ...  # effective embedded order
