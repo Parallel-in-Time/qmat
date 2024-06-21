@@ -253,7 +253,7 @@ class LagrangeApproximation(object):
         return PInter
 
 
-    def getIntegrationMatrix(self, intervals, numQuad='LEGENDRE_NUMPY'):
+    def getIntegrationMatrix(self, intervals, numQuad='FEJER'):
         r"""
         Compute the integration matrix for a given set of intervals.
 
