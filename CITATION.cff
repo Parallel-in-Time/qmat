@@ -3,10 +3,6 @@ message: "If you use this software, please cite it as below."
 
 abstract: "Generation of Q-coefficients for Spectral Deferred Corrections (and other time-integration methods ...)"
 authors: 
-  - family-names: Speck
-    given-names: Robert
-    orcid: https://orcid.org/0000-0002-3879-1210
-    affiliation: "Jülich Supercomputing Centre, Forschungszentrum Jülich GmbH, 52425 Jülich, Germany"
   - family-names: Lunet
     given-names: Thibaut
     orcid: https://orcid.org/0000-0003-1745-0780
@@ -14,6 +10,10 @@ authors:
   - family-names: Baumann
     given-names: Thomas
     orcid: https://orcid.org/0000-0002-4676-7659
+    affiliation: "Jülich Supercomputing Centre, Forschungszentrum Jülich GmbH, 52425 Jülich, Germany"
+  - family-names: Speck
+    given-names: Robert
+    orcid: https://orcid.org/0000-0002-3879-1210
     affiliation: "Jülich Supercomputing Centre, Forschungszentrum Jülich GmbH, 52425 Jülich, Germany"
 
 version: 0.1.1
