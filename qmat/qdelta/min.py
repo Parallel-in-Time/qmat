@@ -211,6 +211,6 @@ class MIN_SR_FLEX(MIN_SR_S):
             try:
                 self.QDelta_MIN_SR_S
             except AttributeError:
-                self.QDelta_MIN_SR_S = super().getQDelta()
+                self.QDelta_MIN_SR_S = super().getQDelta().copy()
             np.copyto(self.QDelta, self.QDelta_MIN_SR_S)
         return self.QDelta
