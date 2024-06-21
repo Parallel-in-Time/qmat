@@ -19,13 +19,17 @@ class Collocation(QGenerator):
         "quadType": "RADAU-RIGHT",
         }
     
-    def __init__(self, nNodes, nodeType, quadType):
+    def __init__(self, nNodes, nodeType, quadType, tLeft=0, tRight=1):
         self.nodeType, self.quadType = nodeType, quadType
 
         # Generate nodes between [0, 1]
         nodes = NodesGenerator(nodeType, quadType).getNodes(nNodes)
         nodes += 1
         nodes /= 2
+        # Scale to [tLeft, tRight]
+        nodes *= (tRight-tLeft)
+        nodes += tLeft
+        # Rounding for safety
         np.round(nodes, 14, out=nodes) # TODO : check if necessary ...
         self._nodes = nodes
 
@@ -78,5 +82,3 @@ class Collocation(QGenerator):
                 return 2*M-1
             elif quadType == "LOBATTO":
                 return 2*M-2
-            else:
-                raise ValueError(f"unknown quadType={quadType}")
