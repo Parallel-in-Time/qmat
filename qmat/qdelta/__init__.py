@@ -5,7 +5,7 @@ Base module for QDelta coefficients generation
 """
 import numpy as np
 
-from qmat.utils import checkOverriding, storeClass, importAll
+from qmat.utils import checkOverriding, storeClass, importAll, checkGenericConstr
 
 class QDeltaGenerator(object):
 
@@ -36,6 +36,7 @@ class QDeltaGenerator(object):
 QDELTA_GENERATORS = {}
 
 def register(cls:QDeltaGenerator)->QDeltaGenerator:
+    checkGenericConstr(cls)
     checkOverriding(cls, "getQDelta", isProperty=False)
     storeClass(cls, QDELTA_GENERATORS)
     return cls

@@ -3,6 +3,7 @@
 """
 Utility module
 """
+import inspect
 import pkgutil
 import numpy as np
 
@@ -17,6 +18,15 @@ def checkOverriding(cls, name, isProperty=True):
     else:
         pass
         # TODO : check that signatures are the same
+
+
+def checkGenericConstr(cls):
+    sig = inspect.signature(cls.__init__)
+    try:
+        par = sig.parameters["kwargs"]
+        assert par.kind == par.VAR_KEYWORD
+    except (KeyError, AssertionError):
+        raise AssertionError(f"{cls.__name__} class requires **kwargs in its constructor")
 
 
 def storeAlias(cls, dico, alias):

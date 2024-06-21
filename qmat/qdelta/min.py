@@ -83,7 +83,7 @@ class MIN_VDHS(FromTable):
 class MIN_SR_NS(QDeltaGenerator):
     aliases = ["MIN-SR-NS", "MIN_GT"]
 
-    def __init__(self, nodes):
+    def __init__(self, nodes, **kwargs):
         self.nodes = np.asarray(nodes)
         M = self.nodes.size
         self.QDelta = np.zeros((M, M), dtype=float)
