@@ -30,8 +30,9 @@ class Collocation(QGenerator):
         nodes *= (tRight-tLeft)
         nodes += tLeft
         self.tLeft, self.tRight = tLeft, tRight
-        # Rounding for safety
-        np.round(nodes, 14, out=nodes) # TODO : check if necessary ...
+        # Safety when bound should be included ...
+        if np.allclose(tLeft, nodes[0]): nodes[0] = tLeft
+        if np.allclose(tRight, nodes[-1]): nodes[-1] = tRight
         self._nodes = nodes
 
         # Lagrange approximation based on nodes
