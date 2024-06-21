@@ -29,6 +29,7 @@ class Collocation(QGenerator):
         # Scale to [tLeft, tRight]
         nodes *= (tRight-tLeft)
         nodes += tLeft
+        self.tLeft, self.tRight = tLeft, tRight
         # Rounding for safety
         np.round(nodes, 14, out=nodes) # TODO : check if necessary ...
         self._nodes = nodes
@@ -38,8 +39,8 @@ class Collocation(QGenerator):
         self._approx = approx
 
         # Compute Q (quadrature matrix) and weights
-        Q = approx.getIntegrationMatrix([(0, tau) for tau in nodes])
-        weights = approx.getIntegrationMatrix([(0, 1)]).ravel()
+        Q = approx.getIntegrationMatrix([(tLeft, tau) for tau in nodes])
+        weights = approx.getIntegrationMatrix([(tLeft, tRight)]).ravel()
         self._Q, self._weights = Q, weights
 
         # For convergence tests
@@ -58,7 +59,7 @@ class Collocation(QGenerator):
     @property
     def S(self):
         nodes = self._nodes
-        pInts = [(0 if i == 0 else nodes[i-1], nodes[i])
+        pInts = [(self.tLeft if i == 0 else nodes[i-1], nodes[i])
                  for i in range(nodes.shape[0])]
         return self._approx.getIntegrationMatrix(pInts)
 
