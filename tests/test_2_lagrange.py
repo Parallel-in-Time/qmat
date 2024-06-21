@@ -54,9 +54,28 @@ def testInterpolation(nNodes, weightComputation):
     P = approx.getInterpolationMatrix(times)
 
     polyCoeffs = np.random.rand(nNodes)
-    polyNodes = np.polyval(polyCoeffs, nodes)
-    polyTimes = np.polyval(polyCoeffs, times)
-    assert np.allclose(polyTimes, P @ polyNodes)
+    polyValues = np.polyval(polyCoeffs, nodes)
+    refEvals = np.polyval(polyCoeffs, times)
+    assert np.allclose(refEvals, P @ polyValues)
+
+
+@pytest.mark.parametrize("weightComputation", ["AUTO", "FAST", "STABLE", "CHEBFUN"])
+@pytest.mark.parametrize("nNodes", nNodeTests)
+def testEvaluation(nNodes, weightComputation):
+    nodes = np.sort(np.random.rand(nNodes))
+    times = np.random.rand(nNodes*2)
+    polyCoeffs = np.random.rand(nNodes)
+    polyValues = np.polyval(polyCoeffs, nodes)
+    
+    approx = LagrangeApproximation(nodes, weightComputation=weightComputation, fValues=polyValues)
+    P = approx.getInterpolationMatrix(times)
+    refEvals = P @ polyValues
+
+    polyEvals = approx(t=times, fValues=polyValues)
+    assert np.allclose(polyEvals, refEvals)
+
+    polyEvals = approx(t=times)
+    assert np.allclose(polyEvals, refEvals)
     
 
 @pytest.mark.parametrize("numQuad", ["LEGENDRE_NUMPY", "LEGENDRE_SCIPY", "FEJER"])

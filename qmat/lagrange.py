@@ -104,6 +104,8 @@ class LagrangeApproximation(object):
         - 'MAX' : scaling based on the maximum weight value.
 
         The default is 'MAX'.
+    fValues : list, tuple or np.1darray
+        Function values to be used when evaluating the LagrangeApproximation as a function
 
     Attributes
     ----------
@@ -118,7 +120,7 @@ class LagrangeApproximation(object):
            "Barycentric Lagrange interpolation." SIAM review, 46(3), 501-517.
     """
 
-    def __init__(self, points, weightComputation='AUTO', scaleRef='MAX'):
+    def __init__(self, points, weightComputation='AUTO', scaleRef='MAX', fValues=None):
         points = np.asarray(points).ravel()
         assert np.unique(points).size == points.size, "distinct interpolation points are required"
 
@@ -177,6 +179,23 @@ class LagrangeApproximation(object):
         self.points = points
         self.weights = weights
         self.weightComputation = weightComputation
+
+        # Store function values if provided
+        if fValues is not None:
+            fValues = np.asarray(fValues)
+            if fValues.shape != points.shape:
+                raise ValueError(f'fValues {fValues.shape} has not the correct shape: {points.shape}')
+        self.fValues = fValues
+
+
+    def __call__(self, t, fValues=None):
+        if fValues is None: fValues=self.fValues
+        assert fValues is not None, "cannot evaluate polynomial without fValues"
+        t = np.asarray(t)
+        fValues = np.asarray(fValues)
+        values = self.getInterpolationMatrix(t.ravel()).dot(fValues)
+        values.shape = t.shape
+        return values
 
 
     @property

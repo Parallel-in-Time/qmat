@@ -24,7 +24,7 @@ dependencies:
   ...
   - pip
   - pip:
-    qmat
+    - qmat
 ```
 
 ## Install from source
