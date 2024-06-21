@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "qmat"
-version = "0.1.6"
+version = "0.1.7"
 description = "Generation of Q-coefficients for Spectral Deferred Corrections (and other time-integration methods ...)"
 dependencies = [
     "numpy",
