@@ -24,7 +24,7 @@ def referenceWeights(pType, n):
 def testWeights(pType, weightComputation):
     for n in nNodeTests:
         points, weights = referenceWeights(pType, n)
-        approx = LagrangeApproximation(points, weightComputation=weightComputation)
+        approx = LagrangeApproximation(points, weightComputation=weightComputation, scaleWeights=True)
         assert np.allclose(approx.weights, weights), f"discrepancy with reference weights for n={n}"
 
 

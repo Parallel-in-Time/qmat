@@ -120,7 +120,7 @@ class LagrangeApproximation(object):
            "Barycentric Lagrange interpolation." SIAM review, 46(3), 501-517.
     """
 
-    def __init__(self, points, weightComputation='AUTO', scaleRef='MAX', fValues=None):
+    def __init__(self, points, weightComputation='AUTO', scaleWeights=False, scaleRef='MAX', fValues=None):
         points = np.asarray(points).ravel()
         assert np.unique(points).size == points.size, "distinct interpolation points are required"
 
@@ -173,7 +173,8 @@ class LagrangeApproximation(object):
             raise NotImplementedError(
                 f'weightComputation={weightComputation}')
         weights = invProd
-        weights /= np.max(np.abs(weights))
+        if scaleWeights:
+            weights /= np.max(np.abs(weights))
 
         # Store attributes
         self.points = points
