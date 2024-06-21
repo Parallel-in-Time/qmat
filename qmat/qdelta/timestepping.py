@@ -9,13 +9,15 @@ from qmat.qdelta import QDeltaGenerator, register
 
 class TimeStepping(QDeltaGenerator):
 
-    def __init__(self, nodes, **kwargs):
-        self.nodes = np.asarray(nodes)
+    def __init__(self, nodes, tLeft=0, **kwargs):
+        nodes = np.asarray(nodes)
         deltas = nodes.copy()
+        deltas[0] = nodes[0] - tLeft
         deltas[1:] = np.ediff1d(nodes)
         self.deltas = deltas
-        M = self.nodes.size
+        M = nodes.size
         self.QDelta = np.zeros((M, M), dtype=float)
+        self.nodes = nodes
 
 
 @register
