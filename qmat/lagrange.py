@@ -243,7 +243,7 @@ class LagrangeApproximation(object):
         concom = (iDiff == np.inf) | (iDiff == -np.inf)
         i, j = np.where(concom)
 
-        # Replace iDiff by on on those lines to get a simple copy of the value
+        # Replace iDiff by one on those lines to get a simple copy of the value
         iDiff[i, :] = concom[i, :]
 
         # Compute interpolation matrix using weights
@@ -288,7 +288,7 @@ class LagrangeApproximation(object):
             - 'LEGENDRE_SCIPY' : Gauss-Legendre rule from Scipy
             - 'FEJER' : internaly implemented Fejer-I rule
 
-            The default is 'LEGENDRE_NUMPY'.
+            The default is 'FEJER'.
 
         Returns
         -------
