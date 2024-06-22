@@ -17,15 +17,14 @@ class MIN(QDeltaGenerator):
     aliases = ["MIN-Speck"]
 
     def rho(self, x):
-        M = self.QDelta.shape[0]
+        M = self.size
         return max(abs(
             np.linalg.eigvals(np.eye(M) - np.diag(x).dot(self.Q))))
 
-    def getQDelta(self, k=None):
-        x0 = 10 * np.ones(self.Q.shape[0])
+    def computeQDelta(self, k=None):
+        x0 = 10 * np.ones(self.size)
         d = spo.minimize(self.rho, x0, method='Nelder-Mead')
-        np.copyto(self.QDelta, np.linalg.inv(np.diag(d.x)))
-        return self.QDelta
+        return np.linalg.inv(np.diag(d.x))
 
 
 class FromTable(QDeltaGenerator):
@@ -34,19 +33,30 @@ class FromTable(QDeltaGenerator):
         self.nNodes = nNodes
         self.nodeType = nodeType
         self.quadType = quadType
-        self.QDelta = np.zeros((nNodes, nNodes), dtype=float)
+    
+    @property
+    def size(self):
+        return self.nNodes
 
-    def getQDelta(self, k=None):
+    def computeQDelta(self, k=None):
         name = self.__class__.__name__
         try:
             table = getattr(tables, name)
-            coeffs = table[self.nodeType][self.quadType][self.nNodes]
+            coeffs = table[self.nodeType][self.quadType][self.size]
+            coeffs = np.asarray(coeffs, dtype=float)
+            assert coeffs.ndim == 1
+            assert coeffs.size == self.size
         except KeyError:
             raise NotImplementedError(
-                "no {name} MIN coefficients for"
+                f"no {name} MIN coefficients for"
                 f"{self.nNodes} {self.nodeType} {self.quadType} nodes")
-        np.copyto(self.QDelta, np.diag(coeffs))
-        return self.QDelta
+        except AssertionError:
+            raise ValueError(
+                f"MIN coefficients stored for {name} are inconsistent : {coeffs}")
+        except:
+            raise ValueError(
+                f"could not convert {name} MIN coefficients to numpy array")
+        return np.diag(coeffs)
 
     def check(cls):
         try:
@@ -85,12 +95,13 @@ class MIN_SR_NS(QDeltaGenerator):
 
     def __init__(self, nodes, **kwargs):
         self.nodes = np.asarray(nodes)
-        M = self.nodes.size
-        self.QDelta = np.zeros((M, M), dtype=float)
 
-    def getQDelta(self, k=None):
-        np.copyto(self.QDelta, np.diag(self.nodes)/self.nodes.size)
-        return self.QDelta
+    @property
+    def size(self):
+        return self.nodes.size
+
+    def computeQDelta(self, k=None):
+        return np.diag(self.nodes)/self.size
 
 
 @register
@@ -98,11 +109,13 @@ class MIN_SR_S(QDeltaGenerator):
     aliases = ["MIN-SR-S"]
 
     def __init__(self, nNodes, nodeType, quadType, **kwargs):
-        self.nNodes = nNodes
         self.nodeType = nodeType
         self.quadType = quadType
-        self.QDelta = np.zeros((nNodes, nNodes), dtype=float)
         self.coll = Collocation(nNodes, nodeType, quadType)
+
+    @property
+    def size(self):
+        return self.coll.nodes.size
 
     def computeCoeffs(self, M, a=None, b=None):
         """
@@ -132,7 +145,7 @@ class MIN_SR_S(QDeltaGenerator):
             The nodes associated to the current coefficients.
         """
         nodeType, quadType = self.nodeType, self.quadType
-        if M == self.nNodes:
+        if M == self.size:
             collM = self.coll
         else:
             collM = Collocation(nNodes=M, nodeType=nodeType, quadType=quadType)
@@ -182,35 +195,32 @@ class MIN_SR_S(QDeltaGenerator):
         sol = spo.minimize(lawDiff, [1.0, 1.0], method="nelder-mead")
         return sol.x
 
-    def getQDelta(self, k=None):
+    def computeQDelta(self, k=None):
         # Compute coefficients incrementally
         a, b = None, None
         m0 = 2 if self.quadType in ['LOBATTO', 'RADAU-LEFT'] else 1
-        for m in range(m0, self.nNodes + 1):
+        for m in range(m0, self.size + 1):
             coeffs, nodes = self.computeCoeffs(m, a, b)
             if m > 1:
                 a, b = self.fit(coeffs * m, nodes)
-
-        np.copyto(self.QDelta, np.diag(coeffs))
-        return self.QDelta
+        return np.diag(coeffs)
 
 
 @register
 class MIN_SR_FLEX(MIN_SR_S):
+    _K_DEP = True
     aliases = ["MIN-SR-FLEX"]
 
-    def getQDelta(self, k=None):
+    def computeQDelta(self, k=None):
         if k is None:
             k = 1
         if k < 1:
             raise ValueError(f"k must be greater than 0 ({k})")
-        nodes = self.coll.nodes
-        if k <= nodes.size:
-            np.copyto(self.QDelta, np.diag(nodes)/k)
+        if k <= self.size:
+            return np.diag(self.coll.nodes/k)
         else:
             try:
-                self.QDelta_MIN_SR_S
+                self._QDelta_MIN_SR_S
             except AttributeError:
-                self.QDelta_MIN_SR_S = super().getQDelta().copy()
-            np.copyto(self.QDelta, self.QDelta_MIN_SR_S)
-        return self.QDelta
+                self._QDelta_MIN_SR_S = super().computeQDelta()
+            return self._QDelta_MIN_SR_S

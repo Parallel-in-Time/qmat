@@ -7,17 +7,23 @@ import numpy as np
 
 from qmat.qdelta import QDeltaGenerator, register
 
+
 class TimeStepping(QDeltaGenerator):
 
     def __init__(self, nodes, tLeft=0, **kwargs):
         nodes = np.asarray(nodes)
+
         deltas = nodes.copy()
         deltas[0] = nodes[0] - tLeft
         deltas[1:] = np.ediff1d(nodes)
+        
         self.deltas = deltas
-        M = nodes.size
-        self.QDelta = np.zeros((M, M), dtype=float)
         self.nodes = nodes
+        self.tLeft = tLeft
+
+    @property
+    def size(self):
+        return self.nodes.size
 
 
 @register
@@ -25,11 +31,11 @@ class BE(TimeStepping):
     """Approximation based on Backward Euler steps between the nodes"""
     aliases = ["IE"]
 
-    def getQDelta(self, k=None):
-        QDelta, M, deltas = self.QDelta, self.nodes.size, self.deltas
+    def computeQDelta(self, k=None):
+        QDelta, M, deltas = self.zeros, self.nodes.size, self.deltas
         for i in range(M):
             QDelta[i:, :M-i] += np.diag(deltas[:M-i])
-        return self.storeAndReturn(QDelta)
+        return QDelta
 
 
 @register
@@ -37,23 +43,24 @@ class FE(TimeStepping):
     """Approximation based on Forward Euler steps between the nodes"""
     aliases = ["EE"]
 
-    def getQDelta(self, k=None):
-        QDelta, M, deltas = self.QDelta, self.nodes.size, self.deltas
+    def computeQDelta(self, k=None):
+        QDelta, M, deltas = self.zeros, self.nodes.size, self.deltas
         for i in range(1, M):
             QDelta[i:, :M-i] += np.diag(deltas[1:M-i+1])
-        return self.storeAndReturn(QDelta)
+        return QDelta
 
     @property
     def dTau(self):
         return self.nodes*0 + self.deltas[0]
+
 
 @register
 class TRAP(TimeStepping):
     """Approximation based on Trapezoidal Rule between the nodes"""
     aliases = ["CN"]
 
-    def getQDelta(self, k=None):
-        QDelta, M, deltas = self.QDelta, self.nodes.size, self.deltas
+    def computeQDelta(self, k=None):
+        QDelta, M, deltas = self.zeros, self.nodes.size, self.deltas
         for i in range(0, M):
             QDelta[i:, :M-i] += np.diag(deltas[:M-i])
         for i in range(1, M):
@@ -71,19 +78,17 @@ class BEPAR(TimeStepping):
     """Approximation based on parallel Backward Euler steps from zero to nodes"""
     aliases = ["IEpar"]
 
-    def getQDelta(self, k=None):
-        self.QDelta[:] = np.diag(self.nodes)
-        return self.QDelta
+    def computeQDelta(self, k=None):
+        return np.diag(self.nodes) - self.tLeft
 
 
 @register
 class TRAPAR(TimeStepping):
     """Approximation based on parallel Trapezoidal Rule from zero to nodes"""
 
-    def getQDelta(self, k=None):
-        self.QDelta[:] = np.diag(self.nodes/2)
-        return self.QDelta
+    def computeQDelta(self, k=None):
+        return np.diag(self.nodes/2) - self.tLeft
 
     @property
     def dTau(self):
-        return self.nodes/2.0
+        return self.nodes/2.0 - self.tLeft

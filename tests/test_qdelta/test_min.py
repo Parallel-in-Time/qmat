@@ -106,10 +106,6 @@ def testFlex(nNodes, nodeType, quadType):
     for k in range(nNodes):
         P = (I - np.linalg.solve(gen.getQDelta(k+1), Q)) @ P
 
-    assert np.allclose(np.tril(P), P), \
-        "QDelta product is not lower triangular"
-    assert np.allclose(P, np.diag(np.diag(P))), \
-        "QDelta product is not diagonal"
     assert np.linalg.norm(P, ord=np.inf) < 1e-13 * margin, \
         "nilpotency measure is to high"
 

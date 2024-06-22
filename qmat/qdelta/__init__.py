@@ -7,37 +7,58 @@ import numpy as np
 
 from qmat.utils import checkOverriding, storeClass, importAll, checkGenericConstr
 
+
 class QDeltaGenerator(object):
+    _K_DEP = False
 
     def __init__(self, Q, **kwargs):
         self.Q = np.asarray(Q, dtype=float)
-        self.QDelta = np.zeros_like(self.Q)
 
-    def storeAndReturn(self, QDelta):
-        np.copyto(self.QDelta, QDelta)
-        return self.QDelta
+    @property
+    def size(self):
+        return self.Q.shape[0]
 
-    def getQDelta(self, k=None):
+    @property
+    def zeros(self):
+        M = self.size
+        return np.zeros((M, M), dtype=float)
+    
+    def computeQDelta(self, k=None) -> np.ndarray:
+        """Compute and returns the QDelta matrix"""
         raise NotImplementedError("mouahahah")
+
+    def getQDelta(self, k=None, copy=True):
+        try:
+            QDelta = self._QDelta[k] if self._K_DEP else self._QDelta
+        except Exception as e:
+            QDelta = self.computeQDelta(k)
+            if type(e) == AttributeError:
+                self._QDelta = {k: QDelta} if self._K_DEP else QDelta
+            elif type(e) == KeyError:
+                self._QDelta[k] = QDelta
+            else:
+                raise Exception("some very weird bug happened ... did you do fishy stuff ?")
+        return QDelta.copy() if copy else QDelta
 
     @property
     def dTau(self):
-        return self.QDelta[0]*0
+        return np.zeros(self.size, dtype=float)
 
     def genCoeffs(self, k=None, dTau=False):
         if isinstance(k, list):
-            out = [np.array([self.getQDelta(_k) for _k in k])]
+            out = [np.array([self.getQDelta(_k, copy=False) for _k in k])]
         else:
             out = [self.getQDelta(k)]
         if dTau:
             out += [self.dTau]
         return out if len(out) > 1 else out[0]
 
+
 QDELTA_GENERATORS = {}
 
 def register(cls:QDeltaGenerator)->QDeltaGenerator:
     checkGenericConstr(cls)
-    checkOverriding(cls, "getQDelta", isProperty=False)
+    checkOverriding(cls, "computeQDelta", isProperty=False)
     storeClass(cls, QDELTA_GENERATORS)
     return cls
 
