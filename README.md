@@ -37,7 +37,7 @@ which are key elements for Spectral Deferred Correction (SDC), or more general I
 ## Installation
 
 ```bash
-$ pip install qmat
+pip install qmat
 ```
 
 🔍 See more [detailed instructions for conda environment, development, ...](https://qmat.readthedocs.io/en/latest/installation.html)
