@@ -3,7 +3,7 @@
 
 ## Using PyPI
 
-You can download the latest version from [`pypi`](https://pypi.org/) :
+You can download the latest version from [`pypi`](https://pypi.org/) using `pip` :
 
 ```bash
 pip install qmat

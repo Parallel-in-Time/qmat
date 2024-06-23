@@ -45,9 +45,23 @@ It allows to generate :math:`Q`-coefficients for multi-stages methods (equivalen
 and many different **lower-triangular** approximation of the :math:`Q` matrix, named :math:`Q_\Delta`,
 which are key elements for Spectral Deferred Correction (SDC), or more general Iterated Runge-Kutta Methods.
 
+.. raw:: html
+
+    <a href="https://zenodo.org/doi/10.5281/zenodo.11956478">
+        <img alt="DOI" src="https://zenodo.org/badge/804826743.svg">
+    </a>
+
+
+Package can be installed using `pip` :
+
+.. code-block:: bash
+
+    pip install qmat    # basic installation through
+
+... but you can also use `conda` or installation from sources, see the :doc:`Installation Instructions 💾<installation>`
+
 
     📜 *If you are already familiar with those concepts, you can use this package like this :*
-
 
 .. code-block:: python
 

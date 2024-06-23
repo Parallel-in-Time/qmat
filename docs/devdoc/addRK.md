@@ -64,7 +64,7 @@ But this automatic time-step size selection may not be adapted for methods with 
 to actually see the theoretical order.
 In that case, simply add a `CONV_TEST_NSTEPS` _class attribute_ storing a list with **higher numbers of time-steps** in increasing order, high enough so the convergence test passes.
 
-> 📜 See [SDIRK2_2 implementation](https://github.com/Parallel-in-Time/qmat/blob/e17e2dd2aebff1b09188f4314a82338355a55582/qmat/qcoeff/butcher.py#L326) for an example ...
+> 📜 See [SDIRK2_2 implementation](https://github.com/Parallel-in-Time/qmat/blob/e17e2dd2aebff1b09188f4314a82338355a55582/qmat/qcoeff/butcher.py#L269) for an example ...
 
 
 ## Embedded scheme

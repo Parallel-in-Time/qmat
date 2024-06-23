@@ -3,13 +3,14 @@
 """
 Base module for QDelta coefficients generation
 """
+import inspect
 import numpy as np
 
 from qmat.utils import checkOverriding, storeClass, importAll, checkGenericConstr
 
 
 class QDeltaGenerator(object):
-    _K_DEP = False
+    _K_DEPENDENT = False
 
     def __init__(self, Q, **kwargs):
         self.Q = np.asarray(Q, dtype=float)
@@ -29,11 +30,11 @@ class QDeltaGenerator(object):
 
     def getQDelta(self, k=None, copy=True):
         try:
-            QDelta = self._QDelta[k] if self._K_DEP else self._QDelta
+            QDelta = self._QDelta[k] if self._K_DEPENDENT else self._QDelta
         except Exception as e:
             QDelta = self.computeQDelta(k)
             if type(e) == AttributeError:
-                self._QDelta = {k: QDelta} if self._K_DEP else QDelta
+                self._QDelta = {k: QDelta} if self._K_DEPENDENT else QDelta
             elif type(e) == KeyError:
                 self._QDelta[k] = QDelta
             else:
@@ -59,6 +60,14 @@ QDELTA_GENERATORS = {}
 def register(cls:QDeltaGenerator)->QDeltaGenerator:
     checkGenericConstr(cls)
     checkOverriding(cls, "computeQDelta", isProperty=False)
+    try:
+        sig = inspect.signature(cls.computeQDelta)
+        par = sig.parameters["k"]
+        assert par.kind == par.POSITIONAL_OR_KEYWORD
+        if par.default is not None:
+            cls._K_DEPENDENT = True
+    except (KeyError, AssertionError):
+        raise AssertionError(f"{cls.__name__} class does not properly override the computeQDelta method")
     storeClass(cls, QDELTA_GENERATORS)
     return cls
 

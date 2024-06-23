@@ -208,12 +208,10 @@ class MIN_SR_S(QDeltaGenerator):
 
 @register
 class MIN_SR_FLEX(MIN_SR_S):
-    _K_DEP = True
     aliases = ["MIN-SR-FLEX"]
 
-    def computeQDelta(self, k=None):
-        if k is None:
-            k = 1
+    def computeQDelta(self, k=1):
+        if k is None: k = 1
         if k < 1:
             raise ValueError(f"k must be greater than 0 ({k})")
         if k <= self.size:

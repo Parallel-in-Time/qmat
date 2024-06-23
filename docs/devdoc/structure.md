@@ -1,8 +1,8 @@
-# General code structure
+# Generic code structure
 
 📜 _Quick introduction on the code design and how to extend it ..._
 
-## Generator registration
+## Registration mechanism
 
 The two main features, namely the generation of $Q$-coefficients and $Q_\Delta$ approximations,
 are respectively implemented in the `qmat.qcoeff` and `qmat.qdelta` sub-packages.
@@ -46,20 +46,20 @@ from qmat.qcoeff import QGenerator, register
 class MyGenerator(QGenerator):
 
     @property
-    def nodes(self):
-        # TODO : implementation
+    def nodes(self)
+        # TODO : returns a np.1darray
 
     @property
     def weights(self):
-        # TODO : implementation
+        # TODO : returns a np.1darray
 
     @property
     def Q(self):
-        # TODO : implementation
+        # TODO : returns a np.2darray:
 
     @property
     def order(self):
-        # TODO : implementation
+        # TODO : returns an int
 ```
 
 The `nodes`, `weights`, and `Q` properties have to be overridden 
@@ -67,12 +67,15 @@ The `nodes`, `weights`, and `Q` properties have to be overridden
 the expected arrays in `numpy.ndarray` format :
 
 1. `nodes` : 1D vector of size `nNodes`
-2. `weights` : 1D vector of size `nNides`
+2. `weights` : 1D vector of size `nNodes`
 3. `Q` : 2D matrix of size `(nNodes,nNodes)`
 
-While `nNodes` is a variable depending on the generator instance, later on the tests checks if the for each $Q$-generators, dimensions of `nodes`, `weights` and `Q` are consistent.
+While `nNodes` is directly determined from the `nodes` property, later on the tests checks if the for each $Q$-generators, dimensions of `nodes`, `weights` and `Q` are consistent.
 Finally, you should implement the `order` property, that returns the theoretical accuracy order of the associated scheme (global truncation error).
-The later is used in the [test series for convergence](https://github.com/Parallel-in-Time/qmat/blob/main/tests/test_qcoeff/test_convergence.py) to check the coefficients.
+Value returned by `order` is used in the [test series for convergence](https://github.com/Parallel-in-Time/qmat/blob/main/tests/test_qcoeff/test_convergence.py) to check the coefficients.
+
+> 🔔 For Runge-Kutta type generators, their implementation use an additional abstract layer to simplify the addition
+> of new schemes, see [specific documentation to add RK schemes ...](./addRK.md)
 
 Even if not it's not mandatory, $Q$-generators can implement a constructor to store parameters, _e.g_ :
 
@@ -96,7 +99,7 @@ class MyGenerator(QGenerator):
 You can provide required parameters (like `param1`) or optional ones with default value (like `param2`).
 
 > ⚠️ For required parameters, you must provide a default value in the class attribute `DEFAULT_PARAMS`, such that the `QGenerator.getInstance()` class method works.
-> The later is used by to create a default instance of the $Q$-generator, by setting required parameters values using `DEFAULT_PARAMS`.
+> The later is used during testing to create a default instance of the $Q$-generator, by setting required parameters values using `DEFAULT_PARAMS`.
 
 After implementing a new generator, you should test is by running the following test :
 
@@ -106,20 +109,39 @@ pytest -v ./tests/test_qcoeff
 
 This will run all consistency and convergence check tests on all generators (including yours), more details on how to run the tests are provided [here ...](./testing.md)
 
+> 🔔 Convergence tests for new $Q$-generators are automatically done depending on its order. In some particular case, you may 
+> have to add a `CONV_TEST_NSTEPS` class variable to your generator class for those tests to pass
+> (_e.g_, if your generator has a high error constant).
+> See [documentation on adding RK schemes](./addRK.md#convergence-testing) for more details ...
+
 ## $Q_\Delta$-generators implementation
 
-First, know that the base `QDeltaGenerator` class implement the following constructor :
+By default, the base `QDeltaGenerator` class implement those base methods, that may be used by any
+specialized $Q_\Delta$ generator.
 
 ```python
 class QDeltaGenerator(object):
 
     def __init__(self, Q, **kwargs):
         self.Q = np.asarray(Q, dtype=float)
-        self.QDelta = np.zeros_like(self.Q)
+
+    @property
+    def size(self):
+        return self.Q.shape[0]
+
+    @property
+    def zeros(self):
+        M = self.size
+        return np.zeros((M, M), dtype=float)
 ```
-This default constructor is actually used by all the specialized generators
-implemented in `qmat.qdelta.algebraic`, as their $Q_\Delta$ approximation is build directly from
-the $Q$ matrix given as parameter.
+
+The default constructor stores the $Q$ matrix that is approximated,
+and the `size` property is used to determine the shape of generated $Q_\Delta$ approximation,
+and the `zeros` property can be used to generate the initial basis for $Q_\Delta$.
+
+> 🔔 The default constructor is used by all the specialized generators implemented in `qmat.qdelta.algebraic`, 
+> as their $Q_\Delta$ approximation is build directly from the $Q$ matrix given as parameter.
+
 
 To implement a new $Q_\Delta$-generator (in an existing or new category), new classes must at least follow this template :
 
@@ -129,27 +151,28 @@ from qmat.qdelta import QDeltaGenerator, register
 @register
 class MyGenerator(QDeltaGenerator):
 
-    def getQDelta(self, k=None):
-        # TODO : implementation
-        return self.QDelta
+    def computeQDelta(self, k=None):
+        # TODO : returns a np.2darray with shape (self.size, self.size)
 ```
 
-In practice, `getQDelta` must modify the current `QDelta` attribute (initialized with zeros) and return it. 
-You may implement a check avoiding to recompute `QDelta` when already computed, _e.g_
+The `computeQDelta` must simply returns the $Q_\Delta$ approximation for this generator,
+eventually using the `zeros` property as starting basis.
+
+**📣 Important :** even if this may not be used by your generator, the `computeQDelta` method **must always** 
+take a `k` optional parameter corresponding to a **sweep or iteration number** in SDC or iterated RK methods, 
+starting at $k=1$ for the first sweep.
+The default value for this parameter must be :
+
+- `None` if $Q_\Delta$ does not vary with `k`
+- **any other value** you see fit if $Q_\Delta$ varies with `k`. For instance, using `1` as default value :
 
 ```python
-@register
-class MyGenerator(QDeltaGenerator):
-
-    def getQDelta(self, k=None):
-        if hasattr(self, "_computed"):
-            return self.QDelta
-        # TODO : implementation
-        self._computed = "ouiii"
-        return self.QDelta
+def computeQDelta(self, k=1):
+    if k is None: k=1
+    # TODO : returns a np.2darray with shape (self.size, self.size)
 ```
 
-> ⚠️ Even if this may not be used by your generator, the `getQDelta` method should always take a `k` optional parameter (with the default value you see fit, `None` is enough if you don't use `k`).
+> ⚠️ The `computeQDelta` method must be able to take `k=None` as argument, and eventually replace it by its default value.
 
 You can also redefine the constructor of your generator like this :
 ```python
@@ -158,13 +181,16 @@ class MyGenerator(QDeltaGenerator):
 
     def __init__(self, param1, param2, **kwargs):
         # TODO : implementation
-        self.QDelta = ...
+
+    @property
+    def size(self):
+        # TODO : proper redefinition
 ```
 
 But then it is necessary to :
 
-1. add the `**kwargs` arguments to your constructor, but don't use it for your generator's parameters : `**kwargs` is only used when series of $Q_\Delta$ matrices are generated from different types of generators
-2. zero-initialize a `QDelta` `numpy.ndarray` with the appropriate shape (square matrix).
+1. add the `**kwargs` arguments to your constructor, but don't use it for your generator's parameters : `**kwargs` is only used when $Q_\Delta$ matrices are generated from different types of generators using one single call
+2. properly redefine the `size` property if you don't store any $Q$ matrix attribute in your constructor
 
 
 ## Additional submodules
