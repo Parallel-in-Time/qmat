@@ -52,11 +52,11 @@ which are key elements for Spectral Deferred Correction (SDC), or more general I
     </a>
 
 
-Package can be installed using `pip` :
+This package can be installed using `pip` :
 
 .. code-block:: bash
 
-    pip install qmat    # basic installation through
+    pip install qmat
 
 ... but you can also use `conda` or installation from sources, see the :doc:`Installation Instructions 💾<installation>`
 

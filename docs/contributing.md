@@ -28,7 +28,7 @@ Chosen merge strategy is to squash commits $\Rightarrow$ you don't have to care 
 
 > 🔔 Once your PR is accepted, please delete this branch from your fork and synchronize your `main` branch. When creating a new development branch later, ensure that you start from an up-to-date `main` branch of your fork. 
 
-In case you are interested in contributing but don't have any idea on what, checkout out [current development roadmap 🎯](./devdoc/roadmap.md) and the current [project proposals 🎓](https://github.com/Parallel-in-Time/qmat/discussions/categories/project-proposals)
+In case you are interested in contributing but don't have any idea on what, checkout out current [development roadmap 🎯](./devdoc/roadmap.md) and [project proposals 🎓](https://github.com/Parallel-in-Time/qmat/discussions/categories/project-proposals)
 
 ## Base recipes
 

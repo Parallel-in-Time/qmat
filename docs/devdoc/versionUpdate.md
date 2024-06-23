@@ -3,7 +3,7 @@
 ## Release conventions
 
 See full [development roadmap](./roadmap.md) for past and planned features corresponding to each versions.
-We use the following denomination for each version update (_a.k.a_ releases) :
+For each version update (_a.k.a_ releases) **after reaching Mature status (6)**, we use the following denomination :
 
 - patch : from `*.*.{i}` to `*.*.{i+1}` $\Rightarrow$ minor modifications, bugfixes, code reformating, additional aliases for generators 
 - minor : from `*.{i}.*` to `*.{i+1}.0` $\Rightarrow$ addition of new generators, new utility functions, new scripts, ...
@@ -11,7 +11,7 @@ We use the following denomination for each version update (_a.k.a_ releases) :
 
 Here are some generic recommendation on release-triggering events :
 
-1. patch version should be released every three months in case some only patch-type commits have been done
+1. patch version should be released every three months in case some only patch-type changes have been done
 2. minor version should be released after merging a PR including new features (requires a version dump commit, see below ...)
 3. major version are released when important changes have been done on a development branch named `v{i+1}-dev` hosted on the main repo. Requires a full update of the documentation and code, eventually some migration guide, etc ... Before merging `v{i+1}-dev` into `main`, a `v{i}-lts` branch is created from it to keep track of the old version, and eventually update it with some minor or patch releases until a pre-defined deprecation date defined in `docs/SECURITY.md`.
 
