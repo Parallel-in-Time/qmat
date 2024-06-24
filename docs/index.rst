@@ -42,7 +42,7 @@ It allows to generate :math:`Q`-coefficients for multi-stages methods (equivalen
     \end{array}
     \quad\text{(Butcher table)}
 
-and many different **lower-triangular** approximation of the :math:`Q` matrix, named :math:`Q_\Delta`,
+and many different **lower-triangular** approximations of the :math:`Q` matrix, named :math:`Q_\Delta`,
 which are key elements for Spectral Deferred Correction (SDC), or more general Iterated Runge-Kutta Methods.
 
 .. raw:: html

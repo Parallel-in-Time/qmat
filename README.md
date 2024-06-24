@@ -29,7 +29,7 @@ c & A \\
 \quad\text{(Butcher table)}
 $$
 
-and many different **lower-triangular** approximation of the $Q$ matrix, named $Q_\Delta$,
+and many different **lower-triangular** approximations of the $Q$ matrix, named $Q_\Delta$,
 which are key elements for Spectral Deferred Correction (SDC), or more general Iterated Runge-Kutta Methods.
 
 [![DOI](https://zenodo.org/badge/804826743.svg)](https://zenodo.org/doi/10.5281/zenodo.11956478)
