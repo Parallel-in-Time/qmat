@@ -67,11 +67,15 @@ in particular the [**step by step tutorials**](https://qmat.readthedocs.io/en/la
 For any contribution, please checkout out (very cool) [Contribution Guidelines](https://qmat.readthedocs.io/en/latest/contributing.html)
 and the current [Development Roadmap](https://qmat.readthedocs.io/en/latest/devdoc/roadmap.html).
 
+## Projects relying on `qmat`
+
+- [pySDC](https://github.com/Parallel-in-Time/pySDC) : _Python implementation of the spectral deferred correction (SDC) approach and its flavors, esp. the multilevel extension MLSDC and PFASST._
+
 ## Links
 
 - Documentation : https://qmat.readthedocs.io/
 - Issues Tracker : https://github.com/Parallel-in-Time/qmat/issues
-- Q & A : https://github.com/Parallel-in-Time/qmat/discussions/categories/q-a
+- Q&A : https://github.com/Parallel-in-Time/qmat/discussions/categories/q-a
 - Project Proposals : https://github.com/Parallel-in-Time/qmat/discussions/categories/project-proposals
 
 

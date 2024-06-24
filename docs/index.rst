@@ -83,6 +83,12 @@ This package can be installed using `pip` :
     and the current :doc:`Development Roadmap 🎯<devdoc/roadmap>`
 
 
+Projects relying on `qmat`
+==========================
+
+* `pySDC <https://github.com/Parallel-in-Time/pySDC>`_ : *Python implementation of the spectral deferred correction (SDC) approach and its flavors, esp. the multilevel extension MLSDC and PFASST.*
+
+
 Doc Contents
 ============
 
@@ -100,7 +106,7 @@ Links
 
 * Code repository: https://github.com/Parallel-in-Time/qmat
 * Issues Tracker : https://github.com/Parallel-in-Time/qmat/issues
-* Q & A : https://github.com/Parallel-in-Time/qmat/discussions/categories/q-a
+* Q&A : https://github.com/Parallel-in-Time/qmat/discussions/categories/q-a
 * Project Proposals : https://github.com/Parallel-in-Time/qmat/discussions/categories/project-proposals
 
 Developer
