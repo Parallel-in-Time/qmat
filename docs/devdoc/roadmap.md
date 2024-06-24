@@ -19,7 +19,7 @@ Detailed description of all specific versions and their associated changes is av
 
 - ✅ integration of all RK schemes from [pySDC](https://github.com/Parallel-in-Time/pySDC)
 - ✅ citation file and zenodo releases
-- integration of `qmat` into [pySDC](https://github.com/Parallel-in-Time/pySDC)
+- ✅ integration of `qmat` into [pySDC](https://github.com/Parallel-in-Time/pySDC), _c.f_ [associated PR](https://github.com/Parallel-in-Time/pySDC/pull/445)
 - ✅ refined design for $Q_\Delta$ generators
 - full documentation of classes and functions
 - finalization of extended usage tutorials ($S$-matrix, `dTau` coefficient for initial sweep, prolongation)
