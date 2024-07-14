@@ -30,17 +30,25 @@ def testGeneration(name, nNodes):
     assert np.allclose(QD1, QD2), \
         f"OOP QDelta and PP QDelta are not equals for {name}"
 
-    _, dTau1 = gen.genCoeffs(dTau=True)
+    SD1, dTau1 = gen.genCoeffs(form="N2N", dTau=True)
     assert type(dTau1) == np.ndarray, \
         f"dTau for {name} is not np.ndarray but {type(dTau1)}"
     assert dTau1.ndim == 1, \
         f"dTau for {name} is not 1D : {dTau1}"
     assert dTau1.size == nNodes, \
         f"dTau for {name} has not the correct size : {dTau1}"
+    assert SD1.ndim == 2, \
+        f"SDelta for {name} is not 2D : {SD1}"
+    assert SD1.shape == QD2.shape, \
+        f"SDelta for {name} has not the correct shape : {SD1}"
 
-    _, dTau2 = genQDeltaCoeffs(name, Q=Q, dTau=True)
+    SD2, dTau2 = genQDeltaCoeffs(name, Q=Q, form="N2N", dTau=True)
+    assert np.allclose(SD1, SD2), \
+        f"OOP SDelta and PP SDelta are not equals for {name}"
     assert np.allclose(dTau1, dTau2), \
         f"OOP dTau and PP dTau are not equals for {name}"
+
+
 
 
 nNodes = 4

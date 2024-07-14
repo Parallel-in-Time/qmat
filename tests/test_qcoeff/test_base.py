@@ -57,22 +57,21 @@ def testAdditionalCoeffs(name):
         f"hCoeffs for {name} has inconsistent size : {h1.size}"
 
     try:
-        _, _, _, S2, h2 = genQCoeffs(name, withS=True, hCoeffs=True)
+        _, _, S2, h2 = genQCoeffs(name, form="N2N", hCoeffs=True)
     except TypeError:
-        _, _, _, S2, h2 = genQCoeffs(name, withS=True, hCoeffs=True,
-                                **GENERATORS[name].DEFAULT_PARAMS)
+        _, _, S2, h2 = genQCoeffs(
+            name, form="N2N", hCoeffs=True, **GENERATORS[name].DEFAULT_PARAMS)
     assert np.allclose(S1, S2), \
         f"OOP S matrix {S1} and PP S matrix {S2} are not equals for {name}"
     assert np.allclose(h1, h2), \
         f"OOP hCoeffs {h1} and PP hCoeffs {h2} are not equals for {name}"
 
-
     try:
         try:
             _, b, _  = genQCoeffs(name, embedded=True)
         except TypeError:
-            _, b, _  = genQCoeffs(name, embedded=True, **GENERATORS[name].DEFAULT_PARAMS)
-
+            _, b, _  = genQCoeffs(
+                name, embedded=True, **GENERATORS[name].DEFAULT_PARAMS)
         assert type(b) == np.ndarray
         assert b.ndim == 2
     except NotImplementedError:

@@ -17,12 +17,17 @@ SCHEMES = getClasses(QDELTA_GENERATORS, module="timestepping")
 def testBE(nNodes, nodeType, quadType):
     coll = Collocation(nNodes, nodeType, quadType)
     nodes = coll.nodes
-    QDelta = module.BE(nodes).getQDelta()
+    gen =  module.BE(nodes)
+    QDelta = gen.getQDelta()
 
     assert np.allclose(np.tril(QDelta), QDelta), \
         "QDelta is not lower triangular"
     assert np.allclose(QDelta.sum(axis=1), nodes), \
         "sum over the columns is not equal to nodes"
+
+    SDelta = gen.getSDelta()
+    assert np.allclose(np.diag(np.diag(SDelta)), SDelta), \
+        "SDelta is not diagonal"
 
 
 @pytest.mark.parametrize("quadType", QUAD_TYPES)
@@ -31,7 +36,8 @@ def testBE(nNodes, nodeType, quadType):
 def testFE(nNodes, nodeType, quadType):
     coll = Collocation(nNodes, nodeType, quadType)
     nodes = coll.nodes
-    QDelta = module.FE(nodes).getQDelta()
+    gen = module.FE(nodes)
+    QDelta = gen.getQDelta()
 
     assert np.allclose(np.tril(QDelta), QDelta), \
         "QDelta is not lower triangular"
@@ -40,7 +46,7 @@ def testFE(nNodes, nodeType, quadType):
     assert np.allclose(QDelta.sum(axis=1)[1:], np.cumsum(np.diff(coll.nodes))), \
         "sum over the columns is not equal to cumsum of node differences"
 
-    _, dTau = module.FE(nodes).genCoeffs(dTau=True)
+    SDelta, dTau = module.FE(nodes).genCoeffs(form="N2N", dTau=True)
     assert type(dTau) == np.ndarray, \
         f"dTau is not np.ndarray but {type(dTau)}"
     assert dTau.ndim == 1, \
@@ -49,6 +55,8 @@ def testFE(nNodes, nodeType, quadType):
         f"dTau has not the correct size : {dTau}"
     assert np.allclose(dTau, coll.nodes[0]), \
         "dTau is not equal to nodes[0]"
+    assert np.allclose(np.diag(np.diag(SDelta, k=-1), k=-1), SDelta), \
+        "SDelta is not strictly lower diagonal"
 
 
 @pytest.mark.parametrize("quadType", QUAD_TYPES)

@@ -23,7 +23,7 @@ class QDeltaGenerator(object):
     def zeros(self):
         M = self.size
         return np.zeros((M, M), dtype=float)
-    
+
     def computeQDelta(self, k=None) -> np.ndarray:
         """Compute and returns the QDelta matrix"""
         raise NotImplementedError("mouahahah")
@@ -41,15 +41,28 @@ class QDeltaGenerator(object):
                 raise Exception("some very weird bug happened ... did you do fishy stuff ?")
         return QDelta.copy() if copy else QDelta
 
+    def getSDelta(self, k=None):
+        QDelta = self.getQDelta(k)
+        M = QDelta.shape[0]
+        T = np.eye(M)
+        T[1:,:-1][np.diag_indices(M-1)] = -1
+        return T @ QDelta
+
     @property
     def dTau(self):
         return np.zeros(self.size, dtype=float)
 
-    def genCoeffs(self, k=None, dTau=False):
-        if isinstance(k, list):
-            out = [np.array([self.getQDelta(_k, copy=False) for _k in k])]
+    def genCoeffs(self, k=None, form="Z2N", dTau=False):
+        if form == "Z2N":
+            gen = lambda k, copy=False: self.getQDelta(k, copy)
+        elif form == "N2N":
+            gen = lambda k, copy=None: self.getSDelta(k)
         else:
-            out = [self.getQDelta(k)]
+            raise ValueError(f"form must be Z2N or N2N, not {form}")
+        if isinstance(k, list):
+            out = [np.array([gen(_k, copy=False) for _k in k])]
+        else:
+            out = [gen(k)]
         if dTau:
             out += [self.dTau]
         return out if len(out) > 1 else out[0]
@@ -71,7 +84,8 @@ def register(cls:QDeltaGenerator)->QDeltaGenerator:
     storeClass(cls, QDELTA_GENERATORS)
     return cls
 
-def genQDeltaCoeffs(qDeltaType, nSweeps=None, dTau=False, **params):
+
+def genQDeltaCoeffs(qDeltaType, nSweeps=None, form="Z2N", dTau=False, **params):
 
     # Check arguments
     if isinstance(qDeltaType, str):
@@ -103,7 +117,7 @@ def genQDeltaCoeffs(qDeltaType, nSweeps=None, dTau=False, **params):
             raise ValueError(f"qDeltaType={qDeltaType} is not available")
 
         gen = Generator(**params)
-        return gen.genCoeffs(dTau=dTau)
+        return gen.genCoeffs(form=form, dTau=dTau)
 
     else:  # Multiple matrices return
         try:
@@ -113,12 +127,13 @@ def genQDeltaCoeffs(qDeltaType, nSweeps=None, dTau=False, **params):
 
         if len(qDeltaType) == 1:  # Single QDelta generator
             gen = Generators[0](**params)
-            return gen.genCoeffs(k=[k+1 for k in range(nSweeps)], dTau=dTau)
+            return gen.genCoeffs(
+                k=[k+1 for k in range(nSweeps)], form=form, dTau=dTau)
 
         else:  # Multiple QDelta generators
             gens = [Gen(**params) for Gen in Generators]
             out = [np.array(
-                [gen.getQDelta(k+1) for k, gen in enumerate(gens)]
+                [gen.genCoeffs(k+1, form) for k, gen in enumerate(gens)]
                 )]
             if dTau:
                 out += [gens[0].dTau]

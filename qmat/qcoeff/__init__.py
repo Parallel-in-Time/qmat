@@ -71,13 +71,16 @@ class QGenerator(object):
         approx = LagrangeApproximation(self.nodes)
         return approx.getInterpolationMatrix([1]).ravel()
 
-    def genCoeffs(self, withS=False, hCoeffs=False, embedded=False):
-        out = [self.nodes, self.weights, self.Q]
-
+    def genCoeffs(self, form="Z2N", hCoeffs=False, embedded=False):
+        if form == "Z2N":
+            mat = self.Q
+        elif form == "N2N":
+            mat = self.S
+        else:
+            raise ValueError(f"form must be Z2N or N2N, not {form}")
+        out = [self.nodes, self.weights, mat]
         if embedded:
             out[1] = np.vstack([out[1], self.weightsEmbedded])
-        if withS:
-            out.append(self.S)
         if hCoeffs:
             out.append(self.hCoeffs)
         return out
@@ -141,13 +144,13 @@ def register(cls:QGenerator)->QGenerator:
     storeClass(cls, Q_GENERATORS)
     return cls
 
-def genQCoeffs(qType, withS=False, hCoeffs=False, embedded=False, **params):
+def genQCoeffs(qType, form="Z2N", hCoeffs=False, embedded=False, **params):
     try:
         Generator = Q_GENERATORS[qType]
     except KeyError:
         raise ValueError(f"{qType=!r} is not available")
     gen = Generator(**params)
-    return gen.genCoeffs(withS, hCoeffs, embedded)
+    return gen.genCoeffs(form, hCoeffs, embedded)
 
 
 # Import all local submodules
