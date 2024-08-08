@@ -808,13 +808,12 @@ class ARK324L2SAERK(RK):
     c[2] = 3./5.
     c[3] = 1.
 
-
     @property
     def order(self): return 3
 
 
 @registerRK
-class ARK324L2SAESDIRKA(ARK324L2SAERK):
+class ARK324L2SAESDIRK(ARK324L2SAERK):
     """
     Implicit part of embedded additive Runge-Kutta pair of orders 3 and 2. See https://doi.org/10.1016/S0168-9274(02)00138-1
     """
