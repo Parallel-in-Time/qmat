@@ -102,7 +102,7 @@ def genQDeltaCoeffs(qDeltaType, nSweeps=None, form="Z2N", dTau=False, **params):
         elif isinstance(nSweeps, int) and nSweeps > 0:
             # complete with additional sweeps
             assert nSweeps >= len(qDeltaType), \
-                f"nSweeps ({nSweeps} lower than list length for qDeltaType ({qDeltaType})"
+                f"nSweeps ({nSweeps}) is lower than list length for qDeltaType ({qDeltaType})"
             qDeltaType += [qDeltaType[-1]]*(nSweeps-len(qDeltaType))
         else:
             raise ValueError(f"bad value of nSweep {nSweeps}")
