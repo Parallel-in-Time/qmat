@@ -552,6 +552,9 @@ class ESDIRK53(RK):
     def order(self): return 5
 
 
+# -------------------------- Additive (IMEX) schemes --------------------------
+
+
 @registerRK
 class ARK548L2SAERK(RK):
     """
@@ -829,3 +832,36 @@ class ARK324L2SAESDIRK(ARK324L2SAERK):
     A[3, 3] = 1767732205903./4055673282236.
 
     CONV_TEST_NSTEPS = [120, 100, 80]
+
+
+@registerRK
+class ARK222EDIRK(RK):
+    """
+    2nd-order 2-stage EDIRK scheme [Ascher 1997 sec 2.6]
+    Use as implicit part for ARK scheme in combination with ARK222ERK.
+    """
+
+    gamma = (2 - np.sqrt(2)) / 2
+    delta = 1 - 1 / gamma / 2
+
+    c = np.array([0, gamma, 1])
+
+    A = np.array([[0,  0 , 0],
+                  [0,  gamma , 0],
+                  [0, 1-gamma, gamma]])
+
+    b = A[-1, :]
+
+    @property
+    def order(self): return 2
+
+@registerRK
+class ARK222ERK(ARK222EDIRK):
+    """
+    2nd-order 2-stage ERK scheme [Ascher 1997 sec 2.6]
+    Use as explicit part for ARK scheme in combination with ARK222EDIRK.
+    """
+    A = np.array([[0,  0 , 0],
+                  [ARK222EDIRK.gamma,  0 , 0],
+                  [ARK222EDIRK.delta, 1-ARK222EDIRK.delta, 0]])
+    b = A[-1, :]
