@@ -13,7 +13,7 @@ Here are some generic recommendation on release-triggering events :
 
 1. patch version should be released every three months in case some only patch-type changes have been done
 2. minor version should be released after merging a PR including new features (requires a version dump commit, see below ...)
-3. major version are released when important changes have been done on a development branch named `v{i+1}-dev` hosted on the main repo. Requires a full update of the documentation and code, eventually some migration guide, etc ... Before merging `v{i+1}-dev` into `main`, a `v{i}-lts` branch is created from it to keep track of the old version, and eventually update it with some minor or patch releases until a pre-defined deprecation date defined in `docs/SECURITY.md`.
+3. major version are released when important changes have been done on a development branch named `v{i+1}-dev` hosted on the main repo. Requires a full update of the documentation and code, maybe with some migration guide, etc ... Before merging `v{i+1}-dev` into `main`, a `v{i}-lts` branch is created from it to keep track of the old version, and eventually updated with some minor or patch releases until a pre-defined deprecation date defined in `docs/SECURITY.md`.
 
 ## Pipeline description
 
@@ -23,7 +23,7 @@ To release a new version, one need maintainer access to the `qmat` Github projec
 2. Modify the version number and the release date in [`CITATION.cff`](https://github.com/Parallel-in-Time/qmat/blob/main/CITATION.cff)
 3. (Minor & major update) update [`roadmap.md`](https://github.com/Parallel-in-Time/qmat/blob/main/docs/devdoc/roadmap.md) if not done already
 4. (Major update) update [SECURITY.md](https://github.com/Parallel-in-Time/qmat/blob/main/docs/SECURITY.md) if not done already
-5. Commit with message `XX: dump version` where `XX` are your initials
+5. Commit with message `XX: bump version to x.x.x` where `XX` are your initials and `x.x.x` is the new version
 6. Manually run the ["Publish to PyPI 📦"](https://github.com/Parallel-in-Time/qmat/actions/workflows/publish.yml) workflow
 7. [Draft a new release](https://github.com/Parallel-in-Time/qmat/releases/new) associated to a new tag `v*.*.*` (with `*.*.*` the new version, and the `+ Create new tag: ... on publish` button)
 8. Find a cool title for the release, and describe what is new or changed (don't forget to thanks the non-maintainers authors)

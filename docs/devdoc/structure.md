@@ -156,7 +156,7 @@ class MyGenerator(QDeltaGenerator):
 ```
 
 The `computeQDelta` must simply returns the $Q_\Delta$ approximation for this generator,
-eventually using the `zeros` property as starting basis.
+potentially using the `zeros` property as starting basis.
 
 **📣 Important :** even if this may not be used by your generator, the `computeQDelta` method **must always** 
 take a `k` optional parameter corresponding to a **sweep or iteration number** in SDC or iterated RK methods, 
@@ -172,7 +172,7 @@ def computeQDelta(self, k=1):
     # TODO : returns a np.2darray with shape (self.size, self.size)
 ```
 
-> ⚠️ The `computeQDelta` method must be able to take `k=None` as argument, and eventually replace it by its default value.
+> ⚠️ The `computeQDelta` method must be able to take `k=None` as argument, and potentially replace it by its default value.
 
 You can also redefine the constructor of your generator like this :
 ```python
