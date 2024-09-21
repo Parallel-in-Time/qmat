@@ -286,7 +286,7 @@ class MidPoint(RK):
 @registerRK
 class TRAP(RK):
     """Trapeze method (cf Wikipedia)"""
-    aliases = ["TRAPZ", "CN", "CrankNicholson"]
+    aliases = ["TRAPZ", "CN", "CrankNicolson"]
     A = [[0, 0],
          [1/2, 1/2]]
     b = [1/2, 1/2]
