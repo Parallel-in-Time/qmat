@@ -19,7 +19,7 @@ def getExtrapolationMatrix(nodes, times, pOrder=None):
         The times where to extrapolate the polynomial.
     pOrder : int
         Order of the polynomial regression on the node values
-        (default = len(nodes)-1.
+        (default = len(nodes)-1).
 
     Returns
     -------
