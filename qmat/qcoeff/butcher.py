@@ -902,3 +902,46 @@ class ARK443ERK(ARK443ESDIRK):
                   [ 5/6 , -5/6 , 1/2,   0 , 0],
                   [ 1/4 ,  7/4 , 3/4, -7/4, 0]])
     b = A[-1, :]
+
+
+@registerRK
+class ARK4EDIRK(RK):
+    """
+    A stable 7 stage fourth order diagonally implicit stiffly accurate Runge-Kutta method with explicit first stage
+    Implicit part of Additive RK.4.A.2 from https://doi.org/10.1016/j.cam.2005.02.020
+    Use with ARK4ERK to get fourth order stiffly accurate IMEX method.
+    """
+    c = np.array([0, 1/3, 1/3, 1/2, 1/2, 1, 1])
+
+    A = np.zeros((7, 7))
+    A[1, :2] = [-1/6, 1/2]
+    A[2, :3] = [1/6, -1/3, 1/2]
+    A[3, :4] = [3/8, -3/8, 0, 1/2]
+    A[4, :5] = [1/8, 0, 3/8, -1/2, 1/2]
+    A[5, :6] = [-1/2, 0, 3, -3, 1, 1/2]
+    A[6, :] = [1/6, 0, 0, 0, 2/3, -1/2, 2/3]
+
+    b = A[-1, :]
+
+    @property
+    def order(self): return 4
+
+    CONV_TEST_NSTEPS = [60, 40, 20, 10]
+
+
+@registerRK
+class ARK4ERK(ARK4EDIRK):
+    """
+    7 stage fourth order explicit stiffly accurate Runge-Kutta method
+    Explicit part of Additive RK.4.A.2 from https://doi.org/10.1016/j.cam.2005.02.020
+    Use with ARK4EDIRK to get fourth order stiffly accurate IMEX method.
+    """
+    A = np.zeros((7, 7))
+    A[1, :1] = 1/3
+    A[2, :2] = [1/6, 1/6]
+    A[3, :3] = [1/8, 0, 3/8]
+    A[4, :4] = [1/8, 0, 3/8, 0]
+    A[5, :5] = [1/2, 0, -3/2, 0, 2]
+    A[6, :6] = [1/6, 0, 0, 0, 2/3, 1/6]
+
+    b = A[-1, :]
