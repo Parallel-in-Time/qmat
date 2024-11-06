@@ -894,7 +894,7 @@ class ARK443ESDIRK(RK):
 class ARK443ERK(ARK443ESDIRK):
     """
     3rd-order 4-stage ERK scheme [Ascher 1997 sec 2.8]
-    Use as explicit part for ARK scheme in combination with ARK443EDIRK.
+    Use as explicit part for ARK scheme in combination with ARK443ESDIRK.
     """
     A = np.array([[  0  ,   0  ,  0 ,   0 , 0],
                   [ 1/2 ,   0  ,  0 ,   0 , 0],
