@@ -855,6 +855,7 @@ class ARK222EDIRK(RK):
     @property
     def order(self): return 2
 
+
 @registerRK
 class ARK222ERK(ARK222EDIRK):
     """
@@ -864,4 +865,40 @@ class ARK222ERK(ARK222EDIRK):
     A = np.array([[0,  0 , 0],
                   [ARK222EDIRK.gamma,  0 , 0],
                   [ARK222EDIRK.delta, 1-ARK222EDIRK.delta, 0]])
+    b = A[-1, :]
+
+
+@registerRK
+class ARK443ESDIRK(RK):
+    """
+    3rd-order 4-stage ESDIRK scheme [Ascher 1997 sec 2.8]
+    Use as implicit part for ARK scheme in combination with ARK443ERK.
+    """
+
+    c = np.array([0, 1/2, 2/3, 1/2, 1])
+
+    A = np.array([[0,   0 ,   0 ,  0 ,  0 ],
+                  [0,  1/2,   0 ,  0 ,  0 ],
+                  [0,  1/6,  1/2,  0 ,  0 ],
+                  [0, -1/2,  1/2, 1/2,  0 ],
+                  [0,  3/2, -3/2, 1/2, 1/2]])
+
+
+    b = A[-1, :]
+
+    @property
+    def order(self): return 3
+
+
+@registerRK
+class ARK443ERK(ARK443ESDIRK):
+    """
+    3rd-order 4-stage ERK scheme [Ascher 1997 sec 2.8]
+    Use as explicit part for ARK scheme in combination with ARK443EDIRK.
+    """
+    A = np.array([[  0  ,   0  ,  0 ,   0 , 0],
+                  [ 1/2 ,   0  ,  0 ,   0 , 0],
+                  [11/18,  1/18,  0 ,   0 , 0],
+                  [ 5/6 , -5/6 , 1/2,   0 , 0],
+                  [ 1/4 ,  7/4 , 3/4, -7/4, 0]])
     b = A[-1, :]
