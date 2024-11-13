@@ -1,7 +1,8 @@
 import pytest
 import numpy as np
 
-from qmat.utils import getClasses, numericalOrder
+from qmat.utils import getClasses
+from qmat.mathutils import numericalOrder
 from qmat.qcoeff import Q_GENERATORS
 from qmat.nodes import NODE_TYPES, QUAD_TYPES
 

@@ -3,7 +3,8 @@ import numpy as np
 
 from qmat.qdelta import QDELTA_GENERATORS
 import qmat.qdelta.timestepping as module
-from qmat.utils import getClasses, numericalOrder
+from qmat.utils import getClasses
+from qmat.mathutils import numericalOrder
 from qmat.qcoeff.collocation import Collocation
 from qmat.nodes import NODE_TYPES, QUAD_TYPES
 from qmat.sdc import errorDahlquistSDC, getOrderSDC

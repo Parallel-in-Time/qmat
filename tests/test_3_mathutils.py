@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 
-from qmat.vander import getExtrapolationMatrix
+import qmat.mathutils as mu
 
 nNodeTests = [2, 3, 4, 5, 6, 7, 8]
 
@@ -12,10 +12,17 @@ def testRegression(nNodes):
 
     for pOrder in range(1, nNodes):
         times = nodes + 1
-        Pe = getExtrapolationMatrix(nodes, times, pOrder)
+        Pe = mu.getExtrapolationMatrix(nodes, times, pOrder)
 
         polyCoeffs = np.random.rand(pOrder+1)
         nodeValues = np.polyval(polyCoeffs, nodes)
         refValues = np.polyval(polyCoeffs, times)
 
         assert np.allclose(refValues, Pe @ nodeValues)
+
+
+@pytest.mark.parametrize("nNodes", nNodeTests)
+def testLDUFactorization(nNodes):
+    Q = np.random.rand(nNodes, nNodes)
+    L, D, U = mu.lduFactorization(Q)
+    assert np.allclose(Q, L @ D @ U)

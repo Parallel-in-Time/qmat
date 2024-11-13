@@ -7,6 +7,7 @@ import numpy as np
 import scipy.linalg as spl
 
 from qmat.qdelta import QDeltaGenerator, register
+from qmat.mathutils import lduFactorization
 
 
 @register
@@ -61,3 +62,11 @@ class GS(QDeltaGenerator):
 
     def computeQDelta(self, k=None):
         return np.tril(self.Q)
+
+
+@register
+class LDU(QDeltaGenerator):
+    """Diagonal approximation using LDU factorization"""
+
+    def computeQDelta(self, k=None):
+        return lduFactorization(self.Q)[1]
