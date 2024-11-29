@@ -324,3 +324,40 @@ class LagrangeApproximation(object):
         PInter = integrand.sum(axis=-1).T
 
         return PInter
+
+    def getDerivationMatrix(self):
+        r"""
+        Generate the first order derivation matrix :math:`D^{(1)}` based on the
+        Lagrange interpolant, such that
+
+        .. math::
+            D^{(1)} u \simeq \frac{du}{dx}
+
+        on the interpolation points. The formula is :
+
+        .. math::
+            D^{(1)}_{ij} = \frac{w_j/w_i}{x_i-x_j}
+
+        for :math:`i \neq j` and
+
+        .. math::
+            D^{(1)}_{jj} = -\sum_{i \neq j} D^{(1)}_{ij}`
+
+        Returns
+        -------
+        D1 : np.2darray
+            Derivation matrix.
+        """
+        w = self.weights
+        x = self.points
+
+        with np.errstate(divide='ignore'):
+            iDiff = 1 / (x[:, None] - x[None, :])
+        iDiff[np.isinf(iDiff)] = 0
+
+        base = w[None, :]/w[:, None]
+        base *= iDiff
+
+        D1 = base
+        np.fill_diagonal(D1, -D1.sum(axis=-1))
+        return D1

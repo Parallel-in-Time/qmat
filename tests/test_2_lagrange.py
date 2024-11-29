@@ -49,7 +49,7 @@ def testAsymptoticWeightsSTABLE(pType, scaleRef):
 def testInterpolation(nNodes, weightComputation):
     nodes = np.sort(np.random.rand(nNodes))
     approx = LagrangeApproximation(nodes, weightComputation=weightComputation)
-    
+
     times = np.random.rand(nNodes*2)
     P = approx.getInterpolationMatrix(times)
 
@@ -66,7 +66,7 @@ def testEvaluation(nNodes, weightComputation):
     times = np.random.rand(nNodes*2)
     polyCoeffs = np.random.rand(nNodes)
     polyValues = np.polyval(polyCoeffs, nodes)
-    
+
     approx = LagrangeApproximation(nodes, weightComputation=weightComputation, fValues=polyValues)
     P = approx.getInterpolationMatrix(times)
     refEvals = P @ polyValues
@@ -76,7 +76,7 @@ def testEvaluation(nNodes, weightComputation):
 
     polyEvals = approx(t=times)
     assert np.allclose(polyEvals, refEvals)
-    
+
 
 @pytest.mark.parametrize("numQuad", ["LEGENDRE_NUMPY", "LEGENDRE_SCIPY", "FEJER"])
 @pytest.mark.parametrize("weightComputation", ["AUTO", "FAST", "STABLE", "CHEBFUN"])
@@ -93,3 +93,18 @@ def testIntegration(nNodes, weightComputation, numQuad):
     polyInteg = np.polyval(np.polyint(polyCoeffs), times) - np.polyval(np.polyint(polyCoeffs), 0)
 
     assert np.allclose(polyInteg, P @ polyNodes)
+
+
+@pytest.mark.parametrize("weightComputation", ["AUTO", "FAST", "STABLE", "CHEBFUN"])
+@pytest.mark.parametrize("nNodes", nNodeTests)
+def testDerivation(nNodes, weightComputation):
+    nodes = np.sort(np.random.rand(nNodes))
+    approx = LagrangeApproximation(nodes, weightComputation=weightComputation)
+
+    D = approx.getDerivationMatrix()
+
+    polyCoeffs = np.random.rand(nNodes)
+    polyNodes = np.polyval(polyCoeffs, nodes)
+    polyDeriv = np.polyval(np.polyder(polyCoeffs), nodes)
+
+    assert np.allclose(polyDeriv, D @ polyNodes)
