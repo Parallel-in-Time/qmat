@@ -116,8 +116,11 @@ class LagrangeApproximation(object):
     n : int (property)
         The number of points
 
+    References
+    ----------
     .. [1] Berrut, J. P., & Trefethen, L. N. (2004).
-           "Barycentric Lagrange interpolation." SIAM review, 46(3), 501-517.
+        "Barycentric Lagrange interpolation." SIAM review, 46(3), 501-517.
+        URL: https://doi.org/10.1137/S0036144502417715
     """
 
     def __init__(self, points, weightComputation='AUTO', scaleWeights=False, scaleRef='MAX', fValues=None):
@@ -325,10 +328,11 @@ class LagrangeApproximation(object):
 
         return PInter
 
-    def getDerivationMatrix(self):
+    def getDerivationMatrix(self, order=1):
         r"""
-        Generate the first order derivation matrix :math:`D^{(1)}` based on the
-        Lagrange interpolant, such that
+        Generate derivation matrix of first or second order (or both) based on
+        the Lagrange interpolant.
+        The first order differentiation matrix :math:`D^{(1)}` approximates
 
         .. math::
             D^{(1)} u \simeq \frac{du}{dx}
@@ -343,11 +347,48 @@ class LagrangeApproximation(object):
         .. math::
             D^{(1)}_{jj} = -\sum_{i \neq j} D^{(1)}_{ij}`
 
+        The second order differentiation matrix :math:`D^{(2)}` approximates
+
+        .. math::
+            D^{(2)} u \simeq \frac{d^2u}{dx^2}
+
+        on the interpolation points. The formula is :
+
+        .. math::
+            D^{(1)}_{ij} = -2\frac{w_j/w_i}{x_i-x_j}\left[
+                \frac{1}{x_i-x_j} + \sum_{k \neq i}\frac{w_k/w_i}{x_i-x_k}
+                \right]
+
+        for :math:`i \neq j` and
+
+        .. math::
+            D^{(2)}_{jj} = -\sum_{i \neq j} D^{(2)}_{ij}`
+
+        ⚠️ If you want a derivation matrix with many points (~1000 or more),
+        favor the use of weightComputation="STABLE" when initializing
+        the LagrangeApproximation object. If not, some (very small) weights
+        could be approximated by zeros, which would make the computation
+        of the derivation matrices fail ...
+
+        Note
+        ----
+        There is a typo in the formula for :math:`D^{(2)}` given in the paper
+        of Berrut and Trefethen. The formula above is the correct one.
+
+        Parameters
+        ----------
+        order : int or str, optional
+            The order of the derivation matrix, use "ALL" to retrieve both.
+            The default is 1.
+
         Returns
         -------
-        D1 : np.2darray
-            Derivation matrix.
+        D : np.2darray or tuple of np.2darray
+            Derivation matrix. If order="ALL", return a tuple containing all
+            derivations matrix in increasing derivation order.
         """
+        if order not in [1, 2, "ALL"]:
+            raise NotImplementedError(f"order={order}")
         w = self.weights
         x = self.points
 
@@ -358,6 +399,17 @@ class LagrangeApproximation(object):
         base = w[None, :]/w[:, None]
         base *= iDiff
 
-        D1 = base
-        np.fill_diagonal(D1, -D1.sum(axis=-1))
-        return D1
+        if order in [1, "ALL"]:
+            D1 = base.copy()
+            np.fill_diagonal(D1, -D1.sum(axis=-1))
+        if order in [2, "ALL"]:
+            D2 = -2*base
+            D2 *= iDiff + base.sum(axis=-1)[:, None]
+            np.fill_diagonal(D2, -D2.sum(axis=-1))
+
+        if order == 1:
+            return D1
+        elif order == 2:
+            return D2
+        else:
+            return D1, D2

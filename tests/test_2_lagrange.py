@@ -101,10 +101,17 @@ def testDerivation(nNodes, weightComputation):
     nodes = np.sort(np.random.rand(nNodes))
     approx = LagrangeApproximation(nodes, weightComputation=weightComputation)
 
-    D = approx.getDerivationMatrix()
+    D1, D2 = approx.getDerivationMatrix(order="ALL")
+
+    assert np.allclose(D1, approx.getDerivationMatrix())
+    assert np.allclose(D2, approx.getDerivationMatrix(order=2))
 
     polyCoeffs = np.random.rand(nNodes)
     polyNodes = np.polyval(polyCoeffs, nodes)
-    polyDeriv = np.polyval(np.polyder(polyCoeffs), nodes)
+    polyDeriv1 = np.polyval(np.polyder(polyCoeffs), nodes)
+    polyDeriv2 = np.polyval(np.polyder(polyCoeffs, m=2), nodes)
 
-    assert np.allclose(polyDeriv, D @ polyNodes)
+    assert np.allclose(polyDeriv1, D1 @ polyNodes)
+
+    assert np.allclose(polyDeriv2, D2 @ polyNodes)
+    assert np.allclose(polyDeriv2, D1 @ D1 @ polyNodes)
