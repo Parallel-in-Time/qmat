@@ -52,3 +52,13 @@ _A few base memo on how to develop this package ..._
     devdoc/versionUpdate
     devdoc/roadmap
 ```
+
+## Miscellaneous
+
+```{eval-rst}
+.. toctree::
+    :maxdepth: 1
+
+    CODE_OF_CONDUCT
+    SECURITY
+```

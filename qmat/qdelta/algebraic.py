@@ -30,7 +30,7 @@ class Exact(QDeltaGenerator):
 
 @register
 class LU(QDeltaGenerator):
-    """LU approximation from Weiser"""
+    """LU approximation from `[Weiser, 2014] <https://link.springer.com/article/10.1007/s10543-014-0540-y>`_"""
 
     def computeQDelta(self, k=None):
         _, _, U = spl.lu(self.Q.T)
@@ -38,12 +38,11 @@ class LU(QDeltaGenerator):
 
 
 @register
-class LU2(QDeltaGenerator):
-    """LU approximation from Weiser multiplied by 2"""
+class LU2(LU):
+    """LU approximation from `[Weiser, 2014] <https://link.springer.com/article/10.1007/s10543-014-0540-y>`_ multiplied by 2"""
 
     def computeQDelta(self, k=None):
-        _, _, U = spl.lu(self.Q.T)
-        return 2*U.T
+        return super().computeQDelta()*2
 
 
 @register

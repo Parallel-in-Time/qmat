@@ -19,49 +19,41 @@ class NodesGenerator(object):
     Its implementation is fully inspired from a `book of W. Gautschi
     <https://doi.org/10.1093/oso/9780198506720.001.0001>`_.
 
-    Attributes
+    Parameters
     ----------
-    nodeType : str
-        The type of node distribution
-    quadType : str
-        The quadrature type
+    nodeType : str, optional
+        The type of node distribution, can be
+
+        - EQUID : equidistant nodes
+        - LEGENDRE : node distribution from Legendre polynomials
+        - CHEBY-1 : node distribution from Chebychev polynomials (1st kind)
+        - CHEBY-2 : node distribution from Chebychev polynomials (2nd kind)
+        - CHEBY-3 : node distribution from Chebychev polynomials (3rd kind)
+        - CHEBY-4 : node distribution from Chebychev polynomials (4th kind)
+
+        The default is 'LEGENDRE'.
+
+    quadType : str, optional
+        The quadrature type, can be
+
+        - GAUSS : inner point only, no node at boundary
+        - RADAU-LEFT : only left boundary as node
+        - RADAU-RIGHT : only right boundary as node
+        - LOBATTO : left and right boundary as node
+
+        The default is 'LOBATTO'.
     """
     def __init__(self, nodeType='LEGENDRE', quadType='LOBATTO'):
-        """
-        Parameters
-        ----------
-        nodeType : str, optional
-            The type of node distribution, can be
-
-            - EQUID : equidistant nodes
-            - LEGENDRE : node distribution from Legendre polynomials
-            - CHEBY-1 : node distribution from Chebychev polynomials (1st kind)
-            - CHEBY-2 : node distribution from Chebychev polynomials (2nd kind)
-            - CHEBY-3 : node distribution from Chebychev polynomials (3rd kind)
-            - CHEBY-4 : node distribution from Chebychev polynomials (4th kind)
-
-            The default is 'LEGENDRE'.
-
-        quadType : str, optional
-            The quadrature type, can be
-
-            - GAUSS : inner point only, no node at boundary
-            - RADAU-LEFT : only left boundary as node
-            - RADAU-RIGHT : only right boundary as node
-            - LOBATTO : left and right boundary as node
-
-            The default is 'LOBATTO'.
-        """
-
-        # Check argument validity
         for arg, vals in zip(['nodeType', 'quadType'], [NODE_TYPES, QUAD_TYPES]):
             val = eval(arg)
             if val not in vals:
                 raise ValueError(f"{arg}='{val}' not implemented, must be in {vals}")
 
-        # Store attributes
         self.nodeType = nodeType
+        """Type of the node distribution"""
+
         self.quadType = quadType
+        """Quadrature type"""
 
 
     def getNodes(self, nNodes):

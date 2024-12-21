@@ -2,6 +2,14 @@
 # -*- coding: utf-8 -*-
 """
 Submodule to generate Q matrices based on Collocation
+
+Examples
+--------
+
+>>> from qmat.qcoeff.collocation import Collocation
+>>> coll = Collocation(nNodes=4, nodeType="LEGENDRE", quadType="RADAU-RIGHT")
+>>> nodes, weights, Q = coll.genCoeffs()
+>>> S = coll.S
 """
 import numpy as np
 
@@ -11,6 +19,22 @@ from qmat.lagrange import LagrangeApproximation
 
 @register
 class Collocation(QGenerator):
+    """
+    Base class to generate :math:`Q`-coefficients for a Collocation method.
+
+    Parameters
+    ----------
+    nNodes : int
+        Number of collocation nodes.
+    nodeType : str
+        Type of node distributions, see :class:`qmat.nodes` for possible choices.
+    quadType : str
+        Quadrature type, see :class:`qmat.nodes` for possible choices.
+    tLeft : float, optional
+        Left boundary for the nodes. The default is 0.
+    tRight : float, optional
+        Right boundary for the nodes. The default is 1.
+    """
     aliases = ["coll"]
 
     DEFAULT_PARAMS = {
@@ -18,7 +42,8 @@ class Collocation(QGenerator):
         "nodeType": "LEGENDRE",
         "quadType": "RADAU-RIGHT",
         }
-    
+    """Defaults parameters for getInstance"""
+
     def __init__(self, nNodes, nodeType, quadType, tLeft=0, tRight=1):
         self.nodeType, self.quadType = nodeType, quadType
 
@@ -37,7 +62,7 @@ class Collocation(QGenerator):
 
         # Lagrange approximation based on nodes
         approx = LagrangeApproximation(nodes)
-        self._approx = approx
+        self.approx = approx
 
         # Compute Q (quadrature matrix) and weights
         Q = approx.getIntegrationMatrix([(tLeft, tau) for tau in nodes])
@@ -49,27 +74,27 @@ class Collocation(QGenerator):
             self.CONV_TEST_NSTEPS = [32, 64, 128]  # high error constant
 
     @property
-    def nodes(self): return self._nodes
+    def nodes(self)->np.ndarray: return self._nodes
 
     @property
-    def Q(self): return self._Q
+    def Q(self)->np.ndarray: return self._Q
 
     @property
-    def weights(self): return self._weights
+    def weights(self)->np.ndarray: return self._weights
 
     @property
-    def S(self):
+    def S(self)->np.ndarray:
         nodes = self._nodes
         pInts = [(self.tLeft if i == 0 else nodes[i-1], nodes[i])
                  for i in range(nodes.shape[0])]
-        return self._approx.getIntegrationMatrix(pInts)
+        return self.approx.getIntegrationMatrix(pInts)
 
     @property
-    def hCoeffs(self):
-        return self._approx.getInterpolationMatrix([1]).ravel()
+    def hCoeffs(self)->np.ndarray:
+        return self.approx.getInterpolationMatrix([1]).ravel()
 
     @property
-    def order(self):
+    def order(self)->int:
         M, nodeType, quadType = self.nodes.size, self.nodeType, self.quadType
         if nodeType != "LEGENDRE":
             if quadType in ["GAUSS", "LOBATTO"] \

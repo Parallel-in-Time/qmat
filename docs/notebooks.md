@@ -11,14 +11,16 @@ All tutorials are written in jupyter notebooks, that can be :
 
 Notebooks are categorized into three main sections :
 
-1. **Basic usage** : how to generate and use basic $Q$-coefficients and $Q_\Delta$ approximations
-2. **Extended usage** : additional features or `qmat`, like $S$-matrix, `hCoeffs`, `dTau`, etc ...
-3. **Advanced usage** : using `qmat` for generic non-linear ODE, multilevel SDC, PFASST, ...
+1. **Basic usage** : how to generate and use basic $Q$-coefficients and $Q_\Delta$ approximations, through a step-by-step tutorial going from generic Runge-Kutta methods to SDC for simple problems. 
+2. **Extended usage** : description of the additional features or `qmat`, like the $S$-matrix, 
+the `hCoeffs` and `dTau` coefficients, ... going deeper into SDC 
 
 
 ```{eval-rst}
-Basic usage
-===========
+Base usage
+==========
+
+📜 *From Butcher Tables to Spectral Deferred Corrections*
 
 .. toctree::
     :maxdepth: 1
@@ -29,18 +31,10 @@ Basic usage
 Extended usage
 ==============
 
+📜 *Going deeper into SDC's understanding*
+
 .. toctree::
     :maxdepth: 1
     :glob:
 
     notebooks/1*
-
-Advanced usage
-==============
-
-.. toctree::
-    :maxdepth: 1
-    :glob:
-
-    notebooks/2*
-```

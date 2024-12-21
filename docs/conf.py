@@ -71,9 +71,17 @@ add_module_names = False
 autoapi_type = 'python'
 autoapi_dirs = ['../qmat']
 autoapi_file_patterns = ['*.py']
-autoapi_options = ['members', 'undoc-members']
+autoapi_options = [
+    'members', 'undoc-members', 
+    'show-inheritance-diagram',
+    'show-module-summary',
+    ]
 autoapi_python_class_content = 'both'
 autoapi_add_toctree_entry = False
+autoapi_ignore = ['*scripts*']
+autoapi_root = "api"
+
+autoapi_keep_files = False
 
 napoleon_use_param = False
 napoleon_use_keyword = False
@@ -139,6 +147,10 @@ html_css_files = [
 # 'searchbox.html']``.
 #
 # html_sidebars = {}
+
+html_theme_options = {
+    'globaltoc_maxdepth': 2,
+}
 
 
 # -- Options for HTMLHelp output ---------------------------------------------

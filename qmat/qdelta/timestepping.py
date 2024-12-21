@@ -9,20 +9,35 @@ from qmat.qdelta import QDeltaGenerator, register
 
 
 class TimeStepping(QDeltaGenerator):
+    """
+    Base class for time-stepping based :math:`Q_\Delta` approximations
 
+    Parameters
+    ----------
+    nodes : list-like
+        Normalized nodes in increasing order.
+    tLeft : float, optional
+        Left bound for the nodes. The default is 0.
+    **kwargs :
+        Additional parameters given in a generic call, ignored by this class.
+    """
     def __init__(self, nodes, tLeft=0, **kwargs):
         nodes = np.asarray(nodes)
-
         deltas = nodes.copy()
         deltas[0] = nodes[0] - tLeft
         deltas[1:] = np.ediff1d(nodes)
-        
-        self.deltas = deltas
-        self.nodes = nodes
-        self.tLeft = tLeft
+
+        self.deltas:np.ndarray = deltas
+        """Differences between nodes"""
+
+        self.nodes:np.ndarray = nodes
+        """Array of normalized nodes"""
+
+        self.tLeft:float = tLeft
+        """Left bound for the nodes"""
 
     @property
-    def size(self):
+    def size(self)->int:
         return self.nodes.size
 
 
@@ -50,7 +65,7 @@ class FE(TimeStepping):
         return QDelta
 
     @property
-    def dTau(self):
+    def dTau(self)->np.ndarray:
         return self.nodes*0 + self.deltas[0]
 
 
@@ -69,7 +84,7 @@ class TRAP(TimeStepping):
         return QDelta
 
     @property
-    def dTau(self):
+    def dTau(self)->np.ndarray:
         return self.nodes*0 + self.deltas[0]/2.0
 
 
@@ -90,5 +105,5 @@ class TRAPAR(TimeStepping):
         return np.diag(self.nodes/2) - self.tLeft
 
     @property
-    def dTau(self):
+    def dTau(self)->np.ndarray:
         return self.nodes/2.0 - self.tLeft

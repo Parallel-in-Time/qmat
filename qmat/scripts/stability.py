@@ -2,7 +2,7 @@
 from qmat import genQCoeffs
 
 def main():
-    nodes, weights, Q = genQCoeffs("coll", nNodes=3, nodeType="LEGENDRE", quadType="GAUSS")
+    nodes, weights, Q = genQCoeffs("coll", nNodes=4, nodeType="LEGENDRE", quadType="RADAU-RIGHT")
     print("node :", nodes)
     print("weights :", weights)
     print("Q :")

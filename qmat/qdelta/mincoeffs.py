@@ -132,6 +132,7 @@ MIN3 = {
         }
 
     }
+"""Magic diagonal coefficients from `[Speck, 2021] <https://zenodo.org/records/5775971>`_"""
 
 MIN_VDHS = {
     "LEGENDRE": {
@@ -141,3 +142,4 @@ MIN_VDHS = {
         }
     }
 }
+"""Diagonal coefficients from `[van der Houwen & Sommeijer, 1991] <https://epubs.siam.org/doi/10.1137/0912054>`_"""

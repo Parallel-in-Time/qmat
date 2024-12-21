@@ -43,12 +43,12 @@ def storeClass(cls, dico):
             storeAlias(cls, dico, alias)
 
 
-def importAll(localVars, path, name, _import):
+def importAll(localVars, __all__, __path__, __name__, __import__):
     """The magic function"""
-    _all = [var for var in localVars.keys() if not var.startswith('__')]
-    for _, moduleName, _ in pkgutil.walk_packages(path):
-        _all.append(moduleName)
-        _import(name+'.'+moduleName)
+    __all__ += [var for var in localVars.keys() if not var.startswith('__')]
+    for _, moduleName, _ in pkgutil.walk_packages(__path__):
+        __all__.append(moduleName)
+        __import__(__name__+'.'+moduleName)
 
 
 def getClasses(dico, module=None):

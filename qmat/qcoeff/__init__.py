@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Base module for Q coefficients generation
+Defines the base abstract class to generate :math:`Q`-coefficients (Butcher tables) :
+the :class:`QGenerator` 🚀
+
+Each submodule contains specializations of this class for many kind of
+methods :
+
+- :class:`collocation` : Collocation based
+- :class:`butcher` : Runge-Kutta based (Butcher tables)
 """
 import numpy as np
 
@@ -9,9 +16,11 @@ from qmat.utils import checkOverriding, storeClass, importAll
 from qmat.lagrange import LagrangeApproximation
 
 class QGenerator(object):
+    """Base abstract class for all :math:`Q`-coefficients generators"""
 
     @classmethod
     def getInstance(cls):
+        """Provide an instance of this QGenerator using default parameters."""
         try:
             return cls()
         except TypeError:
@@ -19,33 +28,36 @@ class QGenerator(object):
 
     @property
     def nodes(self):
+        r"""Nodes :math:`\tau` (:math:`c` coefficients in Butcher table)"""
         raise NotImplementedError("mouahahah")
 
     @property
     def Q(self):
+        r""":math:`Q` coefficients (:math:`A` Butcher table)"""
         raise NotImplementedError("mouahahah")
 
     @property
     def weights(self):
+        r"""Weights :math:`\omega` (:math:`b` coefficients in Butcher table)"""
         raise NotImplementedError("mouahahah")
 
     @property
     def weightsEmbedded(self):
-        """
-        These weights can be used to construct a secondary lower order method from the same stages.
-        """
-        raise NotImplementedError("no embedded weights implemented for {type(self).__name__}")
+        """Weights for a secondary lower order method from the same stages."""
+        raise NotImplementedError(f"no embedded weights implemented for {type(self).__name__}")
 
     @property
-    def nNodes(self):
+    def nNodes(self)->int:
+        """Number of nodes (or stages) for this QGenerator"""
         return self.nodes.size
 
     @property
-    def rightIsNode(self):
+    def rightIsNode(self)->bool:
+        """Wether or not the last nodes is the right boundary"""
         return self.nodes[-1] == 1.
 
     @property
-    def T(self):
+    def T(self)->np.ndarray:
         """Transfer matrix from zero-to-nodes to node-to-node"""
         M = self.Q.shape[0]
         T = np.eye(M)
@@ -53,7 +65,8 @@ class QGenerator(object):
         return T
 
     @property
-    def S(self):
+    def S(self)->np.ndarray:
+        """Quadrature matrix in node to node (N2N)"""
         Q = np.asarray(self.Q)
         M = self.Q.shape[0]
         T = np.eye(M)
@@ -61,17 +74,39 @@ class QGenerator(object):
         return T @ Q
 
     @property
-    def Tinv(self):
+    def Tinv(self)->np.ndarray:
         """Transfer matrix from node-to-node to zero-to-node"""
         M = self.Q.shape[0]
         return np.tri(M)
 
     @property
-    def hCoeffs(self):
+    def hCoeffs(self)->np.ndarray:
+        """:math:`h` interpolation coefficients for the right boundary"""
         approx = LagrangeApproximation(self.nodes)
         return approx.getInterpolationMatrix([1]).ravel()
 
     def genCoeffs(self, form="Z2N", hCoeffs=False, embedded=False):
+        """
+        Generate :math:`Q`-coefficients of this :class:`QGenerator` object.
+
+        Parameters
+        ----------
+        form : str, optional
+            Write coefficients in zero-to-nodes (Z2N) or node-to-node (N2N).
+            The default is "Z2N".
+        hCoeffs : bool, optional
+            Wether or not returning the :math:`h` coefficients. The default is False.
+        embedded : bool, optional
+            Wether or not returning the embedded :math:`h` coefficients.
+            The default is False.
+
+        Returns
+        -------
+        out : tuple
+            Contains (nodes, weights, Q).
+            If `hCoeffs=True`, returns (nodes, weights, Q, hCoeffs).
+            If `embedded=True`, `weights` is a 2xM array containing embedded weights in `weights[1]`.
+        """
         if form == "Z2N":
             mat = self.Q
         elif form == "N2N":
@@ -87,13 +122,40 @@ class QGenerator(object):
 
     @property
     def order(self):
+        """Global convergence order of the method"""
         raise NotImplementedError("mouahahah")
 
     @property
-    def orderEmbedded(self):
+    def orderEmbedded(self)->int:
+        """Global convergence order of the associated embedded method"""
         return self.order - 1
 
     def solveDahlquist(self, lam, u0, T, nSteps, useEmbeddedWeights=False):
+        r"""
+        Solve the Dahlquist test problem
+
+        .. math::
+
+            \frac{du}{dt} = \lambda u, \quad t \in [0, T], \quad u(0)=u_0
+
+        Parameters
+        ----------
+        lam : complex or float
+            The :math:`\lambda` coefficient.
+        u0 : complex or float
+            The initial solution :math:`u_0`.
+        T : float
+            Final time :math:`T`.
+        nSteps : int
+            Number of time-step for the whole :math:`[0,T]` interval.
+        useEmbeddedWeights : bool, optional
+            Wether or not use the embedded weights for the prolongation. The default is False.
+
+        Returns
+        -------
+        uNum : np.ndarray
+            Array containing the `nSteps+1` solutions :math:`\{u(0), ..., u(T)\}`.
+        """
         nodes, weights, Q = self.nodes, self.weights, self.Q
 
         if useEmbeddedWeights:
@@ -112,6 +174,30 @@ class QGenerator(object):
         return uNum
 
     def errorDahlquist(self, lam, u0, T, nSteps, uNum=None, useEmbeddedWeights=False):
+        """
+        Compute :math:`L_\infty` error in time for the Dahlquist problem
+
+        Parameters
+        ----------
+        lam : complex or float
+            The :math:`\lambda` coefficient.
+        u0 : complex or float
+            The initial solution :math:`u_0`.
+        T : float
+            Final time :math:`T`.
+        nSteps : int
+            Number of time-step for the whole :math:`[0,T]` interval.
+        uNum : np.ndarray, optional
+            Numerical solution, if not provided use the `solveDahlquist` method
+            to compute the solution. The default is None.
+        useEmbeddedWeights : bool, optional
+            Wether or not use the embedded weights for the prolongation. The default is False.
+
+        Returns
+        -------
+        float
+            The :math:`L_\infty` norm.
+        """
         if uNum is None:
             uNum = self.solveDahlquist(lam, u0, T, nSteps, useEmbeddedWeights=useEmbeddedWeights)
         times = np.linspace(0, T, nSteps+1)
@@ -120,8 +206,10 @@ class QGenerator(object):
 
 
 Q_GENERATORS = {}
+"""Dictionary containing all specialized :class:`QGenerator` classes, with all their aliases"""
 
 def register(cls:QGenerator)->QGenerator:
+    """Class decorator to register a specialized :class:`QGenerator` class in qmat"""
     # Check for correct overriding
     for name in ["nodes", "Q", "weights", "order"]:
         checkOverriding(cls, name)
@@ -145,6 +233,31 @@ def register(cls:QGenerator)->QGenerator:
     return cls
 
 def genQCoeffs(qType, form="Z2N", hCoeffs=False, embedded=False, **params):
+    """
+    Generate :math:`Q`-coefficients for a given method
+
+    Parameters
+    ----------
+    qType : str
+        Name (or alias) of the QGenerator.
+    form : str, optional
+        Write coefficients in zero-to-nodes (Z2N) or node-to-node (N2N).
+        The default is "Z2N".
+    hCoeffs : bool, optional
+        Wether or not returning the :math:`h` coefficients. The default is False.
+    embedded : bool, optional
+        Wether or not returning the embedded :math:`h` coefficients.
+        The default is False.
+    **params :
+        Parameters to be used to instantiate the QGenerator.
+
+    Returns
+    -------
+    out : tuple
+        Contains (nodes, weights, Q).
+        If `hCoeffs=True`, returns (nodes, weights, Q, hCoeffs).
+        If `embedded=True`, `weights` is a 2xM array containing embedded weights in `weights[1]`.
+    """
     try:
         Generator = Q_GENERATORS[qType]
     except KeyError:
@@ -154,4 +267,6 @@ def genQCoeffs(qType, form="Z2N", hCoeffs=False, embedded=False, **params):
 
 
 # Import all local submodules
-__all__ = importAll(locals(), __path__, __name__, __import__)
+__all__ = ["genQCoeffs", "QGenerator", "Q_GENERATORS", "register"]
+Q_GENERATORS.clear()  # to allow hot reload on some IDEs
+importAll(locals(), __all__, __path__, __name__, __import__)

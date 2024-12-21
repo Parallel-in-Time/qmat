@@ -1,7 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Base module for QDelta coefficients generation
+Defines the base abstract class to generate  :math:`Q_\Delta` approximations :
+the :class:`QDeltaGenerator` 🚀
+
+Each submodule contains specializations of this class for many kind of
+methods :
+
+- :class:`timestepping` : based on time-stepping methods (Backward Euler, etc ...)
+- :class:`algebraic` : based on algebraic consideration on the :math:`Q` matrix
+- :class:`min` : diagonal approximations based on minimization
 """
 import inspect
 import numpy as np
@@ -10,25 +18,67 @@ from qmat.utils import checkOverriding, storeClass, importAll, checkGenericConst
 
 
 class QDeltaGenerator(object):
+    r"""
+    Base abstract class for :math:`Q_\Delta` coefficients generators.
+
+    Parameters
+    ----------
+    Q : np.ndarray
+        The :math:`Q` matrix of the base approximated method.
+    **kwargs :
+        Additional parameters given in a generic call, ignored by the class.
+    """
+
     _K_DEPENDENT = False
+    """Wether or not the :math:`Q_\Delta` coefficients varies with the iterations"""
 
     def __init__(self, Q, **kwargs):
-        self.Q = np.asarray(Q, dtype=float)
+        self.Q:np.ndarray = np.asarray(Q, dtype=float)
+        """:math:`Q` matrix of the approximated time-integration method"""
 
     @property
-    def size(self):
+    def size(self)->int:
+        """Dimension of the approximated :math:`Q`-coefficients (number of nodes)"""
         return self.Q.shape[0]
 
     @property
-    def zeros(self):
+    def zeros(self)->np.ndarray:
+        """Seros matrix with the same size of the underlying :math:`Q` matrix"""
         M = self.size
         return np.zeros((M, M), dtype=float)
 
     def computeQDelta(self, k=None) -> np.ndarray:
-        """Compute and returns the QDelta matrix"""
+        """
+        Compute and returns the :math:`Q_\Delta` matrix, has to be implemented
+        in the specialized class.
+
+        Parameters
+        ----------
+        k : int, optional
+            Iteration number of the approximation. The default is None.
+
+        Returns
+        -------
+        QDelta : np.ndarray
+        """
         raise NotImplementedError("mouahahah")
 
     def getQDelta(self, k=None, copy=True):
+        r"""
+        Generic method to retrieve the :math:`Q_\Delta` coefficients
+
+        Parameters
+        ----------
+        k : int, optional
+            Iteration number of the approximation (if needed). The default is None.
+        copy : bool, optional
+            Return a copy of the the result returned by `computeQDelta`.
+            The default is True.
+
+        Returns
+        -------
+        QDelta : np.ndarray
+        """
         try:
             QDelta = self._QDelta[k] if self._K_DEPENDENT else self._QDelta
         except Exception as e:
@@ -42,6 +92,19 @@ class QDeltaGenerator(object):
         return QDelta.copy() if copy else QDelta
 
     def getSDelta(self, k=None):
+        r"""
+        Compute the :math:`S_\Delta` matrix (approximation of :math:`S`).
+
+        Parameters
+        ----------
+        k : int, optional
+            Iteration number, used when the approximation depends on it.
+            The default is None.
+
+        Returns
+        -------
+        SDelta : np.ndarray
+        """
         QDelta = self.getQDelta(k)
         M = QDelta.shape[0]
         T = np.eye(M)
@@ -49,10 +112,32 @@ class QDeltaGenerator(object):
         return T @ QDelta
 
     @property
-    def dTau(self):
+    def dTau(self)->np.ndarray:
+        r"""The :math:`\delta_\tau` coefficients associated to :math:`Q_\Delta`"""
         return np.zeros(self.size, dtype=float)
 
     def genCoeffs(self, k=None, form="Z2N", dTau=False):
+        r"""
+        Generic method to produce :math:`Q_\Delta` coefficients
+
+        Parameters
+        ----------
+        k : int or list, optional
+            Iteration(s) for the approximation. The default is None.
+        form : str, optional
+            Build approximation in zero-to-nodes (Z2N) or node-to-node (N2N).
+            The default is "Z2N".
+        dTau : bool, optional
+            Wether or not to return the :math:`\delta_\tau`.
+            The default is False.
+
+        Returns
+        -------
+        np.ndarray or tuple
+            If `k` is a scalar or `None`, returns a MxM matrix.
+            If `k` is a list, returns a len(k)xMxM matrix.
+            If `dTau=True`, returns a tuple `(QDelta, dTau)`.
+        """
         if form == "Z2N":
             gen = lambda k, copy=False: self.getQDelta(k, copy)
         elif form == "N2N":
@@ -69,8 +154,10 @@ class QDeltaGenerator(object):
 
 
 QDELTA_GENERATORS = {}
+"""Dictionary containing all specialized :class:`QDeltaGenerator` classes"""
 
 def register(cls:QDeltaGenerator)->QDeltaGenerator:
+    """Class decorator to register a specialized :class:`QDeltaGenerator` class in `qmat`"""
     checkGenericConstr(cls)
     checkOverriding(cls, "computeQDelta", isProperty=False)
     try:
@@ -86,7 +173,32 @@ def register(cls:QDeltaGenerator)->QDeltaGenerator:
 
 
 def genQDeltaCoeffs(qDeltaType, nSweeps=None, form="Z2N", dTau=False, **params):
+    r"""
+    Generic function to produce :math:`Q_\Delta` coefficients
 
+    Parameters
+    ----------
+    qDeltaType : str or list
+        The type of approximation, can be a list to have several sweeps.
+    nSweeps : int, optional
+        Number of sweeps when :math:`Q_\Delta` matrices are required for
+        several sweeps. The default is None.
+    form : str, optional
+        Build approximation in zero-to-nodes (Z2N) or node-to-node (N2N).
+        The default is "Z2N".
+    dTau : bool, optional
+        Wether or not to return the :math:`\delta_\tau`. The default is False.
+    **params
+        Additional arguments used to instantiate all :class:`QDeltaGenerator`
+
+    Returns
+    -------
+    np.ndarray or tuple
+        If `qDeltaType` is a string, returns a :math:`M \times M` matrix.
+        If `qDeltaType` is a list or `nSweeps != None`,
+        returns a :math:`N_{sweeps} \times M \times M` matrix.
+        If `dTau=True`, returns a tuple `(QDelta, dTau)`.
+    """
     # Check arguments
     if isinstance(qDeltaType, str):
         if nSweeps is None:
@@ -142,4 +254,6 @@ def genQDeltaCoeffs(qDeltaType, nSweeps=None, form="Z2N", dTau=False, **params):
 
 
 # Import all local submodules
-__all__ = importAll(locals(), __path__, __name__, __import__)
+__all__ = ["genQDeltaCoeffs", "QDeltaGenerator", "QDELTA_GENERATORS", "register"]
+QDELTA_GENERATORS.clear()  # to allow hot reload on some IDEs
+importAll(locals(), __all__, __path__, __name__, __import__)

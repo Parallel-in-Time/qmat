@@ -1,18 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Submodule to generate Q matrices based on Butcher tables
-
-References
-----------
-.. [1] Wang, R., & Spiteri, R. J. (2007). Linear instability of the fifth-order
-       WENO method. SIAM Journal on Numerical Analysis, 45(5), 1871-1901.
-.. [2] Alexander, R. (1977). Diagonally implicit Runge–Kutta methods for stiff
-       ODE’s. SIAM Journal on Numerical Analysis, 14(6), 1006-1021.
-.. [3] Wanner, G., & Hairer, E. (1996). Solving ordinary differential equations
-       II. Springer Berlin Heidelberg.
-.. [4] Butcher, J.C. (2003). Numerical methods for Ordinary Differential
-       Equations. John Wiley & Sons.
+:math:`Q`-coefficients based on Butcher tables
 """
 import numpy as np
 
@@ -21,29 +10,35 @@ from qmat.utils import storeClass
 
 
 class RK(QGenerator):
+    """Base class for Runge-Kutta generators"""
+
     A = None
+    """:math:`A` matrix of the Butcher table"""
     b = None
+    """:math:`b` coefficients of the Butcher table"""
     c = None
-    b2 = None  # for embedded methods
+    """:math:`c` coefficients of the Butcher table"""
+    b2 = None
+    """:math:`b_2` coefficients for the embedded methods"""
 
     @property
-    def nodes(self): return self.c
+    def nodes(self)->np.ndarray: return self.c
 
     @property
-    def weights(self): return self.b
+    def weights(self)->np.ndarray: return self.b
 
     @property
-    def weightsEmbedded(self):
+    def weightsEmbedded(self)->np.ndarray:
         if self.b2 is None:
             raise NotImplementedError(f'kindly direct your request for an embedded version of {type(self).__name__!r} to the Mermathematicians on Europa.')
         else:
             return self.b2
 
     @property
-    def Q(self): return self.A
+    def Q(self)->np.ndarray: return self.A
 
     @property
-    def hCoeffs(self):
+    def hCoeffs(self)->np.ndarray:
         try:
             return super().hCoeffs
         except AssertionError:
@@ -53,6 +48,7 @@ class RK(QGenerator):
 
 
 RK_SCHEMES = {}
+"""Dictionary storing all the implemented RK methods"""
 
 def checkAndStore(cls:RK)->RK:
     cls.A = np.array(cls.A, dtype=float)
@@ -85,19 +81,19 @@ def registerRK(cls:RK)->RK:
 # ---------------------------------- Order 1 ----------------------------------
 @registerRK
 class FE(RK):
-    """Forward Euler method (cf Wikipedia)"""
+    """Forward Euler method (cf `Wikipedia`_)"""
     aliases = ["EE"]
     A = [[0]]
     b = [1]
     c = [0]
 
     @property
-    def order(self): return 1
+    def order(self)->int: return 1
 
 
 @registerRK
 class RK21(RK):
-    """Explicit Runge-Kutta in 2 steps of order 1 from Wang & Spiteri [1]"""
+    """Explicit Runge-Kutta in 2 steps of order 1 from `[Wang & Spiteri, 2007] <https://epubs.siam.org/doi/pdf/10.1137/050637868>`_"""
     aliases = ["ERK21"]
     A = [[0, 0],
          [3/4, 0]]
@@ -105,13 +101,13 @@ class RK21(RK):
     c = [0, 3/4]
 
     @property
-    def order(self): return 1
+    def order(self)->int: return 1
 
 
 # ---------------------------------- Order 2 ----------------------------------
 @registerRK
 class RK2(RK):
-    """Classical Runge-Kutta method of order 2 (cf Wikipedia)"""
+    """Classical Runge-Kutta method of order 2 (cf `Wikipedia`_)"""
     aliases = ["ERK2", "ExplicitMidPoint", "EMP"]
     A = [[0, 0],
          [1/2, 0]]
@@ -119,12 +115,12 @@ class RK2(RK):
     c = [0, 1/2]
 
     @property
-    def order(self): return 2
+    def order(self)->int: return 2
 
 
 @registerRK
 class HEUN2(RK):
-    """Heun method of order 2 (cf Wikipedia)"""
+    """Heun method of order 2 (cf `Wikipedia`_)"""
     aliases = ["HEUN", "HeunEuler"]
     A = [[0, 0],
          [1, 0]]
@@ -133,13 +129,13 @@ class HEUN2(RK):
     b2 = [1, 0]
 
     @property
-    def order(self): return 2
+    def order(self)->int: return 2
 
 
 # ---------------------------------- Order 3 ----------------------------------
 @registerRK
 class RK32(RK):
-    """Explicit Runge-Kutta in 3 steps of order 2 from Wang & Spiteri [1]"""
+    """Explicit Runge-Kutta in 3 steps of order 2 from `[Wang & Spiteri, 2007]`_"""
     aliases = ["ERK32", "RK32-SSP"]
     A = [[0, 0, 0],
          [1/3, 0, 0],
@@ -148,12 +144,12 @@ class RK32(RK):
     c = [0, 1/3, 1]
 
     @property
-    def order(self): return 3  # TODO: Dahlquist order is 3 actually ...
+    def order(self)->int: return 3  # TODO: Dahlquist order is 3 actually ...
 
 
 @registerRK
 class RK33(RK):
-    """Explicit Runge-Kutta in 3 steps of order 3 from Wang & Spiteri [1]"""
+    """Explicit Runge-Kutta in 3 steps of order 3 from `[Wang & Spiteri, 2007]`_"""
     aliases = ["ERK33", "RK33-SSP"]
     A = [[0, 0, 0],
          [1, 0, 0],
@@ -162,12 +158,12 @@ class RK33(RK):
     c = [0, 1, 1/2]
 
     @property
-    def order(self): return 3
+    def order(self)->int: return 3
 
 
 @registerRK
 class RK53(RK):
-    """Explicit Runge-Kutta in 5 steps of order 3 from Wang & Spiteri [1]"""
+    """Explicit Runge-Kutta in 5 steps of order 3 from `[Wang & Spiteri, 2007]`_"""
     aliases = ["ERK53"]
     A = [[0, 0, 0, 0, 0],
          [1/7, 0, 0, 0, 0],
@@ -178,13 +174,13 @@ class RK53(RK):
     c = [0, 1/7, 3/16, 1/3, 2/3]
 
     @property
-    def order(self): return 3
+    def order(self)->int: return 3
 
 
 # ---------------------------------- Order 4 ----------------------------------
 @registerRK
 class RK4(RK):
-    """Classical Runge Kutta method of order 4 (cf Wikipedia)"""
+    """Classical Runge Kutta method of order 4 (cf `Wikipedia`_)"""
     aliases = ["ERK4"]
     A = [[0, 0, 0, 0],
          [0.5, 0, 0, 0],
@@ -194,12 +190,12 @@ class RK4(RK):
     c = [0, 1/2, 1/2, 1]
 
     @property
-    def order(self): return 4
+    def order(self)->int: return 4
 
 
 @registerRK
 class RK4_38(RK):
-    """The 3/8-rule due to Kutta, order 4  (cf Wikipedia)"""
+    """The 3/8-rule due to Kutta, order 4  (cf `Wikipedia`_)"""
     aliases = ["ERK4_38"]
     A = [[0, 0, 0, 0],
          [1/3, 0, 0, 0],
@@ -209,13 +205,13 @@ class RK4_38(RK):
     c = [0, 1/3, 2/3, 1]
 
     @property
-    def order(self): return 4
+    def order(self)->int: return 4
 
 
 # ---------------------------------- Order 5 ----------------------------------
 @registerRK
 class RK65(RK):
-    """Explicit Runge-Kutta in 6 steps of order 5, (236a) from Butcher [4]"""
+    """Explicit Runge-Kutta in 6 steps of order 5, (236a) from `[Butcher, 2016] <https://www.wiley.com/en-fr/Numerical+Methods+for+Ordinary+Differential+Equations%2C+3rd+Edition-p-9781119121503>`_"""
     aliases = ["ERK65"]
     A = [[0, 0, 0, 0, 0, 0],
          [0.25, 0, 0, 0, 0, 0],
@@ -227,13 +223,13 @@ class RK65(RK):
     c = [0, 0.25, 0.25, 0.5, 0.75, 1]
 
     @property
-    def order(self): return 5
+    def order(self)->int: return 5
 
 
 @registerRK
 class CashKarp(RK):
     """
-    Fifth order explicit embedded Runge-Kutta. See [here](https://doi.org/10.1145/79505.79507).
+    Fifth order explicit embedded Runge-Kutta from `[Cash & Karp, 1990] <https://doi.org/10.1145/79505.79507>`_.
     """
     aliases = ["Cash_Karp"]
 
@@ -248,7 +244,7 @@ class CashKarp(RK):
     A[5, :5] = [1631.0 / 55296.0, 175.0 / 512.0, 575.0 / 13824.0, 44275.0 / 110592.0, 253.0 / 4096.0]
 
     @property
-    def order(self): return 5
+    def order(self)->int: return 5
 
     CONV_TEST_NSTEPS = [32, 64, 128]
 
@@ -260,32 +256,32 @@ class CashKarp(RK):
 # ---------------------------------- Order 1 ----------------------------------
 @registerRK
 class BE(RK):
-    """Backward Euler method (also SDIRK1, see [2])"""
-    aliases = ["IE"]
+    """Backward Euler method (also SDIRK1, see `[Alexander, 1977] <https://epubs.siam.org/doi/pdf/10.1137/0714068>`_)"""
+    aliases = ["IE", "SDIRK1"]
     A = [[1]]
     b = [1]
     c = [1]
 
     @property
-    def order(self): return 1
+    def order(self)->int: return 1
 
 
 # ---------------------------------- Order 2 ----------------------------------
 @registerRK
 class MidPoint(RK):
-    """Implicit Mid-Point Rule, see Wikipedia"""
+    """Implicit Mid-Point Rule, see `Wikipedia`_"""
     aliases = ["IMP", "ImplicitMidPoint"]
     A = [[1/2]]
     b = [1]
     c = [1/2]
 
     @property
-    def order(self): return 2
+    def order(self)->int: return 2
 
 
 @registerRK
 class TRAP(RK):
-    """Trapeze method (cf Wikipedia)"""
+    """Trapeze method (cf `Wikipedia`_)"""
     aliases = ["TRAPZ", "CN", "CrankNicolson"]
     A = [[0, 0],
          [1/2, 1/2]]
@@ -293,26 +289,24 @@ class TRAP(RK):
     c = [0, 1]
 
     @property
-    def order(self): return 2
+    def order(self)->int: return 2
 
 
 @registerRK
 class SDIRK2(RK):
-    """First S-stable Diagonally Implicit Runge Kutta method of order 2 in two stages,
-    from Alexander [2]"""
+    """First S-stable Diagonally Implicit Runge Kutta method of order 2 in two stages from `[Alexander, 1977]`_"""
     A = [[1-2**0.5/2, 0],
          [2**0.5/2, 1-2**0.5/2]]
     b = [2**0.5/2, 1-2**0.5/2]
     c = [1-2**0.5/2, 1.]
 
     @property
-    def order(self): return 2
+    def order(self)->int: return 2
 
 
 @registerRK
 class SDIRK2_2(RK):
-    """Second S-stable Diagonally Implicit Runge Kutta method of order 2 in two stages,
-    from Alexander [2]"""
+    """Second S-stable Diagonally Implicit Runge Kutta method of order 2 in two stages from `[Alexander, 1977]`_"""
     aliases = ["SDIRK2-2"]
     A = [[1+2**0.5/2, 0],
          [-2**0.5/2, 1+2**0.5/2]]
@@ -320,7 +314,7 @@ class SDIRK2_2(RK):
     c = [1+2**0.5/2, 1]
 
     @property
-    def order(self): return 2
+    def order(self)->int: return 2
 
     # Has a very high error constant, need very small time-steps to see the order ...
     CONV_TEST_NSTEPS = [64, 128, 256]
@@ -329,8 +323,7 @@ class SDIRK2_2(RK):
 # ---------------------------------- Order 3 ----------------------------------
 @registerRK
 class SDIRK3(RK):
-    """S-stable Diagonally Implicit Runge Kutta method of order 3 in three stages,
-    from Alexander [2]"""
+    """S-stable Diagonally Implicit Runge Kutta method of order 3 in three stages from `[Alexander, 1977]`_"""
     A = [[0.43586652150845967, 0, 0],
          [0.28206673924577014, 0.43586652150845967, 0],
          [1.2084966491760119, -0.6443631706844715, 0.43586652150845967]]
@@ -338,14 +331,13 @@ class SDIRK3(RK):
     c = [0.43586652150845967, 0.7179332607542298, 1.]
 
     @property
-    def order(self): return 3
+    def order(self)->int: return 3
 
 
 @registerRK
 class DIRK43(RK):
     """
-    L-stable Diagonally Implicit RK method with four stages of order 3.
-    Taken from [here](https://en.wikipedia.org/wiki/List_of_Runge%E2%80%93Kutta_methods).
+    L-stable Diagonally Implicit RK method with four stages of order 3 from `Wikipedia <https://en.wikipedia.org/wiki/List_of_Runge%E2%80%93Kutta_methods>`_.
     """
     A = np.zeros((4, 4))
     A[0, 0]  = 1/2
@@ -356,13 +348,13 @@ class DIRK43(RK):
     c = [1/2, 2/3, 1/2, 1]
 
     @property
-    def order(self): return 3
+    def order(self)->int: return 3
 
 
 # ---------------------------------- Order 4 ----------------------------------
 @registerRK
 class GAUSS_LG(RK):
-    """Gauss-Legendre method of order 4 (cf Wikipedia)"""
+    """Gauss-Legendre method of order 4 (cf `Wikipedia`_)"""
     aliases = ["GAUSS-LG"]
     A = [[0.25, 0.25-1/6*3**(0.5)],
          [0.25+1/6*3**(0.5), 0.25]]
@@ -370,14 +362,13 @@ class GAUSS_LG(RK):
     c = [0.5-1/6*3**(0.5), 0.5+1/6*3**(0.5)]
 
     @property
-    def order(self): return 4
+    def order(self)->int: return 4
 
 
 @registerRK
 class SDIRK54(RK):
     """
-    S-stable Diagonally Implicit Runge Kutta method of order 4 in five stages,
-    from Wanner and Hairer [3]
+    S-stable Diagonally Implicit Runge Kutta method of order 4 in five stages from `[Hairer & Wanner, 1996] <https://link.springer.com/book/10.1007/978-3-642-05221-7>`_ 
     """
     A = [[1/4, 0, 0, 0, 0],
          [1/2, 1/4, 0, 0, 0],
@@ -388,14 +379,13 @@ class SDIRK54(RK):
     c = [1/4, 3/4, 11/20, 1/2, 1]
 
     @property
-    def order(self): return 4
+    def order(self)->int: return 4
 
 
 @registerRK
 class EDIRK43(RK):
     """
-    Embedded A-stable diagonally implicit RK pair of order 3 and 4.
-    Taken from [here](https://doi.org/10.1007/BF01934920).
+    Embedded A-stable diagonally implicit RK pair of order 3 and 4 from `[Norsett & Thomsen, 1984] <https://doi.org/10.1007/BF01934920>`_.
     """
     A = np.zeros((4, 4), dtype=float)
     A[0, 0]  = 5/6
@@ -407,7 +397,7 @@ class EDIRK43(RK):
     b2 = [32/75, 169/300, 1/100, 0]
 
     @property
-    def order(self): return 4
+    def order(self)->int: return 4
 
     CONV_TEST_NSTEPS = [32, 64, 128]
 
@@ -415,8 +405,7 @@ class EDIRK43(RK):
 @registerRK
 class EDIRK4(RK):
     """
-    Stiffly accurate, fourth-order EDIRK with four stages. Taken from
-    [here](https://ntrs.nasa.gov/citations/20160005923), second one in eq. (216).
+    Stiffly accurate, fourth-order EDIRK with four stages, taken from `[Kennedy & Carpenter, 2016] <https://ntrs.nasa.gov/citations/20160005923>`_, second one in eq. (216).
     """
     A = np.zeros((4, 4))
     A[0, 0] = 0
@@ -427,7 +416,7 @@ class EDIRK4(RK):
     c = np.array([0.0, 3.0 / 2.0, 7.0 / 5.0, 1.0])
 
     @property
-    def order(self): return 4
+    def order(self)->int: return 4
 
     CONV_TEST_NSTEPS = [32, 64, 128]
 
@@ -435,8 +424,7 @@ class EDIRK4(RK):
 @registerRK
 class ESDIRK43(RK):
     """
-    A-stable embedded RK pair of orders 4 and 3, ESDIRK4(3)6L[2]SA.
-    Taken from [here](https://ntrs.nasa.gov/citations/20160005923)
+    A-stable embedded RK pair of orders 4 and 3, ESDIRK4(3)6L[2]SA, from `[Kennedy & Carpenter, 2016]`_.
     """
     s2 = 2**0.5
     c = np.array([0, 1 / 2, (2 - 2**0.5) / 4, 5 / 8, 26 / 25, 1.0])
@@ -486,7 +474,7 @@ class ESDIRK43(RK):
     ]
 
     @property
-    def order(self): return 4
+    def order(self)->int: return 4
 
     CONV_TEST_NSTEPS = [64, 128, 256]
 
@@ -495,8 +483,7 @@ class ESDIRK43(RK):
 @registerRK
 class ESDIRK53(RK):
     """
-    A-stable embedded RK pair of orders 5 and 3, ESDIRK5(3)6L[2]SA.
-    Taken from [here](https://ntrs.nasa.gov/citations/20160005923).
+    A-stable embedded RK pair of orders 5 and 3, ESDIRK5(3)6L[2]SA, from `[Kennedy & Carpenter, 2016]`_.
     """
     c = [0, 4024571134387.0 / 7237035672548.0, 14228244952610.0 / 13832614967709.0, 1.0 / 10.0, 3.0 / 50.0, 1.0]
     A = np.zeros((6, 6))
@@ -546,10 +533,10 @@ class ESDIRK53(RK):
         ]
 
     @property
-    def orderEmbedded(self): return 3
+    def orderEmbedded(self)->int: return 3
 
     @property
-    def order(self): return 5
+    def order(self)->int: return 5
 
 
 # -------------------------- Additive (IMEX) schemes --------------------------
@@ -626,7 +613,7 @@ class ARK548L2SAERK(RK):
     ]
 
     @property
-    def order(self): return 5
+    def order(self)->int: return 5
 
     CONV_TEST_NSTEPS = [32, 64, 128]
 
@@ -676,14 +663,13 @@ class ARK548L2SAESDIRK(ARK548L2SAERK):
     ]
 
     @property
-    def orderEmbedded(self): return 5
+    def orderEmbedded(self)->int: return 5
 
 
 @registerRK
 class ARK548L2SAESDIRK2(RK):
     """
-    Stiffly accurate singly diagonally L-stable implicit embedded Runge-Kutta pair 
-    of orders 5 and 4 with explicit first stage from [here](https://doi.org/10.1016/j.apnum.2018.10.007).
+    Stiffly accurate singly diagonally L-stable implicit embedded Runge-Kutta pair of orders 5 and 4 with explicit first stage from `[Kennedy & Carpenter, 2019] <https://doi.org/10.1016/j.apnum.2018.10.007>`.
     This method is part of the IMEX method ARK548L2SA.
     """
     gamma = 2.0 / 9.0
@@ -739,7 +725,7 @@ class ARK548L2SAESDIRK2(RK):
     ]
 
     @property
-    def order(self): return 5
+    def order(self)->int: return 5
 
     CONV_TEST_NSTEPS = [16, 32, 64]
 
@@ -747,7 +733,7 @@ class ARK548L2SAESDIRK2(RK):
 @registerRK
 class ARK548L2SAERK2(ARK548L2SAESDIRK2):
     """
-    Explicit embedded pair of Runge-Kutta methods of orders 5 and 4 from [here](https://doi.org/10.1016/j.apnum.2018.10.007).
+    Explicit embedded pair of Runge-Kutta methods of orders 5 and 4 from `[Kennedy & Carpenter, 2019] <https://doi.org/10.1016/j.apnum.2018.10.007>`_
     This method is part of the IMEX method ARK548L2SA.
     """
     A = np.zeros((8, 8))
@@ -784,7 +770,7 @@ class ARK548L2SAERK2(ARK548L2SAESDIRK2):
 @registerRK
 class ARK324L2SAERK(RK):
     """
-    Explicit part of embedded additive Runge-Kutta pair of orders 3 and 2. See https://doi.org/10.1016/S0168-9274(02)00138-1
+    Explicit part of embedded additive Runge-Kutta pair of orders 3 and 2 from `[Kennedy & Carpenter, 2003] <https://doi.org/10.1016/S0168-9274(02)00138-1>`_
     """
     A = np.zeros((4, 4))
     A[1, 0] = 1767732205903./2027836641118.
@@ -812,13 +798,13 @@ class ARK324L2SAERK(RK):
     c[3] = 1.
 
     @property
-    def order(self): return 3
+    def order(self)->int: return 3
 
 
 @registerRK
 class ARK324L2SAESDIRK(ARK324L2SAERK):
     """
-    Implicit part of embedded additive Runge-Kutta pair of orders 3 and 2. See https://doi.org/10.1016/S0168-9274(02)00138-1
+    Implicit part of embedded additive Runge-Kutta pair of orders 3 and 2 from `[Kennedy & Carpenter, 2003]`_
     """
     A = np.zeros((4, 4), dtype=float)
     A[1, 0] = 1767732205903./4055673282236.
@@ -837,7 +823,7 @@ class ARK324L2SAESDIRK(ARK324L2SAERK):
 @registerRK
 class ARK222EDIRK(RK):
     """
-    2nd-order 2-stage EDIRK scheme [Ascher 1997 sec 2.6]
+    2nd-order 2-stage EDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.6] <https://doi.org/10.1016/S0168-9274(97)00056-1>`_
     Use as implicit part for ARK scheme in combination with ARK222ERK.
     """
 
@@ -853,13 +839,13 @@ class ARK222EDIRK(RK):
     b = A[-1, :]
 
     @property
-    def order(self): return 2
+    def order(self)->int: return 2
 
 
 @registerRK
 class ARK222ERK(ARK222EDIRK):
     """
-    2nd-order 2-stage ERK scheme [Ascher 1997 sec 2.6]
+    2nd-order 2-stage ERK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.6]`_
     Use as explicit part for ARK scheme in combination with ARK222EDIRK.
     """
     A = np.array([[0,  0 , 0],
@@ -871,7 +857,7 @@ class ARK222ERK(ARK222EDIRK):
 @registerRK
 class ARK443ESDIRK(RK):
     """
-    3rd-order 4-stage ESDIRK scheme [Ascher 1997 sec 2.8]
+    3rd-order 4-stage ESDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.8] <https://doi.org/10.1016/S0168-9274(97)00056-1>`_
     Use as implicit part for ARK scheme in combination with ARK443ERK.
     """
 
@@ -887,13 +873,13 @@ class ARK443ESDIRK(RK):
     b = A[-1, :]
 
     @property
-    def order(self): return 3
+    def order(self)->int: return 3
 
 
 @registerRK
 class ARK443ERK(ARK443ESDIRK):
     """
-    3rd-order 4-stage ERK scheme [Ascher 1997 sec 2.8]
+    3rd-order 4-stage ERK scheme `[Ascher, Ruuth & Spiteri, 1997 - sec 2.8]`_
     Use as explicit part for ARK scheme in combination with ARK443ESDIRK.
     """
     A = np.array([[  0  ,   0  ,  0 ,   0 , 0],
@@ -907,8 +893,8 @@ class ARK443ERK(ARK443ESDIRK):
 @registerRK
 class ARK4EDIRK(RK):
     """
-    A stable 7 stage fourth order diagonally implicit stiffly accurate Runge-Kutta method with explicit first stage
-    Implicit part of Additive RK.4.A.2 from https://doi.org/10.1016/j.cam.2005.02.020
+    A stable 7 stage fourth order diagonally implicit stiffly accurate Runge-Kutta method with explicit first stage.
+    Implicit part of Additive RK.4.A.2 from `[Liu & Zou, 2006] <https://doi.org/10.1016/j.cam.2005.02.020>`_.
     Use with ARK4ERK to get fourth order stiffly accurate IMEX method.
     """
     c = np.array([0, 1/3, 1/3, 1/2, 1/2, 1, 1])
@@ -924,7 +910,7 @@ class ARK4EDIRK(RK):
     b = A[-1, :]
 
     @property
-    def order(self): return 4
+    def order(self)->int: return 4
 
     CONV_TEST_NSTEPS = [60, 40, 20, 10]
 
@@ -932,8 +918,8 @@ class ARK4EDIRK(RK):
 @registerRK
 class ARK4ERK(ARK4EDIRK):
     """
-    7 stage fourth order explicit stiffly accurate Runge-Kutta method
-    Explicit part of Additive RK.4.A.2 from https://doi.org/10.1016/j.cam.2005.02.020
+    7 stage fourth order explicit stiffly accurate Runge-Kutta method.
+    Explicit part of Additive RK.4.A.2 from `[Liu & Zou, 2006] <https://doi.org/10.1016/j.cam.2005.02.020>`_.
     Use with ARK4EDIRK to get fourth order stiffly accurate IMEX method.
     """
     A = np.zeros((7, 7))

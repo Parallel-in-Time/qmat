@@ -8,8 +8,8 @@
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/qmat?logo=pypi)](https://pypistats.org/packages/qmat)
 
 
-`qmat` is a python package to generate matrix coefficients related to Collocation methods, Spectral Deferred Corrections (SDC), 
-and more general multi-stages time-integration methods (like Runge-Kutta, etc ...).
+`qmat` is a python package to generate matrix coefficients related to Collocation methods, 
+Spectral Deferred Corrections (SDC), and more generally for Runge-Kutta methods.
 
 It allows to generate $Q$-coefficients for multi-stages methods (equivalent to Butcher tables) :
 

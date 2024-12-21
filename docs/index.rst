@@ -19,8 +19,8 @@ QMat Package
         <img alt="Codecov" src="https://codecov.io/gh/Parallel-in-Time/qmat/graph/badge.svg?token=MO0LDVH5NN">
     </a>
 
-`qmat` is a python package to generate matrix coefficients related to Collocation methods, Spectral Deferred Corrections (SDC), 
-and more general multi-stages time-integration methods (like Runge-Kutta, etc ...).
+`qmat` is a python package to generate matrix coefficients related to Collocation methods, 
+Spectral Deferred Corrections (SDC), and more generally for Runge-Kutta methods.
 
 It allows to generate :math:`Q`-coefficients for multi-stages methods (equivalent to Butcher tables) :
 
@@ -98,8 +98,7 @@ Doc Contents
     installation
     notebooks
     contributing
-    misc
-    API reference <autoapi/qmat/index>
+    API reference <api/qmat/index>
 
 Links
 =====

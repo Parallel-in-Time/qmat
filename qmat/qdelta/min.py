@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Submodule for QDelta coefficients based on minimization approaches
+QDelta coefficients based on minimization approaches
 """
 import warnings
 import numpy as np
@@ -14,6 +14,7 @@ from qmat.qcoeff.collocation import Collocation
 
 @register
 class MIN(QDeltaGenerator):
+    """Naive diagonal coefficients based on spectral radius optimization"""
     aliases = ["MIN-Speck"]
 
     def rho(self, x):
@@ -28,6 +29,7 @@ class MIN(QDeltaGenerator):
 
 
 class FromTable(QDeltaGenerator):
+    """Base class for diagonal coefficients stored in tables"""
 
     def __init__(self, nNodes, nodeType, quadType, **kwargs):
         self.nNodes = nNodes
@@ -73,24 +75,20 @@ def registerTable(cls:FromTable)->FromTable:
 
 @registerTable
 class MIN3(FromTable):
-    """
-    These values have been obtained using Indie Solver, a commercial solver for
-    black-box optimization which aggregates several state-of-the-art optimization
-    methods (free academic subscription plan).
-    Objective function :
-        sum over 17^2 values of lamdt, real and imaginary
-    (WORKS SURPRISINGLY WELL!)
-    """
+    """Magic diagonal coefficients from `[Speck, 2021] <https://zenodo.org/records/5775971>`_"""
     aliases = ["Magic_Numbers"]
 
 
 @registerTable
 class MIN_VDHS(FromTable):
+    """Diagonal coefficients from `[van der Houwen & Sommeijer, 1991] <https://epubs.siam.org/doi/10.1137/0912054>`_"""
     aliases = ["VDHS"]
 
 
 @register
 class MIN_SR_NS(QDeltaGenerator):
+    """Diagonal `MIN-SR-NS` coefficients from `[Caklovic et al., 2024] <https://arxiv.org/pdf/2403.18641>`_"""
+
     aliases = ["MIN-SR-NS", "MIN_GT"]
 
     def __init__(self, nodes, **kwargs):
@@ -106,6 +104,8 @@ class MIN_SR_NS(QDeltaGenerator):
 
 @register
 class MIN_SR_S(QDeltaGenerator):
+    """Diagonal `MIN-SR-S` coefficients from `[Caklovic et al., 2024]`_"""
+
     aliases = ["MIN-SR-S"]
 
     def __init__(self, nNodes, nodeType, quadType, **kwargs):
@@ -208,6 +208,8 @@ class MIN_SR_S(QDeltaGenerator):
 
 @register
 class MIN_SR_FLEX(MIN_SR_S):
+    """Diagonal `MIN-SR-FLEX` coefficients from `[Caklovic et al., 2024]`_"""
+
     aliases = ["MIN-SR-FLEX"]
 
     def computeQDelta(self, k=1):
