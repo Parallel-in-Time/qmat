@@ -1,7 +1,30 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Base module for Barycentric Lagrange Approximation
+Base module for Barycentric Lagrange Approximation, based on `[Berrut & Trefethen, 2004] <https://doi.org/10.1137/S0036144502417715>`_.
+Allows to easily build integration / interpolation / derivation matrices, from any list of node points.
+
+Examples
+--------
+>>> # Base usage to generate a quadrature matrix 
+>>> from qmat.lagrange import LagrangeApproximation, np
+>>>
+>>> grid = np.linspace(0, 1, num=5)
+>>> approx = LagrangeApproximation(grid)
+>>> Q = approx.getIntegrationMatrix([(0, tau) for tau in grid])
+>>>
+>>> # Interpolation
+>>> fGrid = np.linspace(0, 1, num=200)
+>>> u = np.exp(grid)
+>>> P = approx.getInterpolationMatrix(fGrid)
+>>> uFine = P @ u
+>>>
+>>> # Alternative interpolation using the object as a function
+>>> uFine = approx(fGrid)
+>>>
+>>> # Derivation
+>>> D = approx.getDerivationMatrix()
+>>> du = D @ u
 """
 import numpy as np
 from scipy.special import roots_legendre
@@ -9,7 +32,7 @@ from scipy.special import roots_legendre
 
 def computeFejerRule(n):
     """
-    Compute a Fejer rule of the first kind, using DFT (Waldvogel 2006)
+    Compute a Fejer rule of the first kind, using DFT `[Waldvogel, 2006] <https://link.springer.com/article/10.1007/s10543-006-0045-4>`_.
     Inspired from quadpy (https://github.com/nschloe/quadpy @Nico_Schlömer)
 
     Parameters
@@ -203,7 +226,7 @@ class LagrangeApproximation(object):
 
 
     @property
-    def n(self):
+    def n(self)->int:
         """The number of points"""
         return self.points.size
 
@@ -232,7 +255,7 @@ class LagrangeApproximation(object):
 
         Returns
         -------
-        PInter : np.2darray(M, n)
+        P : np.2darray(M, n)
             The interpolation matrix, with :math:`M` rows (size of the **times**
             parameter) and :math:`n` columns.
 
@@ -250,10 +273,10 @@ class LagrangeApproximation(object):
         iDiff[i, :] = concom[i, :]
 
         # Compute interpolation matrix using weights
-        PInter = iDiff * self.weights
-        PInter /= PInter.sum(axis=-1)[:, None]
+        P = iDiff * self.weights
+        P /= P.sum(axis=-1)[:, None]
 
-        return PInter
+        return P
 
 
     def getIntegrationMatrix(self, intervals, numQuad='FEJER'):
@@ -295,7 +318,7 @@ class LagrangeApproximation(object):
 
         Returns
         -------
-        PInter : np.2darray(M, n)
+        Q : np.2darray(M, n)
             The integration matrix, with :math:`M` rows (number of intervals)
             and :math:`n` columns.
         """
@@ -324,9 +347,9 @@ class LagrangeApproximation(object):
         # Apply quadrature rule to integrate
         integrand *= omega
         integrand *= (bj - aj) / 2
-        PInter = integrand.sum(axis=-1).T
+        Q = integrand.sum(axis=-1).T
 
-        return PInter
+        return Q
 
     def getDerivationMatrix(self, order=1):
         r"""
@@ -362,11 +385,11 @@ class LagrangeApproximation(object):
         for :math:`i \neq j` and
 
         .. math::
-            D^{(2)}_{jj} = -\sum_{i \neq j} D^{(2)}_{ij}`
+            D^{(2)}_{jj} = -\sum_{i \neq j} D^{(2)}_{ij}
 
         ⚠️ If you want a derivation matrix with many points (~1000 or more),
-        favor the use of weightComputation="STABLE" when initializing
-        the LagrangeApproximation object. If not, some (very small) weights
+        favor the use of `weightComputation="STABLE"` when initializing
+        the `LagrangeApproximation` object. If not, some (very small) weights
         could be approximated by zeros, which would make the computation
         of the derivation matrices fail ...
 

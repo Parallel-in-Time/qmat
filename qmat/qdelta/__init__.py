@@ -255,5 +255,4 @@ def genQDeltaCoeffs(qDeltaType, nSweeps=None, form="Z2N", dTau=False, **params):
 
 # Import all local submodules
 __all__ = ["genQDeltaCoeffs", "QDeltaGenerator", "QDELTA_GENERATORS", "register"]
-QDELTA_GENERATORS.clear()  # to allow hot reload on some IDEs
 importAll(locals(), __all__, __path__, __name__, __import__)

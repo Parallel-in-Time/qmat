@@ -1,7 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-:math:`Q`-coefficients based on Butcher tables
+:math:`Q`-coefficients based on Butcher tables of Runge-Kutta in the literature.
+
+Examples
+--------
+>>> from qmat.qcoeff.butcher import RK_SCHEMES
+>>> c, b, A = RK_SCHEMES["RK4"]().genCoeffs()
+>>> c, (b1, b2), A = RK_SCHEMES["ESDIRK53"]().genCoeffs(embedded=True)
+
+>>> from qmat.qcoeff.butcher import CashKarp
+>>> gen = CashKarp()
+>>> c, b, A = gen.c, gen.b, gen.A
 """
 import numpy as np
 
@@ -51,6 +61,7 @@ RK_SCHEMES = {}
 """Dictionary storing all the implemented RK methods"""
 
 def checkAndStore(cls:RK)->RK:
+    """Check that a `RK`-inherited class is correctly implemented (and store it into the :class:`RK_SCHEMES` dict)"""
     cls.A = np.array(cls.A, dtype=float)
     cls.b = np.array(cls.b, dtype=float)
     cls.c = np.array(cls.c, dtype=float)
@@ -71,6 +82,7 @@ def checkAndStore(cls:RK)->RK:
     return cls
 
 def registerRK(cls:RK)->RK:
+    """Class decorator registering a RK method in `qmat`"""
     return register(checkAndStore(cls))
 
 
@@ -269,7 +281,7 @@ class BE(RK):
 # ---------------------------------- Order 2 ----------------------------------
 @registerRK
 class MidPoint(RK):
-    """Implicit Mid-Point Rule, see `Wikipedia`_"""
+    """Implicit Mid-Point Rule, see `Wikipedia`_."""
     aliases = ["IMP", "ImplicitMidPoint"]
     A = [[1/2]]
     b = [1]
@@ -281,7 +293,7 @@ class MidPoint(RK):
 
 @registerRK
 class TRAP(RK):
-    """Trapeze method (cf `Wikipedia`_)"""
+    """Trapeze method, see `Wikipedia`_."""
     aliases = ["TRAPZ", "CN", "CrankNicolson"]
     A = [[0, 0],
          [1/2, 1/2]]
@@ -294,7 +306,7 @@ class TRAP(RK):
 
 @registerRK
 class SDIRK2(RK):
-    """First S-stable Diagonally Implicit Runge Kutta method of order 2 in two stages from `[Alexander, 1977]`_"""
+    """First S-stable Diagonally Implicit Runge Kutta method of order 2 in two stages from `[Alexander, 1977]`_."""
     A = [[1-2**0.5/2, 0],
          [2**0.5/2, 1-2**0.5/2]]
     b = [2**0.5/2, 1-2**0.5/2]
@@ -306,7 +318,7 @@ class SDIRK2(RK):
 
 @registerRK
 class SDIRK2_2(RK):
-    """Second S-stable Diagonally Implicit Runge Kutta method of order 2 in two stages from `[Alexander, 1977]`_"""
+    """Second S-stable Diagonally Implicit Runge Kutta method of order 2 in two stages from `[Alexander, 1977]`_."""
     aliases = ["SDIRK2-2"]
     A = [[1+2**0.5/2, 0],
          [-2**0.5/2, 1+2**0.5/2]]
@@ -323,7 +335,7 @@ class SDIRK2_2(RK):
 # ---------------------------------- Order 3 ----------------------------------
 @registerRK
 class SDIRK3(RK):
-    """S-stable Diagonally Implicit Runge Kutta method of order 3 in three stages from `[Alexander, 1977]`_"""
+    """S-stable Diagonally Implicit Runge Kutta method of order 3 in three stages from `[Alexander, 1977]`_."""
     A = [[0.43586652150845967, 0, 0],
          [0.28206673924577014, 0.43586652150845967, 0],
          [1.2084966491760119, -0.6443631706844715, 0.43586652150845967]]
@@ -354,7 +366,7 @@ class DIRK43(RK):
 # ---------------------------------- Order 4 ----------------------------------
 @registerRK
 class GAUSS_LG(RK):
-    """Gauss-Legendre method of order 4 (cf `Wikipedia`_)"""
+    """Gauss-Legendre method of order 4 (cf `Wikipedia`_)."""
     aliases = ["GAUSS-LG"]
     A = [[0.25, 0.25-1/6*3**(0.5)],
          [0.25+1/6*3**(0.5), 0.25]]
@@ -368,7 +380,7 @@ class GAUSS_LG(RK):
 @registerRK
 class SDIRK54(RK):
     """
-    S-stable Diagonally Implicit Runge Kutta method of order 4 in five stages from `[Hairer & Wanner, 1996] <https://link.springer.com/book/10.1007/978-3-642-05221-7>`_ 
+    S-stable Diagonally Implicit Runge Kutta method of order 4 in five stages from `[Hairer & Wanner, 1996] <https://link.springer.com/book/10.1007/978-3-642-05221-7>`_.
     """
     A = [[1/4, 0, 0, 0, 0],
          [1/2, 1/4, 0, 0, 0],
@@ -621,7 +633,9 @@ class ARK548L2SAERK(RK):
 @registerRK
 class ARK548L2SAESDIRK(ARK548L2SAERK):
     """
-    Implicit part of the ARK54 scheme. Be careful with the embedded scheme. It seems that both schemes are order 5 as opposed to 5 and 4 as claimed. This may cause issues when doing adaptive time-stepping.
+    Implicit part of the ARK54 scheme.
+    Be careful with the embedded scheme : it seems that both schemes are order 5 as opposed to 5 and 4 as claimed.
+    This may cause issues when doing adaptive time-stepping.
     """
     A = np.zeros((8, 8))
     A[1, :2] = [41.0 / 200.0, 41.0 / 200.0]
@@ -669,7 +683,7 @@ class ARK548L2SAESDIRK(ARK548L2SAERK):
 @registerRK
 class ARK548L2SAESDIRK2(RK):
     """
-    Stiffly accurate singly diagonally L-stable implicit embedded Runge-Kutta pair of orders 5 and 4 with explicit first stage from `[Kennedy & Carpenter, 2019] <https://doi.org/10.1016/j.apnum.2018.10.007>`.
+    Stiffly accurate singly diagonally L-stable implicit embedded Runge-Kutta pair of orders 5 and 4 with explicit first stage from `[Kennedy & Carpenter, 2019] <https://doi.org/10.1016/j.apnum.2018.10.007>`_.
     This method is part of the IMEX method ARK548L2SA.
     """
     gamma = 2.0 / 9.0
@@ -733,7 +747,7 @@ class ARK548L2SAESDIRK2(RK):
 @registerRK
 class ARK548L2SAERK2(ARK548L2SAESDIRK2):
     """
-    Explicit embedded pair of Runge-Kutta methods of orders 5 and 4 from `[Kennedy & Carpenter, 2019] <https://doi.org/10.1016/j.apnum.2018.10.007>`_
+    Explicit embedded pair of Runge-Kutta methods of orders 5 and 4 from `[Kennedy & Carpenter, 2019]`_.
     This method is part of the IMEX method ARK548L2SA.
     """
     A = np.zeros((8, 8))
@@ -770,7 +784,7 @@ class ARK548L2SAERK2(ARK548L2SAESDIRK2):
 @registerRK
 class ARK324L2SAERK(RK):
     """
-    Explicit part of embedded additive Runge-Kutta pair of orders 3 and 2 from `[Kennedy & Carpenter, 2003] <https://doi.org/10.1016/S0168-9274(02)00138-1>`_
+    Explicit part of embedded additive Runge-Kutta pair of orders 3 and 2 from `[Kennedy & Carpenter, 2003] <https://doi.org/10.1016/S0168-9274(02)00138-1>`_.
     """
     A = np.zeros((4, 4))
     A[1, 0] = 1767732205903./2027836641118.
@@ -804,7 +818,7 @@ class ARK324L2SAERK(RK):
 @registerRK
 class ARK324L2SAESDIRK(ARK324L2SAERK):
     """
-    Implicit part of embedded additive Runge-Kutta pair of orders 3 and 2 from `[Kennedy & Carpenter, 2003]`_
+    Implicit part of embedded additive Runge-Kutta pair of orders 3 and 2 from `[Kennedy & Carpenter, 2003]`_.
     """
     A = np.zeros((4, 4), dtype=float)
     A[1, 0] = 1767732205903./4055673282236.
@@ -823,7 +837,7 @@ class ARK324L2SAESDIRK(ARK324L2SAERK):
 @registerRK
 class ARK222EDIRK(RK):
     """
-    2nd-order 2-stage EDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.6] <https://doi.org/10.1016/S0168-9274(97)00056-1>`_
+    2nd-order 2-stage EDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.6] <https://doi.org/10.1016/S0168-9274(97)00056-1>`_.
     Use as implicit part for ARK scheme in combination with ARK222ERK.
     """
 
@@ -845,7 +859,7 @@ class ARK222EDIRK(RK):
 @registerRK
 class ARK222ERK(ARK222EDIRK):
     """
-    2nd-order 2-stage ERK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.6]`_
+    2nd-order 2-stage ERK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.6]`_.
     Use as explicit part for ARK scheme in combination with ARK222EDIRK.
     """
     A = np.array([[0,  0 , 0],
@@ -857,7 +871,7 @@ class ARK222ERK(ARK222EDIRK):
 @registerRK
 class ARK443ESDIRK(RK):
     """
-    3rd-order 4-stage ESDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.8] <https://doi.org/10.1016/S0168-9274(97)00056-1>`_
+    3rd-order 4-stage ESDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.8] <https://doi.org/10.1016/S0168-9274(97)00056-1>`_.
     Use as implicit part for ARK scheme in combination with ARK443ERK.
     """
 
@@ -879,7 +893,7 @@ class ARK443ESDIRK(RK):
 @registerRK
 class ARK443ERK(ARK443ESDIRK):
     """
-    3rd-order 4-stage ERK scheme `[Ascher, Ruuth & Spiteri, 1997 - sec 2.8]`_
+    3rd-order 4-stage ERK scheme `[Ascher, Ruuth & Spiteri, 1997 - sec 2.8]`_.
     Use as explicit part for ARK scheme in combination with ARK443ESDIRK.
     """
     A = np.array([[  0  ,   0  ,  0 ,   0 , 0],

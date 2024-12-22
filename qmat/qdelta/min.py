@@ -1,7 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-QDelta coefficients based on minimization approaches
+QDelta coefficients based on minimization approaches.
+In particular, generate the diagonal coefficients from `[Caklovic et al., 2024]`_.
+
+Examples
+--------
+>>> from qmat.qcoeff.collocation import Collocation
+>>> coll = Collocation(nNodes=4, nodeType="LEGENDRE", quadType="RADAU-RIGHT")
+>>>
+>>> from qmat import genQDeltaCoeffs
+>>> QDelta = genQDeltaCoeffs("MIN-SR-NS", nodes=coll.nodes)
+>>>
+>>> from qmat.qdelta.min import MIN_SR_S, MIN_SR_FLEX
+>>> minSRS= MIN_SR_S(coll.nNodes, coll.nodeType, coll.quadType)
+>>> QDelta = minSRS.getQDelta()
+>>> minSRFLEX = MIN_SR_FLEX(coll.nNodes, coll.nodeType, coll.quadType)
+>>> QD1, QD2, QD3 = minSRFLEX.genCoeffs(k=[1,2,3])
 """
 import warnings
 import numpy as np
@@ -35,7 +50,7 @@ class FromTable(QDeltaGenerator):
         self.nNodes = nNodes
         self.nodeType = nodeType
         self.quadType = quadType
-    
+
     @property
     def size(self):
         return self.nNodes

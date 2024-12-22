@@ -1,7 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Submodule for QDelta coefficients based on time-stepping scheme
+Submodule for QDelta coefficients based on time-stepping scheme.
+Allows to build equivalent SDC sweeps as those introduced in the original
+paper from `[Dutt, Greengard & Rokhlin, 2000] <https://link.springer.com/article/10.1023/A:1022338906936>`_.
+
+Examples
+--------
+>>> from qmat.qcoeff.collocation import Collocation
+>>> coll = Collocation(nNodes=4, nodeType="LEGENDRE", quadType="RADAU-RIGHT")
+>>>
+>>> from qmat import genQDeltaCoeffs
+>>> QDelta = genQDeltaCoeffs("IE", nodes=coll.nodes)
+>>>
+>>> from qmat.qdelta.timestepping import TRAP
+>>> gen = TRAP(nodes=coll.nodes)
+>>> SDelta, dTau = gen.genCoeffs(form="N2N", dTau=True)
 """
 import numpy as np
 

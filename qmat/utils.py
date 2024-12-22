@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Package utility module
+Utility function for `qmat`
 """
 import inspect
 import pkgutil
 
 def checkOverriding(cls, name, isProperty=True):
+    """Check if a class overrides a method with a given name"""
     method = getattr(cls, name)
     parent = getattr(cls.mro()[-2], name)
     assert method != parent, \
@@ -20,6 +21,7 @@ def checkOverriding(cls, name, isProperty=True):
 
 
 def checkGenericConstr(cls):
+    """Check if a class implement a constructor with a `**kwargs` generic parameter"""
     sig = inspect.signature(cls.__init__)
     try:
         par = sig.parameters["kwargs"]
@@ -29,11 +31,13 @@ def checkGenericConstr(cls):
 
 
 def storeAlias(cls, dico, alias):
+    """Store a class into a dictionary with a given alias"""
     assert alias not in dico, f"{alias} alias already registered in {dico}"
     dico[alias] = cls
 
 
 def storeClass(cls, dico):
+    """Store a class into a dictionary"""
     storeAlias(cls, dico, cls.__name__)
     aliases = getattr(cls, "aliases", None)
     if aliases:
@@ -44,7 +48,7 @@ def storeClass(cls, dico):
 
 
 def importAll(localVars, __all__, __path__, __name__, __import__):
-    """The magic function"""
+    """Import all submodules in the current (sub-)package"""
     __all__ += [var for var in localVars.keys() if not var.startswith('__')]
     for _, moduleName, _ in pkgutil.walk_packages(__path__):
         __all__.append(moduleName)
@@ -52,6 +56,7 @@ def importAll(localVars, __all__, __path__, __name__, __import__):
 
 
 def getClasses(dico, module=None):
+    """Retrieve all classes stored into a dictionary, filtering aliases"""
     classes = {}
     if module is None:
         check = lambda cls: True

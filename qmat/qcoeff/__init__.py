@@ -268,5 +268,4 @@ def genQCoeffs(qType, form="Z2N", hCoeffs=False, embedded=False, **params):
 
 # Import all local submodules
 __all__ = ["genQCoeffs", "QGenerator", "Q_GENERATORS", "register"]
-Q_GENERATORS.clear()  # to allow hot reload on some IDEs
 importAll(locals(), __all__, __path__, __name__, __import__)

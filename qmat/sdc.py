@@ -1,13 +1,41 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Module with simple usage SDC type time-stepping solvers
+Functions to run SDC and evaluate its numerical error on simple problems.
 """
 import numpy as np
 
 
 def solveDahlquistSDC(lam, u0, T, nSteps, nSweeps, Q, QDelta,
                       weights=None):
+    r"""
+    Solve the Dahlquist problem with SDC.
+
+    Parameters
+    ----------
+    lam : complex or float
+        The :math:`\lambda` coefficient.
+    u0 : complex or float
+        The initial solution :math:`u_0`.
+    T : float
+        Final time :math:`T`.
+    nSteps : int
+        Number of time-step for the whole :math:`[0,T]` interval.
+    nSweeps : int
+        Number of SDC sweeps.
+    Q : np.ndarray
+        Quadrature matrix :math:`Q` used for SDC.
+    QDelta : np.ndarray
+        Approximate quadrature matrix :math:`Q_\Delta` used for SDC.
+    weights : np.ndarray, optional
+        Quadrature weights to use for the prologation.
+        If None, prolongation is not performed. The default is None.
+
+    Returns
+    -------
+    uNum : np.ndarray
+        Array containing the `nSteps+1` solutions :math:`\{u(0), ..., u(T)\}`.
+    """
     uNum = np.zeros(nSteps+1, dtype=complex)
     uNum[0] = u0
 
@@ -33,6 +61,37 @@ def solveDahlquistSDC(lam, u0, T, nSteps, nSweeps, Q, QDelta,
 
 def errorDahlquistSDC(lam, u0, T, nSteps, nSweeps, Q, QDelta,
                       weights=None, uNum=None):
+    r"""
+    Compute the time :math:`L_\infty` error of SDC.
+
+    Parameters
+    ----------
+    lam : complex or float
+        The :math:`\lambda` coefficient.
+    u0 : complex or float
+        The initial solution :math:`u_0`.
+    T : float
+        Final time :math:`T`.
+    nSteps : int
+        Number of time-step for the whole :math:`[0,T]` interval.
+    nSweeps : int
+        Number of SDC sweeps.
+    Q : np.ndarray
+        Quadrature matrix :math:`Q` used for SDC.
+    QDelta : np.ndarray
+        Approximate quadrature matrix :math:`Q_\Delta` used for SDC.
+    weights : np.ndarray, optional
+        Quadrature weights to use for the prologation.
+        If None, prolongation is not performed. The default is None.
+    uNum : np.ndarray, optional
+        Numerical solution, if not provided use the `solveDahlquist` method
+        to compute the solution. The default is None.
+
+    Returns
+    -------
+    float
+        The :math:`L_\infty` norm.
+    """
     if uNum is None:
         uNum = solveDahlquistSDC(
             lam, u0, T, nSteps, nSweeps, Q, QDelta,
@@ -44,6 +103,25 @@ def errorDahlquistSDC(lam, u0, T, nSteps, nSweeps, Q, QDelta,
 
 
 def getOrderSDC(coll, nSweeps, qDelta, prolongation):
+    r"""
+    Give the expected order of SDC after a fixed number of iterations.
+
+    Parameters
+    ----------
+    coll : :class:`qmat.qcoeff.collocation.Collocation`
+        The underlying `Collocation` class.
+    nSweeps : int
+        Number of sweeps for SDC.
+    qDelta : str
+        Type of the :math:`Q_\Delta` approximation used.
+    prolongation : bool
+        Wether or not the prolongation is done at the end.
+
+    Returns
+    -------
+    order : int
+        Expected order of the SDC time-integration.
+    """
     # TODO : extend with additional results from
     # https://gitlab.inria.fr/sweet/sweet/-/blob/main/mule_local/python/sdc/qmatrix.py#L596
 

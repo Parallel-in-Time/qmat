@@ -8,7 +8,7 @@ import numpy as np
 
 def numericalOrder(nSteps, err):
     """
-    Utility function to compute numerical order from error and nSteps vectors
+    Compute numerical order from two vectors containing the error and the number of time-steps.
 
     Parameters
     ----------
@@ -103,11 +103,11 @@ def getExtrapolationMatrix(nodes, times, pOrder=None):
 
     Returns
     -------
-    Pe : np.2darray, shape (N, M)
+    P : np.2darray, shape (N, M)
         Extrapolation matrix, that can be used on any node values.
     """
     if pOrder is None: pOrder = np.size(nodes)-1
     X = np.vander(nodes, N=pOrder+1, increasing=True)
     T = np.vander(times, N=pOrder+1, increasing=True)
-    Pe = T @ np.linalg.solve(X.T @ X, X.T)
-    return Pe
+    P = T @ np.linalg.solve(X.T @ X, X.T)
+    return P

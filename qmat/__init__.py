@@ -18,7 +18,7 @@ Examples
 --------
 >>> from qmat import genQCoeffs, genQDeltaCoeffs
 >>>
->>> # Coefficients or specific collocation method
+>>> # Coefficients of a specific collocation method
 >>> nodes, weights, Q = genQCoeffs(
 >>>     "Collocation", nNodes=4, nodeType="LEGENDRE", quadType="RADAU-RIGHT")
 >>>
@@ -28,11 +28,8 @@ Examples
 >>> # Butcher table of the classical explicit RK4 method
 >>> c, b, A = genQCoeffs("ERK4")
 
-
->>> from qcoeff import Q_GENERATORS
->>> print(Q_GENERATORS)     # list all available generator classes for Q coefficients
-
->>> from qdelta import QDELTA_GENERATORS
+>>> from qmat import Q_GENERATORS, QDELTA_GENERATORS
+>>> print(Q_GENERATORS)         # list all available generator classes for Q coefficients
 >>> print(QDELTA_GENERATORS)    # list all available generator classes for QDelta approximations
 """
 from qmat.qcoeff import genQCoeffs, Q_GENERATORS

@@ -1,7 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Submodule for QDelta coefficients based on algebraic approach
+Submodule for QDelta coefficients based on algebraic approaches,
+in particular the `LU trick` from `[Weiser, 2014]`_.
+
+Examples
+--------
+>>> from qmat.qcoeff.collocation import Collocation
+>>> coll = Collocation(nNodes=4, nodeType="LEGENDRE", quadType="RADAU-RIGHT")
+>>>
+>>> from qmat import genQDeltaCoeffs
+>>> QDelta = genQDeltaCoeffs("LU", Q=coll.Q)
+>>>
+>>> from qmat.qdelta.algebraic import LDU
+>>> gen = LDU(Q=coll.Q)
+>>> QDelta = gen.getQDelta()
 """
 import numpy as np
 import scipy.linalg as spl
@@ -39,7 +52,7 @@ class LU(QDeltaGenerator):
 
 @register
 class LU2(LU):
-    """LU approximation from `[Weiser, 2014] <https://link.springer.com/article/10.1007/s10543-014-0540-y>`_ multiplied by 2"""
+    """LU approximation from `[Weiser, 2014]`_ multiplied by 2"""
 
     def computeQDelta(self, k=None):
         return super().computeQDelta()*2

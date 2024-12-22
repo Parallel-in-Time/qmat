@@ -1,7 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Base module for nodes generation
+Implement the base :class:`NodesGenerator` class that can be used to generate
+quadrature nodes for many kind of distribution and types. 
+Its implementation is mostly based on the book of
+`[Gautschi, 2004] <https://doi.org/10.1093/oso/9780198506720.001.0001>`_.
+
+Examples
+--------
+>>> from qmat.nodes import NodesGenerator
+>>> gen = NodesGenerator(nodeType="CHEBY-1", quadType="RADAU-RIGHT")
+>>> nodes = gen.getNodes(10)
+>>> coarse = gen.getNodes(5)
 """
 import numpy as np
 from scipy.linalg import eigh_tridiagonal
@@ -14,10 +24,8 @@ QUAD_TYPES = ['GAUSS', 'RADAU-LEFT', 'RADAU-RIGHT', 'LOBATTO']
 
 class NodesGenerator(object):
     """
-    Class that can be used to generate generic distribution of nodes derived
-    from Gauss quadrature rule.
-    Its implementation is fully inspired from a `book of W. Gautschi
-    <https://doi.org/10.1093/oso/9780198506720.001.0001>`_.
+    Class that can be used to generate generic distribution of nodes derived from Gauss quadrature rule.
+    Its implementation is fully inspired from `[Gautschi, 2004] <https://doi.org/10.1093/oso/9780198506720.001.0001>`_.
 
     Parameters
     ----------
