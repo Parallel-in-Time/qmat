@@ -6,8 +6,8 @@ Functions to run SDC and evaluate its numerical error on simple problems.
 import numpy as np
 
 
-def solveDahlquistSDC(lam, u0, T, nSteps, nSweeps, Q, QDelta,
-                      weights=None):
+def solveDahlquistSDC(lam, u0, T, nSteps:int, nSweeps:int, Q:np.ndarray, QDelta:np.ndarray,
+                      weights=None, monitors=None):
     r"""
     Solve the Dahlquist problem with SDC.
 
@@ -26,7 +26,8 @@ def solveDahlquistSDC(lam, u0, T, nSteps, nSweeps, Q, QDelta,
     Q : np.ndarray
         Quadrature matrix :math:`Q` used for SDC.
     QDelta : np.ndarray
-        Approximate quadrature matrix :math:`Q_\Delta` used for SDC.
+        Approximate quadrature matrix :math:`Q_\Delta` used for SDC. 
+        If three dimensional, use the first dimension for the sweep index.
     weights : np.ndarray, optional
         Quadrature weights to use for the prologation.
         If None, prolongation is not performed. The default is None.
@@ -36,27 +37,63 @@ def solveDahlquistSDC(lam, u0, T, nSteps, nSweeps, Q, QDelta,
     uNum : np.ndarray
         Array containing the `nSteps+1` solutions :math:`\{u(0), ..., u(T)\}`.
     """
+    nodes = Q.sum(axis=1)
+    nNodes = Q.shape[0]
+    dt = T/nSteps
+    times = np.linspace(0, T, nSteps+1)
+    
+    QDelta = np.asarray(QDelta)
+    if QDelta.ndim == 3:
+        assert QDelta.shape == (nSweeps, nNodes, nNodes), "inconsistent shape for QDelta"
+    else:
+        assert QDelta.shape == (nNodes, nNodes), "inconsistent shape for QDelta"
+        QDelta = np.repeat(QDelta[None, ...], nSweeps, axis=0)
+
+    # Preconditioner built for each sweeps
+    P = np.eye(nNodes)[None, ...] - lam*dt*QDelta
+
     uNum = np.zeros(nSteps+1, dtype=complex)
     uNum[0] = u0
 
-    nNodes = Q.shape[0]
+    # Setup monitors if any
+    if monitors:
+        tmp = {}
+        for key in monitors:
+            assert key in ["residuals", "errors"], f"unknown key '{key}' for monitors"
+            tmp[key] = np.zeros((nSweeps+1, nSteps, nNodes), dtype=complex)
+        monitors = tmp
 
-    dt = T/nSteps
-    P = np.eye(nNodes) - lam*dt*QDelta
     for i in range(nSteps):
 
         uNodes = np.ones(nNodes)*uNum[i]
 
+        # Monitoring
+        if monitors:
+            if "residuals" in monitors:
+                monitors["residuals"][0, i] = uNum[i] + lam*dt*Q @ uNodes - uNodes
+            if "errors" in monitors:
+                monitors["errors"][0, i] = uNodes - u0*np.exp(lam*(times[i] + dt*nodes))
+
         for k in range(nSweeps):
-            b = uNum[i] + lam*dt*(Q-QDelta) @ uNodes
-            uNodes = np.linalg.solve(P, b)
+            b = uNum[i] + lam*dt*(Q-QDelta[k]) @ uNodes
+            uNodes = np.linalg.solve(P[k], b)
+
+            # Monitoring
+            if monitors:
+                if "residuals" in monitors:
+                    monitors["residuals"][k+1, i] = uNum[i] + lam*dt*Q @ uNodes - uNodes
+                if "errors" in monitors:
+                    monitors["errors"][k+1, i] = uNodes - u0*np.exp(lam*(times[i] + dt*nodes))
 
         if weights is None:
             uNum[i+1] = uNodes[-1]
         else:
             uNum[i+1] = uNum[i] + lam*dt*weights.dot(uNodes)
 
-    return uNum
+    if monitors:
+        return uNum, monitors
+    else:   
+        return uNum
 
 
 def errorDahlquistSDC(lam, u0, T, nSteps, nSweeps, Q, QDelta,

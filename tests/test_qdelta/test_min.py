@@ -100,6 +100,10 @@ def testFlex(nNodes, nodeType, quadType):
     Q = coll.Q
 
     gen = module.MIN_SR_FLEX(nNodes=nNodes, nodeType=nodeType, quadType=quadType)
+    gen2 = module.MIN_SR_FLEX(coll=coll)
+    for i in range(nNodes):
+        assert np.allclose(gen2.getQDelta(k=i+1), gen.getQDelta(k=i+1)), \
+            "not the same coefficients using the coll parameter"
 
     I = np.eye(nNodes)
     P = I

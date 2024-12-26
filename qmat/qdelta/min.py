@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 QDelta coefficients based on minimization approaches.
-In particular, generate the diagonal coefficients from `[Caklovic et al., 2024]`_.
+In particular, generates the diagonal coefficients from `[Caklovic et al., 2024]`_.
 
 Examples
 --------
@@ -29,7 +29,7 @@ from qmat.qcoeff.collocation import Collocation
 
 @register
 class MIN(QDeltaGenerator):
-    """Naive diagonal coefficients based on spectral radius optimization"""
+    """Naive diagonal coefficients based on spectral radius optimization."""
     aliases = ["MIN-Speck"]
 
     def rho(self, x):
@@ -44,7 +44,7 @@ class MIN(QDeltaGenerator):
 
 
 class FromTable(QDeltaGenerator):
-    """Base class for diagonal coefficients stored in tables"""
+    """Base (unregistered) class for diagonal coefficients stored in tables."""
 
     def __init__(self, nNodes, nodeType, quadType, **kwargs):
         self.nNodes = nNodes
@@ -90,19 +90,19 @@ def registerTable(cls:FromTable)->FromTable:
 
 @registerTable
 class MIN3(FromTable):
-    """Magic diagonal coefficients from `[Speck, 2021] <https://zenodo.org/records/5775971>`_"""
+    """Magic diagonal coefficients from `[Speck, 2021] <https://zenodo.org/records/5775971>`_."""
     aliases = ["Magic_Numbers"]
 
 
 @registerTable
 class MIN_VDHS(FromTable):
-    """Diagonal coefficients from `[van der Houwen & Sommeijer, 1991] <https://epubs.siam.org/doi/10.1137/0912054>`_"""
+    """Diagonal coefficients from `[van der Houwen & Sommeijer, 1991] <https://epubs.siam.org/doi/10.1137/0912054>`_."""
     aliases = ["VDHS"]
 
 
 @register
 class MIN_SR_NS(QDeltaGenerator):
-    """Diagonal `MIN-SR-NS` coefficients from `[Caklovic et al., 2024] <https://arxiv.org/pdf/2403.18641>`_"""
+    """Diagonal `MIN-SR-NS` coefficients from `[Caklovic et al., 2024] <https://arxiv.org/pdf/2403.18641>`_."""
 
     aliases = ["MIN-SR-NS", "MIN_GT"]
 
@@ -119,14 +119,37 @@ class MIN_SR_NS(QDeltaGenerator):
 
 @register
 class MIN_SR_S(QDeltaGenerator):
-    """Diagonal `MIN-SR-S` coefficients from `[Caklovic et al., 2024]`_"""
+    """Diagonal `MIN-SR-S` coefficients from `[Caklovic et al., 2024]`_."""
 
     aliases = ["MIN-SR-S"]
 
-    def __init__(self, nNodes, nodeType, quadType, **kwargs):
-        self.nodeType = nodeType
-        self.quadType = quadType
-        self.coll = Collocation(nNodes, nodeType, quadType)
+    def __init__(self, nNodes=None, nodeType=None, quadType=None, coll:Collocation=None, **kwargs):
+        """
+        Parameters
+        ----------
+        nNodes : int
+            Number of nodes.
+        nodeType : str
+            Type of node distribution, see :class:`qmat.nodes.NodesGenerator`
+            for available types.
+        quadType : str
+            Quadrature type for the nodes, see :class:`qmat.nodes.NodesGenerator`
+            for available types.
+        coll : :class:`qmat.qcoeff.collocation.Collocation`, optional
+            If given, ignore the previous parameters and use this as the
+            underlying collocation method. The default is None.
+        **kwargs :
+            Additional parameters given during a generic call, not used by this class.
+        """
+        if coll is not None:
+            assert isinstance(coll, Collocation), "coll parameter is not a Collocation object"
+            self.coll = coll
+            self.nodeType = coll.nodeType
+            self.quadType = coll.quadType
+        else:
+            self.nodeType = nodeType
+            self.quadType = quadType
+            self.coll = Collocation(nNodes, nodeType, quadType)
 
     @property
     def size(self):
