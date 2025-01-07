@@ -4,18 +4,28 @@
 
 ## Generating local docs
 
-First you need a few dependencies (besides those for `qmat`), 
-which are listed in the [`docs/requirements.txt`](https://github.com/Parallel-in-Time/qmat/blob/main/docs/requirements.txt) file. 
-You can install those using your favorite python package manager (`pip`, `conda`, ...).
+First you need a few dependencies (besides those for `qmat`). For that download
+the [source code](https://github.com/Parallel-in-Time/qmat) and install the package with all the 
+`docs` dependencies locally :
 
-Then to generate the documentation website locally, simply run (from the root `qmat` repo) :
+```bash
+git clone https://github.com/Parallel-in-Time/qmat.git
+cd qmat
+pip install -e .[docs]
+```
+
+> 📜 The `-e` option ensures that your installed python package is directly linked to the sources (no copy of code),
+> hence modifying any part of the source code (in particular the documentation) 
+> will be taken into account when `sphinx` will parse the code docstring.
+
+Then to generate the documentation website locally, simply run :
 
 ```bash
 cd docs
 make html
 ```
 
-This builds the sphinx documentation automatically in a `_build` folder, 
+This builds the `sphinx` documentation automatically in a `_build` folder, 
 and you can view it by opening `docs/_build/html/index.html` using your favorite browser.
 
 ## Updating a tutorial
