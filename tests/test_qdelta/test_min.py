@@ -124,3 +124,25 @@ def testFlex(nNodes, nodeType, quadType):
     QDelta1 = gen.getQDelta(1)
     assert np.allclose(QDelta0, QDelta1), \
         "default QDelta is not equal to k=1"
+
+
+@pytest.mark.parametrize("quadType", ["GAUSS", "RADAU-RIGHT"])
+@pytest.mark.parametrize("nodeType", NODE_TYPES)
+@pytest.mark.parametrize("nNodes", [2, 3, 4])
+def testJumper(nNodes, nodeType, quadType):
+    coll = Collocation(nNodes=nNodes, nodeType=nodeType, quadType=quadType)
+    nodes, Q = coll.nodes, coll.Q
+    k = np.arange(nNodes)+1
+    
+    gen = module.Jumper(nodes=nodes)
+    genFlex = module.MIN_SR_FLEX(coll=coll)
+    QDeltas = gen.genCoeffs(k)
+    QDeltasFlex = genFlex.genCoeffs(k)
+
+    assert np.allclose(QDeltas, QDeltasFlex/2)
+
+    gen2 = module.FlexJumper(nodes=nodes)
+    QDeltas2 = gen2.genCoeffs(k)
+
+    assert np.allclose(QDeltas2[0], QDeltasFlex[0])
+    assert np.allclose(QDeltas2[1:], QDeltas[:-1])

@@ -144,9 +144,10 @@ class QDeltaGenerator(object):
             gen = lambda k, copy=None: self.getSDelta(k)
         else:
             raise ValueError(f"form must be Z2N or N2N, not {form}")
-        if isinstance(k, list):
+        try:
+            k = list(k)
             out = [np.array([gen(_k, copy=False) for _k in k])]
-        else:
+        except TypeError:
             out = [gen(k)]
         if dTau:
             out += [self.dTau]
