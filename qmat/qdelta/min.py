@@ -279,6 +279,8 @@ class Jumper(MIN_SR_NS):
 class FlexJumper(Jumper):
     """Diagonal coefficients allowing order jump while still maintining high stability"""
 
+    aliases = ["FLEX-JUMPER", "FB2"]
+
     def computeQDelta(self, k=None):
         if k is None: k = 1
         divider = 1 if k == 1 else 2*(k-1)
