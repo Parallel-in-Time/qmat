@@ -27,6 +27,14 @@ import qmat.qdelta.mincoeffs as tables
 from qmat.qcoeff.collocation import Collocation
 
 
+def check(k):
+    """Utility function to check k parameter for k-dependent generators"""
+    if k is None: k = 1
+    if k < 1:
+        raise ValueError(f"k must be greater than 0 ({k})")
+    return k
+
+
 @register
 class MIN(QDeltaGenerator):
     """Naive diagonal coefficients based on spectral radius optimization."""
@@ -251,9 +259,7 @@ class MIN_SR_FLEX(MIN_SR_S):
     aliases = ["MIN-SR-FLEX"]
 
     def computeQDelta(self, k=1):
-        if k is None: k = 1
-        if k < 1:
-            raise ValueError(f"k must be greater than 0 ({k})")
+        k = check(k)
         if k <= self.size:
             return np.diag(self.coll.nodes/k)
         else:
@@ -270,18 +276,18 @@ class Jumper(MIN_SR_NS):
 
     aliases = ["JUMPER", "FB"]
 
-    def computeQDelta(self, k=None):
-        if k is None: k = 1
+    def computeQDelta(self, k=1):
+        k = check(k)
         return np.diag(self.nodes)/(2*k)
 
 
 @register
 class FlexJumper(Jumper):
-    """Diagonal coefficients allowing order jump while still maintining high stability"""
+    """Diagonal coefficients allowing order jump while still maintaining high stability"""
 
     aliases = ["FLEX-JUMPER", "FB2"]
 
-    def computeQDelta(self, k=None):
-        if k is None: k = 1
+    def computeQDelta(self, k=1):
+        k = check(k)
         divider = 1 if k == 1 else 2*(k-1)
         return np.diag(self.nodes)/divider
