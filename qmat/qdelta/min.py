@@ -262,3 +262,24 @@ class MIN_SR_FLEX(MIN_SR_S):
             except AttributeError:
                 self._QDelta_MIN_SR_S = super().computeQDelta()
             return self._QDelta_MIN_SR_S
+
+
+@register
+class Jumper(MIN_SR_NS):
+    """Diagonal coefficients allowing order jump"""
+
+    aliases = ["JUMPER", "FB"]
+
+    def computeQDelta(self, k=None):
+        if k is None: k = 1
+        return np.diag(self.nodes)/(2*k)
+
+
+@register
+class FlexJumper(Jumper):
+    """Diagonal coefficients allowing order jump while still maintining high stability"""
+
+    def computeQDelta(self, k=None):
+        if k is None: k = 1
+        divider = 1 if k == 1 else 2*(k-1)
+        return np.diag(self.nodes)/divider
