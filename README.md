@@ -70,6 +70,7 @@ and the current [Development Roadmap](https://qmat.readthedocs.io/en/latest/devd
 ## Projects relying on `qmat`
 
 - [pySDC](https://github.com/Parallel-in-Time/pySDC) : _Python implementation of the spectral deferred correction (SDC) approach and its flavors, esp. the multilevel extension MLSDC and PFASST._
+- [SWEET](https://gitlab.inria.fr/sweet/sweet) : _Shallow Water Equation Environment for Tests, Awesome! (C++)_
 
 ## Links
 
