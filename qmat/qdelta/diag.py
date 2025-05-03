@@ -12,7 +12,7 @@ Examples
 >>> from qmat import genQDeltaCoeffs
 >>> QDelta = genQDeltaCoeffs("MIN-SR-NS", nodes=coll.nodes)
 >>>
->>> from qmat.qdelta.min import MIN_SR_S, MIN_SR_FLEX
+>>> from qmat.qdelta.diag import MIN_SR_S, MIN_SR_FLEX
 >>> minSRS= MIN_SR_S(coll.nNodes, coll.nodeType, coll.quadType)
 >>> QDelta = minSRS.getQDelta()
 >>> minSRFLEX = MIN_SR_FLEX(coll.nNodes, coll.nodeType, coll.quadType)
@@ -30,8 +30,7 @@ from qmat.qcoeff.collocation import Collocation
 def check(k):
     """Utility function to check k parameter for k-dependent generators"""
     if k is None: k = 1
-    if k < 1:
-        raise ValueError(f"k must be greater than 0 ({k})")
+    if k < 1: raise ValueError(f"k must be greater than 0 ({k})")
     return k
 
 
@@ -291,3 +290,38 @@ class FlexJumper(Jumper):
         k = check(k)
         divider = 1 if k == 1 else 2*(k-1)
         return np.diag(self.nodes)/divider
+
+
+@register
+class DNODES(MIN_SR_NS):
+    """Diagonal coefficients build on divided node (1 here)"""
+    divider = 1
+    aliases = ["DNODES-1"]
+
+    def computeQDelta(self, k=None):
+        return np.diag(self.nodes)/self.divider
+
+@register
+class DNODES2(DNODES):
+    """Diagonal coefficients build on divided node (2 here)"""
+    divider = 2
+    aliases = ["DNODES-2"]
+
+@register
+class DNODES3(DNODES):
+    """Diagonal coefficients build on divided node (3 here)"""
+    divider = 3
+    aliases = ["DNODES-3"]
+
+@register
+class DNODES4(DNODES):
+    """Diagonal coefficients build on divided node (4 here)"""
+    divider = 4
+    aliases = ["DNODES-4"]
+
+@register
+class DNODES5(DNODES):
+    """Diagonal coefficients build on divided node (5 here)"""
+    divider = 5
+    aliases = ["DNODES-5"]
+

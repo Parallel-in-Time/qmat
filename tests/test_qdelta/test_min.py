@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 
 from qmat.qdelta import QDELTA_GENERATORS
-import qmat.qdelta.min as module
+import qmat.qdelta.diag as module
 from qmat.qcoeff.collocation import Collocation
 from qmat.nodes import NODE_TYPES, QUAD_TYPES
 
