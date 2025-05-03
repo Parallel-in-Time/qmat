@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 
 from qmat.qdelta import QDELTA_GENERATORS
-import qmat.qdelta.min as module
+import qmat.qdelta.diag as module
 from qmat.qcoeff.collocation import Collocation
 from qmat.nodes import NODE_TYPES, QUAD_TYPES
 
@@ -146,3 +146,24 @@ def testJumper(nNodes, nodeType, quadType):
 
     assert np.allclose(QDeltas2[0], QDeltasFlex[0])
     assert np.allclose(QDeltas2[1:], QDeltas[:-1])
+
+
+@pytest.mark.parametrize("quadType", ["GAUSS", "RADAU-RIGHT"])
+@pytest.mark.parametrize("nodeType", NODE_TYPES)
+@pytest.mark.parametrize("nNodes", [2, 3, 4])
+@pytest.mark.parametrize("divider", [1, 2, 3, 4, 5])
+def testDNODES(divider, nNodes, nodeType, quadType):
+    coll = Collocation(nNodes=nNodes, nodeType=nodeType, quadType=quadType)
+    nodes = coll.nodes
+    
+    Generator = {
+        1: module.DNODES,
+        2: module.DNODES2,
+        3: module.DNODES3,
+        4: module.DNODES4,
+        5: module.DNODES5,
+    }[divider]
+    gen:module.DNODES = Generator(nodes=nodes)
+    QDeltas = gen.genCoeffs()
+
+    assert np.allclose(QDeltas, np.diag(nodes)/divider)
