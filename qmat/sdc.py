@@ -183,7 +183,7 @@ def getOrderSDC(coll, nSweeps, qDelta, prolongation):
 
     order = min(maxOrder, order)
 
-    # Edge cases with bonus order (or malus some times ...)
+    # Edge cases with bonus order
     # TODO: couple with the Butcher theory from Joscha to retrieve this theoretically ...
     if prolongation == "QUADRATURE":  # COPY initialization
         if qDelta == "TRAP":
