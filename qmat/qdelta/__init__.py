@@ -157,7 +157,7 @@ class QDeltaGenerator(object):
         return out if len(out) > 1 else out[0]
 
 
-QDELTA_GENERATORS: Dict[str, QDeltaGenerator] = {}
+QDELTA_GENERATORS: Dict[str, Type[QDeltaGenerator]] = {}
 """Dictionary containing all specialized :class:`QDeltaGenerator` classes"""
 
 def register(cls: Type[T]) -> Type[T]:

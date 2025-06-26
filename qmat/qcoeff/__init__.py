@@ -209,7 +209,7 @@ class QGenerator(object):
         return np.linalg.norm(uNum-uExact, ord=np.inf)
 
 
-Q_GENERATORS: Dict[str, QGenerator] = {}
+Q_GENERATORS: Dict[str, Type[QGenerator]] = {}
 """Dictionary containing all specialized :class:`QGenerator` classes, with all their aliases"""
 
 def register(cls: Type[T]) -> Type[T]:
