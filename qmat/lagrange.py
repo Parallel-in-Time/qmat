@@ -6,7 +6,7 @@ Allows to easily build integration / interpolation / derivation matrices, from a
 
 Examples
 --------
->>> # Base usage to generate a quadrature matrix 
+>>> # Base usage to generate a quadrature matrix
 >>> from qmat.lagrange import LagrangeApproximation, np
 >>>
 >>> grid = np.linspace(0, 1, num=5)
@@ -146,8 +146,22 @@ class LagrangeApproximation(object):
         URL: https://doi.org/10.1137/S0036144502417715
     """
 
-    def __init__(self, points, weightComputation='AUTO', scaleWeights=False, scaleRef='MAX', fValues=None):
+    def __init__(self, points,
+                 weightComputation='AUTO', scaleWeights=False, scaleRef='MAX',
+                 duplicates="USE_LEFT", fValues=None):
         points = np.asarray(points).ravel()
+
+        unique = np.unique_all(points)
+        if points.size == unique.values.size:
+            self.duplicates = duplicates
+            self.origin = points
+            self.unique = unique
+        else:
+            self.duplicates = None
+            self._handleDuplicates = self._passThrough
+
+        points = unique.values
+
         assert np.unique(points).size == points.size, "distinct interpolation points are required"
 
         diffs = points[:, None] - points[None, :]
@@ -223,6 +237,15 @@ class LagrangeApproximation(object):
         values = self.getInterpolationMatrix(t.ravel()).dot(fValues)
         values.shape = t.shape
         return values
+
+    def _handleDuplicates(self, matrix):
+        """Modify a matrix when there is duplicates"""
+        out = matrix[:, self.unique.inverse_indices]
+        nonZeros = self.unique.indices
+
+    def _passThrough(self, matrix):
+        """Simply pass through a matrix when no duplicates"""
+        return matrix
 
 
     @property
