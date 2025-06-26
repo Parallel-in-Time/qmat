@@ -68,6 +68,9 @@ qmat-stability = "qmat.scripts.stability:main"
 nb_diff_ignore = [
     "/metadata/",
     "/cells/*/outputs/*/data/image/png"]
+pythonpath = [
+    "."
+]
 
 [tool.coverage.run]
 relative_files = true

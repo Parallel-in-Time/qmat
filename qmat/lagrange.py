@@ -136,8 +136,10 @@ class LagrangeApproximation(object):
         The interpolating points
     weights : np.1darray
         The associated barycentric weights
-    n : int (property)
-        The number of points
+    nPoints : int (property)
+        The number of points, can also be retrieve with `n` (legacy alias)
+    nUniquePoints : int (property)
+        The number of unique points
 
     References
     ----------
@@ -149,20 +151,18 @@ class LagrangeApproximation(object):
     def __init__(self, points,
                  weightComputation='AUTO', scaleWeights=False, scaleRef='MAX',
                  duplicates="USE_LEFT", fValues=None):
-        points = np.asarray(points).ravel()
+        points = np.asarray(points, dtype=float).ravel()
 
-        unique = np.unique_all(points)
-        if points.size == unique.values.size:
+        uniques = np.unique(points)
+        if points.size != uniques.size:
+            self.points, self.uniquePoints = points, uniques
             self.duplicates = duplicates
-            self.origin = points
-            self.unique = unique
+            self._setupDuplicates()
         else:
-            self.duplicates = None
+            self.points = self.uniquePoints = points
             self._handleDuplicates = self._passThrough
 
-        points = unique.values
-
-        assert np.unique(points).size == points.size, "distinct interpolation points are required"
+        points = uniques  # require unique points for weight computation
 
         diffs = points[:, None] - points[None, :]
         diffs[np.diag_indices_from(diffs)] = 1
@@ -216,16 +216,15 @@ class LagrangeApproximation(object):
         if scaleWeights:
             weights /= np.max(np.abs(weights))
 
-        # Store attributes
-        self.points = points
+        # Store weights
         self.weights = weights
         self.weightComputation = weightComputation
 
         # Store function values if provided
         if fValues is not None:
             fValues = np.asarray(fValues)
-            if fValues.shape != points.shape:
-                raise ValueError(f'fValues {fValues.shape} has not the correct shape: {points.shape}')
+            if fValues.shape != self.points.shape:
+                raise ValueError(f'fValues {fValues.shape} has not the correct shape: {self.points.shape}')
         self.fValues = fValues
 
 
@@ -238,10 +237,30 @@ class LagrangeApproximation(object):
         values.shape = t.shape
         return values
 
+
+    def _setupDuplicates(self):
+        """Check the duplicates parameters"""
+        # TODO : allow some convex combinations between duplicates
+        if self.duplicates not in ["USE_LEFT", "USE_RIGHT"]:
+            raise NotImplementedError(f"duplicates={self.duplicates}")
+
+        unique = np.unique_all(self.points)
+        self.invIdx = unique.inverse_indices
+
+        if self.duplicates == "USE_LEFT":
+            self.nnzIdx = unique.indices
+
+        if self.duplicates == "USE_RIGHT":
+            self.nnzIdx = [
+                np.max(np.where(self.points == pts)) for pts in unique.values]
+
+        self.zerIdx = np.setdiff1d(np.arange(self.nPoints), self.nnzIdx)
+
     def _handleDuplicates(self, matrix):
         """Modify a matrix when there is duplicates"""
-        out = matrix[:, self.unique.inverse_indices]
-        nonZeros = self.unique.indices
+        out = matrix[:, self.invIdx]
+        out[:, self.zerIdx] = 0
+        return out
 
     def _passThrough(self, matrix):
         """Simply pass through a matrix when no duplicates"""
@@ -249,12 +268,19 @@ class LagrangeApproximation(object):
 
 
     @property
-    def n(self)->int:
+    def nPoints(self)->int:
         """The number of points"""
         return self.points.size
 
+    n = nPoints
+    """Legacy alias for nPoints"""
 
-    def getInterpolationMatrix(self, times):
+    @property
+    def nUniquePoints(self)->int:
+        """The number of unique points"""
+        return self.uniquePoints.size
+
+    def getInterpolationMatrix(self, times, duplicates=True):
         r"""
         Compute the interpolation matrix for a given set of discrete "time"
         points.
@@ -285,8 +311,9 @@ class LagrangeApproximation(object):
         """
         # Compute difference between times and Lagrange points
         times = np.asarray(times)
+        assert times.ndim == 1, "times is not a 1D array"
         with np.errstate(divide='ignore'):
-            iDiff = 1 / (times[:, None] - self.points[None, :])
+            iDiff = 1 / (times[:, None] - self.uniquePoints[None, :])
 
         # Find evaluated positions that coincide with one Lagrange point
         concom = (iDiff == np.inf) | (iDiff == -np.inf)
@@ -299,10 +326,13 @@ class LagrangeApproximation(object):
         P = iDiff * self.weights
         P /= P.sum(axis=-1)[:, None]
 
+        if duplicates:
+            P = self._handleDuplicates(P)
+
         return P
 
 
-    def getIntegrationMatrix(self, intervals, numQuad='FEJER'):
+    def getIntegrationMatrix(self, intervals, numQuad='FEJER', duplicates=True):
         r"""
         Compute the integration matrix for a given set of intervals.
 
@@ -335,7 +365,7 @@ class LagrangeApproximation(object):
 
             - 'LEGENDRE_NUMPY' : Gauss-Legendre rule from Numpy
             - 'LEGENDRE_SCIPY' : Gauss-Legendre rule from Scipy
-            - 'FEJER' : internaly implemented Fejer-I rule
+            - 'FEJER' : internally implemented Fejer-I rule
 
             The default is 'FEJER'.
 
@@ -345,6 +375,10 @@ class LagrangeApproximation(object):
             The integration matrix, with :math:`M` rows (number of intervals)
             and :math:`n` columns.
         """
+        intervals = np.array(intervals)
+        assert intervals.ndim == 2, "intervals is not a 2D array"
+        assert intervals.shape[1] == 2, "intervals must contains only pairs"
+
         if numQuad == 'LEGENDRE_NUMPY':
             # Legendre gauss rule, integrate exactly polynomials of deg. (2n-1)
             iNodes, iWeights = np.polynomial.legendre.leggauss((self.n + 1) // 2)
@@ -358,13 +392,13 @@ class LagrangeApproximation(object):
             raise NotImplementedError(f'numQuad={numQuad}')
 
         # Compute quadrature nodes for each interval
-        intervals = np.array(intervals)
         aj, bj = intervals[:, 0][:, None], intervals[:, 1][:, None]
         tau, omega = iNodes[None, :], iWeights[None, :]
         tEval = (bj - aj) / 2 * tau + (bj + aj) / 2
 
         # Compute the integrand function on nodes
-        integrand = self.getInterpolationMatrix(tEval.ravel()).T.reshape(
+        integrand = self.getInterpolationMatrix(
+            tEval.ravel(), duplicates=False).T.reshape(
             (-1,) + tEval.shape)
 
         # Apply quadrature rule to integrate
@@ -372,9 +406,12 @@ class LagrangeApproximation(object):
         integrand *= (bj - aj) / 2
         Q = integrand.sum(axis=-1).T
 
+        if duplicates:
+            Q = self._handleDuplicates(Q)
+
         return Q
 
-    def getDerivationMatrix(self, order=1):
+    def getDerivationMatrix(self, order=1, duplicates=True):
         r"""
         Generate derivation matrix of first or second order (or both) based on
         the Lagrange interpolant.
@@ -436,7 +473,7 @@ class LagrangeApproximation(object):
         if order not in [1, 2, "ALL"]:
             raise NotImplementedError(f"order={order}")
         w = self.weights
-        x = self.points
+        x = self.uniquePoints
 
         with np.errstate(divide='ignore'):
             iDiff = 1 / (x[:, None] - x[None, :])
@@ -448,10 +485,14 @@ class LagrangeApproximation(object):
         if order in [1, "ALL"]:
             D1 = base.copy()
             np.fill_diagonal(D1, -D1.sum(axis=-1))
+            if duplicates:
+                D1 = self._handleDuplicates(D1)
         if order in [2, "ALL"]:
             D2 = -2*base
             D2 *= iDiff + base.sum(axis=-1)[:, None]
             np.fill_diagonal(D2, -D2.sum(axis=-1))
+            if duplicates:
+                D2 = self._handleDuplicates(D2)
 
         if order == 1:
             return D1
