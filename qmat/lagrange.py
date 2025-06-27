@@ -127,6 +127,14 @@ class LagrangeApproximation(object):
         - 'MAX' : scaling based on the maximum weight value.
 
         The default is 'MAX'.
+    duplicates : str
+            Which strategy to use in case of duplicated values within the interpolation
+            points. Can be :
+
+            - 'USE_LEFT' : uses the first value from the left in the values vector
+            - 'USE_RIGHT' : uses the first value from the right in the values vector
+
+            The default is 'USE_LEFT'.
     fValues : list, tuple or np.1darray
         Function values to be used when evaluating the LagrangeApproximation as a function
 
@@ -138,8 +146,13 @@ class LagrangeApproximation(object):
         The associated barycentric weights
     nPoints : int (property)
         The number of points, can also be retrieve with `n` (legacy alias)
+    uniquePoints : np.1darray
+        The unique interpolating points. 
+        When there is no duplicates, points == uniquePoints.
     nUniquePoints : int (property)
         The number of unique points
+    duplicates : str
+        The strategy used when there is duplicated interpolation points
 
     References
     ----------
@@ -245,21 +258,21 @@ class LagrangeApproximation(object):
             raise NotImplementedError(f"duplicates={self.duplicates}")
 
         unique = np.unique_all(self.points)
-        self.invIdx = unique.inverse_indices
+        self._invIdx = unique.inverse_indices
 
         if self.duplicates == "USE_LEFT":
-            self.nnzIdx = unique.indices
+            self._nnzIdx = unique.indices
 
         if self.duplicates == "USE_RIGHT":
-            self.nnzIdx = [
+            self._nnzIdx = [
                 np.max(np.where(self.points == pts)) for pts in unique.values]
 
-        self.zerIdx = np.setdiff1d(np.arange(self.nPoints), self.nnzIdx)
+        self._zerIdx = np.setdiff1d(np.arange(self.nPoints), self._nnzIdx)
 
     def _handleDuplicates(self, matrix):
         """Modify a matrix when there is duplicates"""
-        out = matrix[:, self.invIdx]
-        out[:, self.zerIdx] = 0
+        out = matrix[:, self._invIdx]
+        out[:, self._zerIdx] = 0
         return out
 
     def _passThrough(self, matrix):
@@ -279,6 +292,11 @@ class LagrangeApproximation(object):
     def nUniquePoints(self)->int:
         """The number of unique points"""
         return self.uniquePoints.size
+    
+    @property
+    def hasDuplicates(self)->bool:
+        """Wether the points have duplicates or not"""
+        return self.nPoints > self.nUniquePoints
 
     def getInterpolationMatrix(self, times, duplicates=True):
         r"""
@@ -301,6 +319,10 @@ class LagrangeApproximation(object):
         ----------
         times : list-like or np.1darray
             The discrete "time" points where to interpolate the function.
+        duplicates : bool
+            Wether or not take into account duplicates in the points.
+            This has no impact if all interpolating points are distinct.
+            Default is True.
 
         Returns
         -------
@@ -368,6 +390,10 @@ class LagrangeApproximation(object):
             - 'FEJER' : internally implemented Fejer-I rule
 
             The default is 'FEJER'.
+        duplicates : bool
+            Wether or not take into account duplicates in the points.
+            This has no impact if all interpolating points are distinct.
+            Default is True.
 
         Returns
         -------
@@ -463,6 +489,10 @@ class LagrangeApproximation(object):
         order : int or str, optional
             The order of the derivation matrix, use "ALL" to retrieve both.
             The default is 1.
+        duplicates : bool
+            Wether or not take into account duplicates in the points.
+            This has no impact if all interpolating points are distinct.
+            Default is True.
 
         Returns
         -------
