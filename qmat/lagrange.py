@@ -147,7 +147,7 @@ class LagrangeApproximation(object):
     nPoints : int (property)
         The number of points, can also be retrieve with `n` (legacy alias)
     uniquePoints : np.1darray
-        The unique interpolating points. 
+        The unique interpolating points.
         When there is no duplicates, points == uniquePoints.
     nUniquePoints : int (property)
         The number of unique points
@@ -257,15 +257,15 @@ class LagrangeApproximation(object):
         if self.duplicates not in ["USE_LEFT", "USE_RIGHT"]:
             raise NotImplementedError(f"duplicates={self.duplicates}")
 
-        unique = np.unique_all(self.points)
-        self._invIdx = unique.inverse_indices
+        values, indices, self._invIdx = np.unique(
+            self.points, return_index=True, return_inverse=True)
 
         if self.duplicates == "USE_LEFT":
-            self._nnzIdx = unique.indices
+            self._nnzIdx = indices
 
         if self.duplicates == "USE_RIGHT":
             self._nnzIdx = [
-                np.max(np.where(self.points == pts)) for pts in unique.values]
+                np.max(np.where(self.points == pts)) for pts in values]
 
         self._zerIdx = np.setdiff1d(np.arange(self.nPoints), self._nnzIdx)
 
@@ -292,7 +292,7 @@ class LagrangeApproximation(object):
     def nUniquePoints(self)->int:
         """The number of unique points"""
         return self.uniquePoints.size
-    
+
     @property
     def hasDuplicates(self)->bool:
         """Wether the points have duplicates or not"""
