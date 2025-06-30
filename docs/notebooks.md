@@ -1,4 +1,4 @@
-# Tutorials
+# Notebook Tutorials
 
 📜 *Extensive user guide, mostly based on step-by-step tutorials ...*
 
@@ -9,11 +9,11 @@ All tutorials are written in jupyter notebooks, that can be :
 
 > 🛠️ Basic usage tutorials are finalized and polished, the rest is still in construction ... 
 
-Notebooks are categorized into three main sections :
+Notebooks are categorized into those main sections :
 
 1. **Basic usage** : how to generate and use basic $Q$-coefficients and $Q_\Delta$ approximations, through a step-by-step tutorial going from generic Runge-Kutta methods to SDC for simple problems. 
-2. **Extended usage** : description of the additional features or `qmat`, like the $S$-matrix, 
-the `hCoeffs` and `dTau` coefficients, ... going deeper into SDC 
+2. **Extended usage** : additional features or `qmat` ($S$-matrix, `hCoeffs`, `dTau` coefficients, ...) to go deeper into SDC
+3. **Components usage** : how to use the main utility modules, like `qmat.lagrange`, etc ...
 
 
 ```{eval-rst}
@@ -38,3 +38,15 @@ Extended usage
     :glob:
 
     notebooks/1*
+
+Components usage
+================
+
+📜 *How to use the utility modules*
+
+.. toctree::
+    :maxdepth: 1
+    :glob:
+
+    notebooks/2*
+```

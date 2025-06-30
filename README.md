@@ -62,7 +62,7 @@ c, b, A = genQCoeffs("ERK4")
 
 > 🔔 _If you are not familiar with SDC or related methods, and want to learn more about it, checkout the 
 > [latest documentation build](https://qmat.readthedocs.io/en/latest/) and 
-in particular the [**step by step tutorials**](https://qmat.readthedocs.io/en/latest/notebooks.html)_
+in particular the [**step by step notebook tutorials**](https://qmat.readthedocs.io/en/latest/notebooks.html)_
 
 For any contribution, please checkout out (very cool) [Contribution Guidelines](https://qmat.readthedocs.io/en/latest/contributing.html)
 and the current [Development Roadmap](https://qmat.readthedocs.io/en/latest/devdoc/roadmap.html).
