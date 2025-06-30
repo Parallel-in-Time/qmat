@@ -127,12 +127,14 @@ def testDuplicates(nPoints, nCopy, duplicates):
 
     assert approx.nPoints == points.size, "wrong nPoints"
     assert approx.nUniquePoints == uniquePoints.size, "wrong nUniquePoints"
+    assert approx.hasDuplicates, "wrong hasDuplicates indicator"
     if duplicates == "USE_LEFT":
         assert np.allclose(approx._nnzIdx, np.arange(nPoints))
     if duplicates == "USE_RIGHT":
         assert np.allclose(approx._zerIdx, np.arange(nPoints*nCopy))
 
     approxUnique = LagrangeApproximation(uniquePoints)
+    assert not approx.hasDuplicates, "wrong hasDuplicates indicator for approxUnique"
 
     assert approxUnique.nPoints == approx.nUniquePoints, "discrepancy nUniquePoints"
 
