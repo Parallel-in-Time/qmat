@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        python: ['3.9', '3.10', '3.11', '3.12', '3.13']
     defaults:
       run:
         shell: bash -l {0}
@@ -44,7 +44,7 @@ jobs:
 
   test-tutorials:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.11
@@ -59,4 +59,3 @@ jobs:
     - name: Test with pytest-notebook
       run: |
         pytest ./docs/notebooks --nb-test-files -v
-  
