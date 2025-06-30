@@ -134,7 +134,7 @@ def testDuplicates(nPoints, nCopy, duplicates):
         assert np.allclose(approx._zerIdx, np.arange(nPoints*nCopy))
 
     approxUnique = LagrangeApproximation(uniquePoints)
-    assert not approx.hasDuplicates, "wrong hasDuplicates indicator for approxUnique"
+    assert not approxUnique.hasDuplicates, "wrong hasDuplicates indicator for approxUnique"
 
     assert approxUnique.nPoints == approx.nUniquePoints, "discrepancy nUniquePoints"
 
