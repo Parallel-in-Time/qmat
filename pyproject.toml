@@ -7,7 +7,7 @@ name = "qmat"
 version = "0.1.18"
 description = "Generation of Q-coefficients for Spectral Deferred Corrections (and other time-integration methods ...)"
 dependencies = [
-    "numpy",
+    "numpy>=2",
     "scipy",
 ]
 requires-python = ">=3.9"
