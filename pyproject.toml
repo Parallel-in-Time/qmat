@@ -13,6 +13,7 @@ dependencies = [
 requires-python = ">=3.9"
 maintainers = [
     {name = "Thibaut Lunet", email = "thibaut.lunet@tuhh.de"},
+    {name = "Thomas Saupe (Baumann)", email = "t.baumann@fz-juelich.de"},
 ]
 readme = "README.md"
 license = {file = "LICENSE"}

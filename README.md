@@ -8,7 +8,7 @@
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/qmat?logo=pypi)](https://pypistats.org/packages/qmat)
 
 
-`qmat` is a python package to generate matrix coefficients related to Collocation methods, 
+`qmat` is a python package to generate matrix coefficients related to Collocation methods,
 Spectral Deferred Corrections (SDC), and more generally for Runge-Kutta methods.
 
 It allows to generate $Q$-coefficients for multi-stages methods (equivalent to Butcher tables) :
@@ -16,13 +16,13 @@ It allows to generate $Q$-coefficients for multi-stages methods (equivalent to B
 $$
 Q\text{-coefficients : }
 \begin{array}{c|c}
-\tau & Q \\ 
+\tau & Q \\
 \hline
 & w^\top
 \end{array}
 \quad \Leftrightarrow \quad
 \begin{array}{c|c}
-c & A \\ 
+c & A \\
 \hline
 & b^\top
 \end{array}
@@ -60,8 +60,8 @@ QDelta = genQDeltaCoeffs("IE", nodes=nodes)
 c, b, A = genQCoeffs("ERK4")
 ```
 
-> 🔔 _If you are not familiar with SDC or related methods, and want to learn more about it, checkout the 
-> [latest documentation build](https://qmat.readthedocs.io/en/latest/) and 
+> 🔔 _If you are not familiar with SDC or related methods, and want to learn more about it, checkout the
+> [latest documentation build](https://qmat.readthedocs.io/en/latest/) and
 in particular the [**step by step notebook tutorials**](https://qmat.readthedocs.io/en/latest/notebooks.html)_
 
 For any contribution, please checkout out (very cool) [Contribution Guidelines](https://qmat.readthedocs.io/en/latest/contributing.html)
@@ -70,7 +70,7 @@ and the current [Development Roadmap](https://qmat.readthedocs.io/en/latest/devd
 ## Projects relying on `qmat`
 
 - [pySDC](https://github.com/Parallel-in-Time/pySDC) : _Python implementation of the spectral deferred correction (SDC) approach and its flavors, esp. the multilevel extension MLSDC and PFASST._
-- [SWEET](https://gitlab.inria.fr/sweet/sweet) : _Shallow Water Equation Environment for Tests, Awesome! (C++)_
+- [SWEET](https://gitlab.inria.fr/sweet/sweet) : _Shallow Water Equation Environment for Tests, Awesome! (C++)._
 
 ## Links
 
@@ -78,5 +78,3 @@ and the current [Development Roadmap](https://qmat.readthedocs.io/en/latest/devd
 - Issues Tracker : https://github.com/Parallel-in-Time/qmat/issues
 - Q&A : https://github.com/Parallel-in-Time/qmat/discussions/categories/q-a
 - Project Proposals : https://github.com/Parallel-in-Time/qmat/discussions/categories/project-proposals
-
-

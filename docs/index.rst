@@ -19,7 +19,7 @@ QMat Package
         <img alt="Codecov" src="https://codecov.io/gh/Parallel-in-Time/qmat/graph/badge.svg?token=MO0LDVH5NN">
     </a>
 
-`qmat` is a python package to generate matrix coefficients related to Collocation methods, 
+`qmat` is a python package to generate matrix coefficients related to Collocation methods,
 Spectral Deferred Corrections (SDC), and more generally for Runge-Kutta methods.
 
 It allows to generate :math:`Q`-coefficients for multi-stages methods (equivalent to Butcher tables) :
@@ -87,6 +87,7 @@ Projects relying on `qmat`
 ==========================
 
 * `pySDC <https://github.com/Parallel-in-Time/pySDC>`_ : *Python implementation of the spectral deferred correction (SDC) approach and its flavors, esp. the multilevel extension MLSDC and PFASST.*
+* `SWEET <https://gitlab.inria.fr/sweet/sweet>`_ : *Shallow Water Equation Environment for Tests, Awesome! (C++).*
 
 
 Doc Contents
@@ -111,4 +112,5 @@ Links
 Developer
 =========
 
-* `Thibaut Lunet <https://github.com/tlunet/>`_
+* `Thibaut Lunet <https://github.com/tlunet>`_
+* `Thomas Saupe (Baumann) <https://github.com/brownbaerchen>`_
