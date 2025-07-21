@@ -530,3 +530,51 @@ class LagrangeApproximation(object):
             return D2
         else:
             return D1, D2
+
+
+def getSparseInterpolationMatrix(inPoints, outPoints, order):
+    """
+    Get a sparse interpolation matrix from `inPoints` to `outPoints` of order
+    `order` using barycentric Lagrange interpolation.
+
+    The matrix will have `order` entries per line, and tends to be banded when
+    both `inPoints` and `outPoints` are equispaced and cover the same interval.
+
+    Parameters
+    ----------
+        inPoints : np.1darray
+            The points you want to interpolate from
+        outPoints : np.1darray
+            The points you want to interpolate to
+        order : int
+            Order of the interpolation
+
+    Returns
+    -------
+    A : scipy.sparse.csc_matrix(len(outPoints), len(inPoints))
+        Sparse interpolation matrix
+    """
+    import scipy.sparse as sp
+
+    assert order <= len(inPoints), f'Cannot interpolate {len(inPoints)} to order {order}! Please reduce order'
+
+    A = sp.lil_matrix((len(outPoints), len(inPoints)))
+    lastInterpolationLine = None
+    lastClosestPoints = None
+
+    for i in range(len(outPoints)):
+        closestPointsIdx = np.sort(np.argsort(np.abs(inPoints - outPoints[i]))[:order])
+        closestPoints = inPoints[closestPointsIdx] - outPoints[i]
+
+        if lastClosestPoints is not None and np.allclose(closestPoints, lastClosestPoints):
+            interpolationLine = lastInterpolationLine
+        else:
+            interpolator = LagrangeApproximation(points = closestPoints)
+            interpolationLine = interpolator.getInterpolationMatrix([0])[0]
+
+            lastInterpolationLine = interpolationLine
+            lastClosestPoints = closestPoints
+
+        A[i, closestPointsIdx] = interpolationLine
+    
+    return A.tocsc()
