@@ -530,7 +530,6 @@ class LagrangeApproximation(object):
             return D2
         else:
             return D1, D2
-        return PInter
 
 
 def getSparseInterpolationMatrix(inPoints, outPoints, order):
@@ -557,7 +556,7 @@ def getSparseInterpolationMatrix(inPoints, outPoints, order):
     """
     import scipy.sparse as sp
 
-    assert order <= len(inPoints), f'Cannot interpolate {inPoints} to order {order}!'
+    assert order <= len(inPoints), f'Cannot interpolate {len(inPoints)} to order {order}! Please reduce order'
 
     A = sp.lil_matrix((len(outPoints), len(inPoints)))
     lastInterpolationLine = None
