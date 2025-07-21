@@ -167,3 +167,33 @@ def testDuplicates(nPoints, nCopy, duplicates):
     assert np.allclose(D2[:, approx._zerIdx], 0), "[D2] zero indices have non-zero values"
     assert np.allclose(D2[:, approx._nnzIdx], D2_ref), "[D2] nonzero values different from reference"
     assert np.allclose(D2_noDuplicates, D2_ref), "[D2] no duplicates values different from reference"
+
+
+@pytest.mark.parametrize('inPoints', [np.linspace(0, 1, 15), np.linspace(0.3, 2.7, 13), np.linspace(0, 10, 4)])
+@pytest.mark.parametrize('outPoints', [np.linspace(0, 1, 9), np.linspace(0.5, 2.2, 4), np.linspace(0.3, 2.7, 13)])
+@pytest.mark.parametrize('order', [1, 2, 3, 4])
+def testSparseInterpolation(inPoints, outPoints, order):
+    from qmat.lagrange import getSparseInterpolationMatrix
+    import scipy.sparse as sp
+
+    np.random.seed(47)
+
+    interpolationMatrix = getSparseInterpolationMatrix(inPoints, outPoints, order)
+    assert isinstance(interpolationMatrix, sp.csc_matrix)
+
+    polyCoeffs = np.random.randn(order)
+    inPolynomial = np.polyval(polyCoeffs,inPoints)
+    interpolated = interpolationMatrix @ inPolynomial
+    error = np.linalg.norm(np.polyval(polyCoeffs, outPoints)- interpolated)
+    assert error < 1e-11, f'Interpolation of order {order} polynomial is not exact with error {error:.2e}'
+
+    testInexactInterpolation = True
+    if len(inPoints) == len(outPoints):
+        if np.allclose(inPoints, outPoints):
+            testInexactInterpolation = False
+
+    if testInexactInterpolation:
+        polyCoeffs = np.random.randn(order+1)
+        inPolynomial = np.polyval(polyCoeffs,inPoints)
+        interpolated = interpolationMatrix @ inPolynomial
+        assert not np.allclose(np.polyval(polyCoeffs, outPoints), interpolated), f'Interpolation of order {order+1} polynomial is unexpectedly exact'
