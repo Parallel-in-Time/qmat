@@ -531,6 +531,11 @@ class LagrangeApproximation(object):
         else:
             return D1, D2
 
+    def getDerivationMatrix(self, *args, **kwargs):
+        import warnings
+        warnings.warn("Function `getDerivationMatrix` is deprecated. Use `getDerivativeMatrix` instead!", DeprecationWarning)
+        return self.getDerivativeMatrix(*args, **kwargs)
+
 
 def getSparseInterpolationMatrix(inPoints, outPoints, order):
     """
