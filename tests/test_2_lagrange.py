@@ -97,13 +97,13 @@ def testIntegration(nNodes, weightComputation, numQuad):
 
 @pytest.mark.parametrize("weightComputation", ["AUTO", "FAST", "STABLE", "CHEBFUN"])
 @pytest.mark.parametrize("nNodes", nNodeTests)
-def testDerivation(nNodes, weightComputation):
+def testDerivative(nNodes, weightComputation):
     nodes = np.sort(np.random.rand(nNodes))
     approx = LagrangeApproximation(nodes, weightComputation=weightComputation)
 
-    D1, D2 = approx.getDerivationMatrix(order="ALL")
+    D1, D2 = approx.getDerivativeMatrix(order="ALL")
 
-    assert np.allclose(D1, approx.getDerivationMatrix())
+    assert np.allclose(D1, approx.getDerivativeMatrix())
     assert np.allclose(D2, approx.getDerivationMatrix(order=2))
 
     polyCoeffs = np.random.rand(nNodes)
@@ -156,9 +156,9 @@ def testDuplicates(nPoints, nCopy, duplicates):
     assert np.allclose(Q[:, approx._nnzIdx], Q_ref), "[Q] nonzero values different from reference"
     assert np.allclose(Q_noDuplicates, Q_ref), "[Q] no duplicates values different from reference"
 
-    D1, D2 = approx.getDerivationMatrix(order="ALL")
-    D1_noDuplicates, D2_noDuplicates = approx.getDerivationMatrix(order="ALL", duplicates=False)
-    D1_ref, D2_ref = approxUnique.getDerivationMatrix(order="ALL")
+    D1, D2 = approx.getDerivativeMatrix(order="ALL")
+    D1_noDuplicates, D2_noDuplicates = approx.getDerivativeMatrix(order="ALL", duplicates=False)
+    D1_ref, D2_ref = approxUnique.getDerivativeMatrix(order="ALL")
 
     assert np.allclose(D1[:, approx._zerIdx], 0), "[D1] zero indices have non-zero values"
     assert np.allclose(D1[:, approx._nnzIdx], D1_ref), "[D1] nonzero values different from reference"

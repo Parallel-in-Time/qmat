@@ -8,7 +8,7 @@ r"""
 
 **Utility modules** ⚙️
 
-- :class:`lagrange` : Barycentric polynomial approximations (integral, interpolation, derivation)
+- :class:`lagrange` : Barycentric polynomial approximations (integral, interpolation, derivative)
 - :class:`nodes` : generation of multiple types of quadrature nodes
 - :class:`sdc` : utility function to run SDC on simple problems
 - :class:`mathutils` : utility functions for math operations

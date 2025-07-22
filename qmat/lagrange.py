@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Base module for Barycentric Lagrange Approximation, based on `[Berrut & Trefethen, 2004] <https://doi.org/10.1137/S0036144502417715>`_.
-Allows to easily build integration / interpolation / derivation matrices, from any list of node points.
+Allows to easily build integration / interpolation / derivative matrices, from any list of node points.
 
 Examples
 --------
@@ -22,8 +22,8 @@ Examples
 >>> # Alternative interpolation using the object as a function
 >>> uFine = approx(fGrid)
 >>>
->>> # Derivation
->>> D = approx.getDerivationMatrix()
+>>> # Derivative
+>>> D = approx.getDerivativeMatrix()
 >>> du = D @ u
 """
 import numpy as np
@@ -437,9 +437,9 @@ class LagrangeApproximation(object):
 
         return Q
 
-    def getDerivationMatrix(self, order=1, duplicates=True):
+    def getDerivativeMatrix(self, order=1, duplicates=True):
         r"""
-        Generate derivation matrix of first or second order (or both) based on
+        Generate derivative matrix of first or second order (or both) based on
         the Lagrange interpolant.
         The first order differentiation matrix :math:`D^{(1)}` approximates
 
@@ -473,11 +473,11 @@ class LagrangeApproximation(object):
         .. math::
             D^{(2)}_{jj} = -\sum_{i \neq j} D^{(2)}_{ij}
 
-        ⚠️ If you want a derivation matrix with many points (~1000 or more),
+        ⚠️ If you want a derivative matrix with many points (~1000 or more),
         favor the use of `weightComputation="STABLE"` when initializing
         the `LagrangeApproximation` object. If not, some (very small) weights
         could be approximated by zeros, which would make the computation
-        of the derivation matrices fail ...
+        of the derivative matrices fail ...
 
         Note
         ----
@@ -487,7 +487,7 @@ class LagrangeApproximation(object):
         Parameters
         ----------
         order : int or str, optional
-            The order of the derivation matrix, use "ALL" to retrieve both.
+            The order of the derivative matrix, use "ALL" to retrieve both.
             The default is 1.
         duplicates : bool
             Wether or not take into account duplicates in the points.
@@ -497,8 +497,8 @@ class LagrangeApproximation(object):
         Returns
         -------
         D : np.2darray or tuple of np.2darray
-            Derivation matrix. If order="ALL", return a tuple containing all
-            derivations matrix in increasing derivation order.
+            Derivative matrix. If order="ALL", return a tuple containing all
+            derivative matrices in increasing derivative order.
         """
         if order not in [1, 2, "ALL"]:
             raise NotImplementedError(f"order={order}")
@@ -530,6 +530,11 @@ class LagrangeApproximation(object):
             return D2
         else:
             return D1, D2
+
+    def getDerivationMatrix(self, *args, **kwargs):
+        import warnings
+        warnings.warn("Function `getDerivationMatrix` is deprecated. Use `getDerivativeMatrix` instead!", DeprecationWarning)
+        return self.getDerivativeMatrix(*args, **kwargs)
 
 
 def getSparseInterpolationMatrix(inPoints, outPoints, order):
