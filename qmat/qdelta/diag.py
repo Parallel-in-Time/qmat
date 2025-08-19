@@ -82,17 +82,15 @@ class FromTable(QDeltaGenerator):
                 f"could not convert {name} MIN coefficients to numpy array")
         return np.diag(coeffs)
 
-    def check(cls):
-        try:
-            getattr(tables, cls.__name__)
-        except AttributeError:
-            raise AttributeError(
-                f"no MIN coefficients table found for {cls.__name__}"
-                " in qmat.qdelta.mincoeffs")
-        return cls
 
 def registerTable(cls:FromTable)->FromTable:
-    return register(FromTable.check(cls))
+    try:
+        getattr(tables, cls.__name__)
+    except AttributeError:
+        raise AttributeError(
+            f"no MIN coefficients table found for {cls.__name__}"
+            " in qmat.qdelta.mincoeffs")
+    return register(cls)
 
 
 @registerTable
@@ -324,4 +322,3 @@ class DNODES5(DNODES):
     """Diagonal coefficients build on divided node (5 here)"""
     divider = 5
     aliases = ["DNODES-5"]
-
