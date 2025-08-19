@@ -48,7 +48,7 @@ def testGeneration(name, nNodes):
     assert np.allclose(dTau1, dTau2), \
         f"OOP dTau and PP dTau are not equals for {name}"
 
-
+    assert gen._K_DEPENDENT == gen.isKDependent()
 
 
 nNodes = 4

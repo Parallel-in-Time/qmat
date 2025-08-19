@@ -91,7 +91,10 @@ class QDeltaGenerator(object):
     """
 
     _K_DEPENDENT = False
-    r"""Wether or not the :math:`Q_\Delta` coefficients varies with the iterations"""
+
+    def isKDependent(cls):
+        r"""Wether or not the :math:`Q_\Delta` coefficients varies with the iterations"""
+        return cls._K_DEPENDENT
 
     def __init__(self, Q, **kwargs):
         self.Q:np.ndarray = np.asarray(Q, dtype=float)
