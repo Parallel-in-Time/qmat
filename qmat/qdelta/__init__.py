@@ -13,7 +13,7 @@ methods :
 """
 import inspect
 import numpy as np
-from typing import Type, TypeVar, Dict
+from typing import TypeVar
 from functools import wraps
 from inspect import signature
 
@@ -225,10 +225,10 @@ class QDeltaGenerator(object):
         return out if len(out) > 1 else out[0]
 
 
-QDELTA_GENERATORS: Dict[str, Type[QDeltaGenerator]] = {}
+QDELTA_GENERATORS: dict[str, dict[QDeltaGenerator]] = {}
 """Dictionary containing all specialized :class:`QDeltaGenerator` classes"""
 
-def register(cls: Type[T]) -> Type[T]:
+def register(cls: type[T]) -> type[T]:
     """Class decorator to register a specialized :class:`QDeltaGenerator` class in `qmat`"""
     checkGenericConstr(cls)
     checkOverriding(cls, "computeQDelta", isProperty=False)

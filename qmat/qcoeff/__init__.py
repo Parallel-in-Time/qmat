@@ -11,7 +11,7 @@ methods :
 - :class:`butcher` : Runge-Kutta based (Butcher tables)
 """
 import numpy as np
-from typing import Type, TypeVar, Dict
+from typing import TypeVar
 
 from qmat.utils import checkOverriding, storeClass, importAll
 from qmat.lagrange import LagrangeApproximation
@@ -209,10 +209,10 @@ class QGenerator(object):
         return np.linalg.norm(uNum-uExact, ord=np.inf)
 
 
-Q_GENERATORS: Dict[str, Type[QGenerator]] = {}
+Q_GENERATORS: dict[str, type[QGenerator]] = {}
 """Dictionary containing all specialized :class:`QGenerator` classes, with all their aliases"""
 
-def register(cls: Type[T]) -> Type[T]:
+def register(cls: type[T]) -> type[T]:
     """Class decorator to register a specialized :class:`QGenerator` class in qmat"""
     # Check for correct overriding
     for name in ["nodes", "Q", "weights", "order"]:
