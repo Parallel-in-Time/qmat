@@ -19,7 +19,7 @@ Examples
 """
 import numpy as np
 
-from qmat.qdelta import QDeltaGenerator, register
+from qmat.qdelta import QDeltaGenerator, QGenerator, register
 
 
 class TimeStepping(QDeltaGenerator):
@@ -49,6 +49,15 @@ class TimeStepping(QDeltaGenerator):
 
         self.tLeft:float = tLeft
         """Left bound for the nodes"""
+
+    @staticmethod
+    def extractParams(qGen:QGenerator) -> dict:
+        """
+        Extract from a :math:`Q`-generator object all parameters
+        required to instantiate the :math:`Q_\Delta`-generator
+        """
+        assert isinstance(qGen, QGenerator), "qGen parameter must be a QGenerator object"
+        return {"nodes": qGen.nodes}
 
     @property
     def size(self)->int:

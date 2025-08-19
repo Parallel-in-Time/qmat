@@ -33,17 +33,17 @@ class QGenerator(object):
     @property
     def nodes(self):
         r"""Nodes :math:`\tau` (:math:`c` coefficients in Butcher table)"""
-        raise NotImplementedError("mouahahah")
+        raise NotImplementedError(f"abstract class {type(self).__name__} should not be used")
 
     @property
     def Q(self):
         r""":math:`Q` coefficients (:math:`A` Butcher table)"""
-        raise NotImplementedError("mouahahah")
+        raise NotImplementedError(f"abstract class {type(self).__name__} should not be used")
 
     @property
     def weights(self):
         r"""Weights :math:`\omega` (:math:`b` coefficients in Butcher table)"""
-        raise NotImplementedError("mouahahah")
+        raise NotImplementedError(f"abstract class {type(self).__name__} should not be used")
 
     @property
     def weightsEmbedded(self):
@@ -270,6 +270,7 @@ def genQCoeffs(qType, form="Z2N", hCoeffs=False, embedded=False, **params):
     return gen.genCoeffs(form, hCoeffs, embedded)
 
 
-# Import all local submodules
-__all__ = ["genQCoeffs", "QGenerator", "Q_GENERATORS", "register"]
-importAll(locals(), __all__, __path__, __name__, __import__)
+if __name__ != "__main__":
+    # Import all local submodules
+    __all__ = ["genQCoeffs", "QGenerator", "Q_GENERATORS", "register"]
+    importAll(locals(), __all__, __path__, __name__, __import__)

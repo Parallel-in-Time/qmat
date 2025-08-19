@@ -22,7 +22,7 @@ import warnings
 import numpy as np
 import scipy.optimize as spo
 
-from qmat.qdelta import QDeltaGenerator, register
+from qmat.qdelta import QDeltaGenerator, QGenerator, register
 import qmat.qdelta.mincoeffs as tables
 from qmat.qcoeff.collocation import Collocation
 
@@ -57,6 +57,19 @@ class FromTable(QDeltaGenerator):
         self.nNodes = nNodes
         self.nodeType = nodeType
         self.quadType = quadType
+
+    @staticmethod
+    def extractParams(qGen:Collocation) -> dict:
+        r"""
+        Extract from a :math:`Q`-generator object all parameters
+        required to instantiate the :math:`Q_\Delta`-generator
+        """
+        assert isinstance(qGen, Collocation), "qGen parameter must be a Collocation object"
+        return {
+            "nNodes": qGen.nNodes,
+            "nodeType": qGen.nodeType,
+            "quadType": qGen.quadType,
+        }
 
     @property
     def size(self):
@@ -114,6 +127,15 @@ class MIN_SR_NS(QDeltaGenerator):
     def __init__(self, nodes, **kwargs):
         self.nodes = np.asarray(nodes)
 
+    @staticmethod
+    def extractParams(qGen:QGenerator) -> dict:
+        r"""
+        Extract from a :math:`Q`-generator object all parameters
+        required to instantiate the :math:`Q_\Delta`-generator
+        """
+        assert isinstance(qGen, QGenerator), "qGen parameter must be a QGenerator object"
+        return {"nodes": qGen.nodes}
+
     @property
     def size(self):
         return self.nodes.size
@@ -128,7 +150,7 @@ class MIN_SR_S(QDeltaGenerator):
 
     aliases = ["MIN-SR-S"]
 
-    def __init__(self, nNodes=None, nodeType=None, quadType=None, coll:Collocation=None, **kwargs):
+    def __init__(self, nNodes, nodeType, quadType, **kwargs):
         """
         Parameters
         ----------
@@ -140,21 +162,25 @@ class MIN_SR_S(QDeltaGenerator):
         quadType : str
             Quadrature type for the nodes, see :class:`qmat.nodes.NodesGenerator`
             for available types.
-        coll : :class:`qmat.qcoeff.collocation.Collocation`, optional
-            If given, ignore the previous parameters and use this as the
-            underlying collocation method. The default is None.
         **kwargs :
             Additional parameters given during a generic call, not used by this class.
         """
-        if coll is not None:
-            assert isinstance(coll, Collocation), "coll parameter is not a Collocation object"
-            self.coll = coll
-            self.nodeType = coll.nodeType
-            self.quadType = coll.quadType
-        else:
-            self.nodeType = nodeType
-            self.quadType = quadType
-            self.coll = Collocation(nNodes, nodeType, quadType)
+        self.coll = Collocation(nNodes, nodeType, quadType)
+        self.nodeType = nodeType
+        self.quadType = quadType
+
+    @staticmethod
+    def extractParams(qGen:Collocation) -> dict:
+        r"""
+        Extract from a :math:`Q`-generator object all parameters
+        required to instantiate the :math:`Q_\Delta`-generator
+        """
+        assert isinstance(qGen, Collocation), "qGen parameter must be a Collocation object"
+        return {
+            "nNodes": qGen.nNodes,
+            "nodeType": qGen.nodeType,
+            "quadType": qGen.quadType,
+        }
 
     @property
     def size(self):

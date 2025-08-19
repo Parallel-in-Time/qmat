@@ -100,7 +100,7 @@ def testFlex(nNodes, nodeType, quadType):
     Q = coll.Q
 
     gen = module.MIN_SR_FLEX(nNodes=nNodes, nodeType=nodeType, quadType=quadType)
-    gen2 = module.MIN_SR_FLEX(coll=coll)
+    gen2 = module.MIN_SR_FLEX(qGen=coll)
     for i in range(nNodes):
         assert np.allclose(gen2.getQDelta(k=i+1), gen.getQDelta(k=i+1)), \
             "not the same coefficients using the coll parameter"
@@ -133,9 +133,9 @@ def testJumper(nNodes, nodeType, quadType):
     coll = Collocation(nNodes=nNodes, nodeType=nodeType, quadType=quadType)
     nodes, Q = coll.nodes, coll.Q
     k = np.arange(nNodes)+1
-    
+
     gen = module.Jumper(nodes=nodes)
-    genFlex = module.MIN_SR_FLEX(coll=coll)
+    genFlex = module.MIN_SR_FLEX(qGen=coll)
     QDeltas = gen.genCoeffs(k)
     QDeltasFlex = genFlex.genCoeffs(k)
 
@@ -155,7 +155,7 @@ def testJumper(nNodes, nodeType, quadType):
 def testDNODES(divider, nNodes, nodeType, quadType):
     coll = Collocation(nNodes=nNodes, nodeType=nodeType, quadType=quadType)
     nodes = coll.nodes
-    
+
     Generator = {
         1: module.DNODES,
         2: module.DNODES2,

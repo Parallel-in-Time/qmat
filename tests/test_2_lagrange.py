@@ -104,7 +104,7 @@ def testDerivative(nNodes, weightComputation):
     D1, D2 = approx.getDerivativeMatrix(order="ALL")
 
     assert np.allclose(D1, approx.getDerivativeMatrix())
-    assert np.allclose(D2, approx.getDerivationMatrix(order=2))
+    assert np.allclose(D2, approx.getDerivativeMatrix(order=2))
 
     polyCoeffs = np.random.rand(nNodes)
     polyNodes = np.polyval(polyCoeffs, nodes)

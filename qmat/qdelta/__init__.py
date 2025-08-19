@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
+r"""
 Defines the base abstract class to generate  :math:`Q_\Delta` approximations :
 the :class:`QDeltaGenerator` 🚀
 
@@ -14,11 +14,44 @@ methods :
 import inspect
 import numpy as np
 from typing import Type, TypeVar, Dict
+from functools import wraps
+from inspect import signature
 
 from qmat.utils import checkOverriding, storeClass, importAll, checkGenericConstr
+from qmat.qcoeff import QGenerator
 
 T = TypeVar("T")
 
+
+def useQGen(__init__):
+    r"""
+    Wrapper to extract :math:`Q_\Delta`-generator parameters from `kwargs` argument,
+    using either a :math:`Q`-generator `qGen` or separatelly given parameters.
+    """
+    pNames = [p.name for p in signature(__init__).parameters.values()
+              if (p.kind == p.POSITIONAL_OR_KEYWORD) and p.name != "self"]
+
+    @wraps(__init__)
+    def wrapper(self, *args, **kwargs):
+
+        if "coll" in kwargs:    # TODO : remove in future version
+            import warnings
+            warnings.warn("using the `coll` argument is deprecated. Use `qGen` instead!", DeprecationWarning)
+            assert "qGen" not in kwargs, "`coll` and `qGen` given together, that's an ambiguous call !"
+            kwargs["qGen"] = kwargs.pop("coll")
+
+        params = {name: value for name, value in zip(pNames, args)}
+        qGen = kwargs.pop("qGen", None)
+        params.update(kwargs)
+
+        if qGen is not None:
+            qGenParams = self.extractParams(qGen)
+            qGenParams.update(params)
+            params = qGenParams
+
+        __init__(self, **params)
+
+    return wrapper
 
 class QDeltaGenerator(object):
     r"""
@@ -30,14 +63,49 @@ class QDeltaGenerator(object):
         The :math:`Q` matrix of the base approximated method.
     **kwargs :
         Additional parameters given in a generic call, ignored by the class.
+
+    Note
+    ----
+    All :math:`Q_\Delta`-generator inheriting from this class, after registration,
+    can also be instantiated using only a `qGen` named argument (QGenerator object).
+    There is three cases :
+
+    1. **only `qGen` is given in `kwargs`** : extract all required parameter from `qGen`, using the `extractParams` method of this class,
+    2. **`qGen` is not given in `kwargs`** : retrieve all parameters from `kwargs` and raises an error if one is missing,
+    3. **`qGen` is given along other arguments in `kwargs`** : use `qGen` as parameter basis, and override with parameters given in `kwargs`.
+
+    >>> from qmat.qcoeff.collocation import Collocation
+    >>> qGen = Collocation(4, "LEGENDRE", "RADAU-RIGHT")
+    >>> Q = qGen.Q
+    >>> # Different way of instantiating a QDeltaGenerator :
+    >>> qdGen = QDeltaGenerator(Q)              # standard approach
+    >>> qdGen = QDeltaGenerator(Q=Q)            # standard approach with named argument
+    >>> qdGen = QDeltaGenerator(qGen=qGen)      # extract parameter from `qGen`
+    >>> qdGen = QDeltaGenerator(Q, qGen=qGen)   # mixed approach
+    >>> qdGen = QDeltaGenerator(qGen=qGen, Q=Q) # mixed approach with named argument
+    >>> qdGen = QDeltaGenerator()               # raises an error
+
+    In case the base constructor is overridden, the static method `extractParams`
+    must be overridden too.
     """
 
     _K_DEPENDENT = False
-    """Wether or not the :math:`Q_\Delta` coefficients varies with the iterations"""
+    r"""Wether or not the :math:`Q_\Delta` coefficients varies with the iterations"""
+    K_DEPENDENT = _K_DEPENDENT
+    """Alias for _K_DEPENDENT (cleaner access, but keeps backward compatibility)"""
 
     def __init__(self, Q, **kwargs):
         self.Q:np.ndarray = np.asarray(Q, dtype=float)
         """:math:`Q` matrix of the approximated time-integration method"""
+
+    @staticmethod
+    def extractParams(qGen:QGenerator) -> dict:
+        r"""
+        Extract from a :math:`Q`-generator object all parameters
+        required to instantiate the :math:`Q_\Delta`-generator
+        """
+        assert isinstance(qGen, QGenerator), "qGen parameter must be a QGenerator object"
+        return {"Q": qGen.Q}
 
     @property
     def size(self)->int:
@@ -51,7 +119,7 @@ class QDeltaGenerator(object):
         return np.zeros((M, M), dtype=float)
 
     def computeQDelta(self, k=None) -> np.ndarray:
-        """
+        r"""
         Compute and returns the :math:`Q_\Delta` matrix, has to be implemented
         in the specialized class.
 
@@ -64,7 +132,7 @@ class QDeltaGenerator(object):
         -------
         QDelta : np.ndarray
         """
-        raise NotImplementedError("mouahahah")
+        raise NotImplementedError(f"abstract class {type(self).__name__} should not be used")
 
     def getQDelta(self, k=None, copy=True):
         r"""
@@ -172,6 +240,7 @@ def register(cls: Type[T]) -> Type[T]:
             cls._K_DEPENDENT = True
     except (KeyError, AssertionError):
         raise AssertionError(f"{cls.__name__} class does not properly override the computeQDelta method")
+    cls.__init__ = useQGen(cls.__init__)
     storeClass(cls, QDELTA_GENERATORS)
     return cls
 
@@ -257,6 +326,7 @@ def genQDeltaCoeffs(qDeltaType, nSweeps=None, form="Z2N", dTau=False, **params):
     return out if len(out) > 1 else out[0]
 
 
-# Import all local submodules
-__all__ = ["genQDeltaCoeffs", "QDeltaGenerator", "QDELTA_GENERATORS", "register"]
-importAll(locals(), __all__, __path__, __name__, __import__)
+if __name__ != "__main__":
+    # Import all local submodules
+    __all__ = ["genQDeltaCoeffs", "QDeltaGenerator", "QDELTA_GENERATORS", "register"]
+    importAll(locals(), __all__, __path__, __name__, __import__)

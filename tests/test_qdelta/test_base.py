@@ -1,11 +1,11 @@
 import pytest
 import numpy as np
 
-from qmat.qdelta import QDELTA_GENERATORS, genQDeltaCoeffs
+from qmat.qdelta import QDELTA_GENERATORS, genQDeltaCoeffs, QDeltaGenerator
 from qmat.utils import getClasses
 
-# Test base functionnality only on algebraic QDelta-generators
-GENERATORS = getClasses(QDELTA_GENERATORS, module="algebraic")
+# Test base functionality only on algebraic QDelta-generators
+GENERATORS:dict[str, type[QDeltaGenerator]] = getClasses(QDELTA_GENERATORS, module="algebraic")
 
 
 @pytest.mark.parametrize("nNodes", [2, 3, 4])
@@ -102,3 +102,14 @@ def testMultipleGenerationMultipleSweeps(nSweeps):
         f"sweep extension produces inconsistent dTau shapes for K={nSweeps}"
     assert np.allclose(dTau1, dTau2), \
         f"sweep extension don't re-use the same dTau for K={nSweeps}"
+
+# Test base functionality only on algebraic QDelta-generators
+ALL_GENERATORS:dict[str, type[QDeltaGenerator]] = getClasses(QDELTA_GENERATORS)
+
+@pytest.mark.parametrize("name", ALL_GENERATORS.keys())
+def testUseQGen(name):
+    from qmat.qcoeff.collocation import Collocation
+    qGen = Collocation.getInstance()
+
+    qDeltaGen = ALL_GENERATORS[name](qGen=qGen)
+    assert np.allclose(qDeltaGen.getQDelta(), qDeltaGen.genCoeffs())
