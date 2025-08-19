@@ -106,6 +106,12 @@ def testDerivative(nNodes, weightComputation):
     assert np.allclose(D1, approx.getDerivativeMatrix())
     assert np.allclose(D2, approx.getDerivativeMatrix(order=2))
 
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        assert np.allclose(D2, approx.getDerivationMatrix(order=2))
+        assert np.allclose(D1, approx.getDerivationMatrix())
+
     polyCoeffs = np.random.rand(nNodes)
     polyNodes = np.polyval(polyCoeffs, nodes)
     polyDeriv1 = np.polyval(np.polyder(polyCoeffs), nodes)

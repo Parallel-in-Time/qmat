@@ -178,7 +178,7 @@ class QGenerator(object):
         return uNum
 
     def errorDahlquist(self, lam, u0, T, nSteps, uNum=None, useEmbeddedWeights=False):
-        """
+        r"""
         Compute :math:`L_\infty` error in time for the Dahlquist problem
 
         Parameters

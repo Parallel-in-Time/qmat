@@ -581,5 +581,5 @@ def getSparseInterpolationMatrix(inPoints, outPoints, order):
             lastClosestPoints = closestPoints
 
         A[i, closestPointsIdx] = interpolationLine
-    
+
     return A.tocsc()

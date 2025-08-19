@@ -167,3 +167,17 @@ def testDNODES(divider, nNodes, nodeType, quadType):
     QDeltas = gen.genCoeffs()
 
     assert np.allclose(QDeltas, np.diag(nodes)/divider)
+
+@pytest.mark.parametrize("quadType", ["GAUSS", "RADAU-RIGHT"])
+@pytest.mark.parametrize("nodeType", NODE_TYPES)
+@pytest.mark.parametrize("nNodes", [2, 3, 4])
+def testDeprecated(nNodes, nodeType, quadType):
+    coll = Collocation(nNodes=nNodes, nodeType=nodeType, quadType=quadType)
+
+    gen1 = module.MIN_SR_S(qGen=coll)
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        gen2 = module.MIN_SR_S(coll=coll)
+
+    assert np.allclose(gen1.getQDelta(), gen2.getQDelta())
