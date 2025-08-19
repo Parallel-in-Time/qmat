@@ -34,7 +34,8 @@ def useQGen(__init__):
     @wraps(__init__)
     def wrapper(self, *args, **kwargs):
 
-        if "coll" in kwargs:    # TODO : remove in future version
+        if "coll" in kwargs: # pragma: no cover
+            # TODO : remove in future version
             import warnings
             warnings.warn("using the `coll` argument is deprecated. Use `qGen` instead!", DeprecationWarning)
             assert "qGen" not in kwargs, "`coll` and `qGen` given together, that's an ambiguous call !"
