@@ -10,6 +10,63 @@ methods :
 - :class:`timestepping` : based on time-stepping methods (Backward Euler, etc ...)
 - :class:`algebraic` : based on algebraic consideration on the :math:`Q` matrix
 - :class:`min` : diagonal approximations based on minimization
+
+Examples
+--------
+
+>>> # Underlying time-integration method (see qmat.qcoeff doc for other options)
+>>> from qmat.qcoeff.collocation import Collocation
+>>> coll = Collocation(nNodes=4, nodeType="LEGENDRE", quadType="RADAU-RIGHT")
+>>>
+>>> # Generate QDelta coefficients with generic function
+>>> from qmat.qdelta import genQDeltaCoeffs
+>>> qDeltaBE = genQDeltaCoeffs("BE", nodes=coll.nodes)  # Backward Euler approximation
+>>> qDeltaLU = genQDeltaCoeffs("LU", Q=coll.Q)          # LU approximation
+>>>
+>>> # Generate QDelta coefficients with QDeltaGenerator objects
+>>> from qmat.qdelta.timestepping import BE
+>>> qDeltaBE = BE(nodes=coll.nodes).getQDelta()
+>>> from qmat.qdelta.algebraic import LU
+>>> qDeltaLU = LU(Q=coll.Q)
+>>>
+>>> # Simplified import for all QDeltaGenerator objects
+>>> from qmat.qdelta import QDELTA_GENERATORS   # 💡 can also be imported from qmat directly
+>>> qDeltaBE = QDELTA_GENERATORS["BE"](nodes=coll.nodes).getQDelta()
+>>> qDeltaLU = QDELTA_GENERATORS["LU"](Q=coll.Q).getQDelta()
+
+Note
+----
+All :math:`Q_\Delta` approximations may need different parameters to be computed (e.g `nodes` for BE or `Q` for LU).
+But **you don't need a different call for each approximation** : additional keyword arguments may be given,
+and ignored when the approximation don't need them ...
+
+>>> # Generic call with generic function
+>>> from qmat.qdelta import genQDeltaCoeffs
+>>> for qdType in ["BE", "LU"]:
+>>>     qDelta = genQDeltaCoeffs(qdType, nodes=coll.nodes, Q=coll.Q)
+>>>
+>>> # Generic call with generic QDeltaGenerator objects import
+>>> from qmat.qdelta import QDELTA_GENERATORS
+>>> for qdType in ["BE", "LU"]:
+>>>     qDelta = QDELTA_GENERATORS[qdType](nodes=coll.nodes, Q=coll.Q).getQDelta()
+
+📣 If you want to **cover all available approximations** implemented in `qmat`,
+we highly suggest to use the `qGen` keyword argument, allowing to extract any
+required parameter from a `QGenerator` object, e.g :
+
+>>> # Using generic function
+>>> for qdType in ["BE", "LU", "MIN-SR-S", "MIN-SR-NS", "MIN-SR-FLEX"]:
+>>>     qDelta = genQDeltaCoeffs(qdType, qGen=coll)
+>>>
+>>> # Using QDeltaGenerator objects
+>>> for qdType in ["BE", "LU", "MIN-SR-S", "MIN-SR-NS", "MIN-SR-FLEX"]:
+>>>     qDelta = QDELTA_GENERATORS[qdType](qGen=coll).getQDelta()
+
+💡 This ensure forward compatibility in your code, so it can use any other
+:math:`Q_\Delta` approximations added later in `qmat` without modification.
+
+    ⚠️ You can also specify :math:`Q_\Delta` specific parameter(s) in addition to `qGen` :
+    in that case, the corresponding parameters extracted from `qGen` are **overridden**.
 """
 import inspect
 import numpy as np
@@ -67,27 +124,7 @@ class QDeltaGenerator(object):
 
     Note
     ----
-    All :math:`Q_\Delta`-generator inheriting from this class, after registration,
-    can also be instantiated using only a `qGen` named argument (QGenerator object).
-    There is three cases :
-
-    1. **only `qGen` is given in `kwargs`** : extract all required parameter from `qGen`, using the `extractParams` method of this class,
-    2. **`qGen` is not given in `kwargs`** : retrieve all parameters from `kwargs` and raises an error if one is missing,
-    3. **`qGen` is given along other arguments in `kwargs`** : use `qGen` as parameter basis, and override with parameters given in `kwargs`.
-
-    >>> from qmat.qcoeff.collocation import Collocation
-    >>> qGen = Collocation(4, "LEGENDRE", "RADAU-RIGHT")
-    >>> Q = qGen.Q
-    >>> # Different way of instantiating a QDeltaGenerator :
-    >>> qdGen = QDeltaGenerator(Q)              # standard approach
-    >>> qdGen = QDeltaGenerator(Q=Q)            # standard approach with named argument
-    >>> qdGen = QDeltaGenerator(qGen=qGen)      # extract parameter from `qGen`
-    >>> qdGen = QDeltaGenerator(Q, qGen=qGen)   # mixed approach
-    >>> qdGen = QDeltaGenerator(qGen=qGen, Q=Q) # mixed approach with named argument
-    >>> qdGen = QDeltaGenerator()               # raises an error
-
-    In case the base constructor is overridden, the static method `extractParams`
-    must be overridden too.
+    All
     """
 
     _K_DEPENDENT = False
