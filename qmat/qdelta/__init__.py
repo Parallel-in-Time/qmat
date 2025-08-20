@@ -14,9 +14,7 @@ methods :
 Examples
 --------
 
->>> # Underlying time-integration method (see qmat.qcoeff doc for other options)
->>> from qmat.qcoeff.collocation import Collocation
->>> coll = Collocation(nNodes=4, nodeType="LEGENDRE", quadType="RADAU-RIGHT")
+>>> coll:QGenerator = ... # any QGenerator object implemented qmat.qcoeff.[...]
 >>>
 >>> # Generate QDelta coefficients with generic function
 >>> from qmat.qdelta import genQDeltaCoeffs
@@ -40,6 +38,8 @@ All :math:`Q_\Delta` approximations may need different parameters to be computed
 But **you don't need a different call for each approximation** : additional keyword arguments may be given,
 and ignored when the approximation don't need them ...
 
+>>> coll:QGenerator = ... # any QGenerator object implemented qmat.qcoeff.[...]
+>>>
 >>> # Generic call with generic function
 >>> from qmat.qdelta import genQDeltaCoeffs
 >>> for qdType in ["BE", "LU"]:
