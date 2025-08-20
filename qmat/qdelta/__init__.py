@@ -14,23 +14,23 @@ methods :
 Examples
 --------
 
->>> coll:QGenerator = ... # any QGenerator object implemented in qmat.qcoeff.[...]
+>>> qGen:QGenerator = ... # any QGenerator object implemented in qmat.qcoeff.[...]
 >>>
 >>> # Generate QDelta coefficients with generic function
 >>> from qmat.qdelta import genQDeltaCoeffs
->>> qDeltaBE = genQDeltaCoeffs("BE", nodes=coll.nodes)  # Backward Euler approximation
->>> qDeltaLU = genQDeltaCoeffs("LU", Q=coll.Q)          # LU approximation
+>>> qDeltaBE = genQDeltaCoeffs("BE", nodes=qGen.nodes)  # Backward Euler approximation
+>>> qDeltaLU = genQDeltaCoeffs("LU", Q=qGen.Q)          # LU approximation
 >>>
 >>> # Generate QDelta coefficients with QDeltaGenerator objects
 >>> from qmat.qdelta.timestepping import BE
->>> qDeltaBE = BE(nodes=coll.nodes).getQDelta()
+>>> qDeltaBE = BE(nodes=qGen.nodes).getQDelta()
 >>> from qmat.qdelta.algebraic import LU
->>> qDeltaLU = LU(Q=coll.Q)
+>>> qDeltaLU = LU(Q=qGen.Q)
 >>>
 >>> # Simplified import for all QDeltaGenerator objects
 >>> from qmat.qdelta import QDELTA_GENERATORS   # 💡 can also be imported from qmat directly
->>> qDeltaBE = QDELTA_GENERATORS["BE"](nodes=coll.nodes).getQDelta()
->>> qDeltaLU = QDELTA_GENERATORS["LU"](Q=coll.Q).getQDelta()
+>>> qDeltaBE = QDELTA_GENERATORS["BE"](nodes=qGen.nodes).getQDelta()
+>>> qDeltaLU = QDELTA_GENERATORS["LU"](Q=qGen.Q).getQDelta()
 
 Note
 ----
@@ -38,17 +38,17 @@ All :math:`Q_\Delta` approximations may need different parameters to be computed
 But **you don't need a different call for each approximation** : additional keyword arguments may be given,
 and ignored when the approximation don't need them ...
 
->>> coll:QGenerator = ... # any QGenerator object implemented in qmat.qcoeff.[...]
+>>> qGen:QGenerator = ... # any QGenerator object implemented in qmat.qcoeff.[...]
 >>>
 >>> # Generic call with generic function
 >>> from qmat.qdelta import genQDeltaCoeffs
 >>> for qdType in ["BE", "LU"]:
->>>     qDelta = genQDeltaCoeffs(qdType, nodes=coll.nodes, Q=coll.Q)
+>>>     qDelta = genQDeltaCoeffs(qdType, nodes=qGen.nodes, Q=qGen.Q)
 >>>
 >>> # Generic call with generic QDeltaGenerator objects import
 >>> from qmat.qdelta import QDELTA_GENERATORS
 >>> for qdType in ["BE", "LU"]:
->>>     qDelta = QDELTA_GENERATORS[qdType](nodes=coll.nodes, Q=coll.Q).getQDelta()
+>>>     qDelta = QDELTA_GENERATORS[qdType](nodes=qGen.nodes, Q=qGen.Q).getQDelta()
 
 📣 If you want to **cover all available approximations** implemented in `qmat`,
 we highly suggest to use the `qGen` keyword argument, allowing to extract any
@@ -56,11 +56,11 @@ required parameter from a `QGenerator` object, e.g :
 
 >>> # Using generic function
 >>> for qdType in ["BE", "LU", "MIN-SR-S", "MIN-SR-NS", "MIN-SR-FLEX"]:
->>>     qDelta = genQDeltaCoeffs(qdType, qGen=coll)
+>>>     qDelta = genQDeltaCoeffs(qdType, qGen=qGen)
 >>>
 >>> # Using QDeltaGenerator objects
 >>> for qdType in ["BE", "LU", "MIN-SR-S", "MIN-SR-NS", "MIN-SR-FLEX"]:
->>>     qDelta = QDELTA_GENERATORS[qdType](qGen=coll).getQDelta()
+>>>     qDelta = QDELTA_GENERATORS[qdType](qGen=qGen).getQDelta()
 
 💡 This ensure forward compatibility in your code, so it can use any other
 :math:`Q_\Delta` approximations added later in `qmat` without modification.
