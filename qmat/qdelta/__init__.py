@@ -14,7 +14,7 @@ methods :
 Examples
 --------
 
->>> coll:QGenerator = ... # any QGenerator object implemented qmat.qcoeff.[...]
+>>> coll:QGenerator = ... # any QGenerator object implemented in qmat.qcoeff.[...]
 >>>
 >>> # Generate QDelta coefficients with generic function
 >>> from qmat.qdelta import genQDeltaCoeffs
@@ -38,7 +38,7 @@ All :math:`Q_\Delta` approximations may need different parameters to be computed
 But **you don't need a different call for each approximation** : additional keyword arguments may be given,
 and ignored when the approximation don't need them ...
 
->>> coll:QGenerator = ... # any QGenerator object implemented qmat.qcoeff.[...]
+>>> coll:QGenerator = ... # any QGenerator object implemented in qmat.qcoeff.[...]
 >>>
 >>> # Generic call with generic function
 >>> from qmat.qdelta import genQDeltaCoeffs
