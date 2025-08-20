@@ -5,6 +5,7 @@ Utility function for `qmat`
 """
 import inspect
 import pkgutil
+import functools
 
 def checkOverriding(cls, name, isProperty=True):
     """Check if a class overrides a method with a given name"""
@@ -66,3 +67,34 @@ def getClasses(dico, module=None):
         if cls not in classes.values() and check(cls):
             classes[key] = cls
     return classes
+
+def useQGen(__init__):
+    r"""
+    Wrapper to extract :math:`Q_\Delta`-generator parameters from `kwargs` argument,
+    using either a :math:`Q`-generator `qGen` or separately given parameters.
+    """
+    pNames = [p.name for p in inspect.signature(__init__).parameters.values()
+              if (p.kind == p.POSITIONAL_OR_KEYWORD) and p.name != "self"]
+
+    @functools.wraps(__init__)
+    def wrapper(self, *args, **kwargs):
+
+        if "coll" in kwargs:
+            # TODO : remove in future version
+            import warnings
+            warnings.warn("using the `coll` argument is deprecated. Use `qGen` instead!", DeprecationWarning)
+            assert "qGen" not in kwargs, "`coll` and `qGen` given together, that's an ambiguous call !"
+            kwargs["qGen"] = kwargs.pop("coll")
+
+        params = {name: value for name, value in zip(pNames, args)}
+        qGen = kwargs.pop("qGen", None)
+        params.update(kwargs)
+
+        if qGen is not None:
+            qGenParams = self.extractParams(qGen)
+            qGenParams.update(params)
+            params = qGenParams
+
+        __init__(self, **params)
+
+    return wrapper

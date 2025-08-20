@@ -71,45 +71,12 @@ required parameter from a `QGenerator` object, e.g :
 import inspect
 import numpy as np
 from typing import TypeVar
-from functools import wraps
-from inspect import signature
 
-from qmat.utils import checkOverriding, storeClass, importAll, checkGenericConstr
+from qmat.utils import checkOverriding, storeClass, importAll, checkGenericConstr, useQGen
 from qmat.qcoeff import QGenerator
 
 T = TypeVar("T")
 
-
-def useQGen(__init__):
-    r"""
-    Wrapper to extract :math:`Q_\Delta`-generator parameters from `kwargs` argument,
-    using either a :math:`Q`-generator `qGen` or separatelly given parameters.
-    """
-    pNames = [p.name for p in signature(__init__).parameters.values()
-              if (p.kind == p.POSITIONAL_OR_KEYWORD) and p.name != "self"]
-
-    @wraps(__init__)
-    def wrapper(self, *args, **kwargs):
-
-        if "coll" in kwargs:
-            # TODO : remove in future version
-            import warnings
-            warnings.warn("using the `coll` argument is deprecated. Use `qGen` instead!", DeprecationWarning)
-            assert "qGen" not in kwargs, "`coll` and `qGen` given together, that's an ambiguous call !"
-            kwargs["qGen"] = kwargs.pop("coll")
-
-        params = {name: value for name, value in zip(pNames, args)}
-        qGen = kwargs.pop("qGen", None)
-        params.update(kwargs)
-
-        if qGen is not None:
-            qGenParams = self.extractParams(qGen)
-            qGenParams.update(params)
-            params = qGenParams
-
-        __init__(self, **params)
-
-    return wrapper
 
 class QDeltaGenerator(object):
     r"""
@@ -120,11 +87,7 @@ class QDeltaGenerator(object):
     Q : np.ndarray
         The :math:`Q` matrix of the base approximated method.
     **kwargs :
-        Additional parameters given in a generic call, ignored by the class.
-
-    Note
-    ----
-    All
+        Additional parameters given in for generic calls, ignored by the class.
     """
 
     _K_DEPENDENT = False
