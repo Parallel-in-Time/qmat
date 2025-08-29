@@ -203,3 +203,31 @@ def testSparseInterpolation(inPoints, outPoints, order):
         inPolynomial = np.polyval(polyCoeffs,inPoints)
         interpolated = interpolationMatrix @ inPolynomial
         assert not np.allclose(np.polyval(polyCoeffs, outPoints), interpolated), f'Interpolation of order {order+1} polynomial is unexpectedly exact'
+
+
+@pytest.mark.parametrize('inPoints', [np.linspace(0, 1, 64, endpoint=False)])
+@pytest.mark.parametrize('outPoints', [np.linspace(0.123, 4.1214, 256, endpoint=False), np.linspace(0, 1, 128, endpoint=False)])
+@pytest.mark.parametrize('order', [2, 3, 4])
+def testSparseInterpolationPeriodic(inPoints, outPoints, order, grid_period=1):
+    """
+    In this test, we do "extrapolation", which is really interpolation because of the periodicity of the grid.
+    """
+    from qmat.lagrange import getSparseInterpolationMatrix
+    import scipy.sparse as sp
+
+    data = np.sin(inPoints * 2 * np.pi / grid_period)
+
+    interpolationMatrix = getSparseInterpolationMatrix(inPoints, outPoints, order, grid_period=grid_period)
+    assert isinstance(interpolationMatrix, sp.csc_matrix)
+
+
+    interpolated = interpolationMatrix @ data
+    ref = np.sin(outPoints * 2* np.pi / grid_period)
+    error = np.linalg.norm(interpolated - ref)
+
+    max_error = {
+        4: 2e-5,
+        3: 4e-4,
+        2: 8e-3,
+    }
+    assert error < max_error[order], error
