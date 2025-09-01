@@ -537,7 +537,7 @@ class LagrangeApproximation(object):
         return self.getDerivativeMatrix(*args, **kwargs)
 
 
-def getSparseInterpolationMatrix(inPoints, outPoints, order):
+def getSparseInterpolationMatrix(inPoints, outPoints, order, gridPeriod=-1):
     """
     Get a sparse interpolation matrix from `inPoints` to `outPoints` of order
     `order` using barycentric Lagrange interpolation.
@@ -553,6 +553,8 @@ def getSparseInterpolationMatrix(inPoints, outPoints, order):
             The points you want to interpolate to
         order : int
             Order of the interpolation
+        grid_period : float
+            Period of the grid. Negative values indicate non-periodic grids
 
     Returns
     -------
@@ -568,10 +570,21 @@ def getSparseInterpolationMatrix(inPoints, outPoints, order):
     lastClosestPoints = None
 
     for i in range(len(outPoints)):
-        closestPointsIdx = np.sort(np.argsort(np.abs(inPoints - outPoints[i]))[:order])
-        closestPoints = inPoints[closestPointsIdx] - outPoints[i]
+        if gridPeriod > 0:
+            pathL = (inPoints - gridPeriod - outPoints[i] % gridPeriod)
+            pathR = (inPoints + gridPeriod - outPoints[i] % gridPeriod)
+            pathC = (inPoints - outPoints[i] % gridPeriod)
+            path = np.append(np.append(pathR, pathL), pathC)
+            dist = np.abs(path)
+            _closestPointsIdx = np.sort(np.argsort(dist)[:order])
+            closestPointsIdx = _closestPointsIdx % len(inPoints)
+            closestPoints, sorting = np.unique(path[_closestPointsIdx], return_index=True)
+            closestPointsIdx = closestPointsIdx[sorting]
+        else:
+            closestPointsIdx = np.sort(np.argsort(np.abs(inPoints - outPoints[i]))[:order])
+            closestPoints = inPoints[closestPointsIdx] - outPoints[i]
 
-        if lastClosestPoints is not None and np.allclose(closestPoints, lastClosestPoints):
+        if lastClosestPoints is not None and len(closestPoints) == len(lastClosestPoints) and np.allclose(closestPoints, lastClosestPoints):
             interpolationLine = lastInterpolationLine
         else:
             interpolator = LagrangeApproximation(points = closestPoints)
