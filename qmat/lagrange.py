@@ -537,7 +537,7 @@ class LagrangeApproximation(object):
         return self.getDerivativeMatrix(*args, **kwargs)
 
 
-def getSparseInterpolationMatrix(inPoints, outPoints, order, grid_period=-1):
+def getSparseInterpolationMatrix(inPoints, outPoints, order, gridPeriod=-1):
     """
     Get a sparse interpolation matrix from `inPoints` to `outPoints` of order
     `order` using barycentric Lagrange interpolation.
@@ -570,10 +570,10 @@ def getSparseInterpolationMatrix(inPoints, outPoints, order, grid_period=-1):
     lastClosestPoints = None
 
     for i in range(len(outPoints)):
-        if grid_period > 0:
-            pathL = (inPoints - grid_period - outPoints[i] % grid_period)
-            pathR = (inPoints + grid_period - outPoints[i] % grid_period)
-            pathC = (inPoints - outPoints[i] % grid_period)
+        if gridPeriod > 0:
+            pathL = (inPoints - gridPeriod - outPoints[i] % gridPeriod)
+            pathR = (inPoints + gridPeriod - outPoints[i] % gridPeriod)
+            pathC = (inPoints - outPoints[i] % gridPeriod)
             path = np.append(np.append(pathR, pathL), pathC)
             dist = np.abs(path)
             _closestPointsIdx = np.sort(np.argsort(dist)[:order])
