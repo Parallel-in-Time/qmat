@@ -20,7 +20,20 @@ from qmat.utils import storeClass
 
 
 class RK(QGenerator):
-    """Base class for Runge-Kutta generators"""
+    """
+    Base class for Runge-Kutta generators
+
+    Parameters
+    ----------
+    padding : str, optional
+        Eventually add padding to the Butcher table. Can be
+
+        - LEFT : add padding corresponding to an additional node at t=0
+        - RIGHT : add padding corresponding to an additional node at t=1
+        - BOTH : add both LEFT and RIGHT padding
+
+        The default is None.
+    """
 
     A = None
     """:math:`A` matrix of the Butcher table"""
@@ -30,6 +43,29 @@ class RK(QGenerator):
     """:math:`c` coefficients of the Butcher table"""
     b2 = None
     """:math:`b_2` coefficients for the embedded methods"""
+
+    def __init__(self, padding=None):
+        if padding:
+            assert padding in ["LEFT", "RIGHT", "BOTH"], "padding choices can only be LEFT, RIGHT or BOTH"
+
+            if padding in ["LEFT", "BOTH"]:
+                self.c = np.array([0] + self.c.tolist())
+                self.b = np.array([0] + self.b.tolist())
+
+                newA = np.zeros((self.nNodes, self.nNodes))
+                newA[1:, 1:] = self.A
+                self.A = newA
+
+            if padding in ["RIGHT", "BOTH"]:
+                self.c = np.array(self.c.tolist() + [1])
+                self.b = np.array(self.b.tolist() + [0])
+
+                newA = np.zeros((self.nNodes, self.nNodes))
+                newA[:-1, :-1] = self.A
+                newA[-1] = self.b
+                self.A = newA
+
+            self.padding = padding
 
     @property
     def nodes(self)->np.ndarray: return self.c
