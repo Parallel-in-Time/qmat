@@ -71,6 +71,7 @@ class NonLinear():
                 uInit.ravel()
                 ).reshape(self.uShape)
             )
+        return out
 
 
     @staticmethod
