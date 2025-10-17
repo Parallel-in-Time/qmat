@@ -873,7 +873,7 @@ class ARK324L2SAESDIRK(ARK324L2SAERK):
 @registerRK
 class ARK222EDIRK(RK):
     """
-    2nd-order 2-stage EDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.6] <https://doi.org/10.1016/S0168-9274(97)00056-1>`_.
+    2nd-order 2-stages EDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.6] <https://doi.org/10.1016/S0168-9274(97)00056-1>`_.
     Use as implicit part for ARK scheme in combination with ARK222ERK.
     """
 
@@ -942,7 +942,7 @@ class ARK443ERK(ARK443ESDIRK):
 @registerRK
 class ARK343ESDIRK(RK):
     """
-    3rd-order 3-stages ESDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.7]`_.
+    3rd-order 3-stages ESDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.7] <https://doi.org/10.1016/S0168-9274(97)00056-1>`_.
     Use as implicit part for ARK scheme in combination with ARK443ERK.
     """
 
@@ -977,7 +977,7 @@ class ARK343ERK(ARK343ESDIRK):
 @registerRK
 class ARK4EDIRK(RK):
     """
-    A stable 7 stage fourth order diagonally implicit stiffly accurate Runge-Kutta method with explicit first stage.
+    A stable 7-stages fourth order diagonally implicit stiffly accurate Runge-Kutta method with explicit first stage.
     Implicit part of Additive RK.4.A.2 from `[Liu & Zou, 2006] <https://doi.org/10.1016/j.cam.2005.02.020>`_.
     Use with ARK4ERK to get fourth order stiffly accurate IMEX method.
     """
@@ -1002,7 +1002,7 @@ class ARK4EDIRK(RK):
 @registerRK
 class ARK4ERK(ARK4EDIRK):
     """
-    7 stage fourth order explicit stiffly accurate Runge-Kutta method.
+    7-stages fourth order explicit stiffly accurate Runge-Kutta method.
     Explicit part of Additive RK.4.A.2 from `[Liu & Zou, 2006] <https://doi.org/10.1016/j.cam.2005.02.020>`_.
     Use with ARK4EDIRK to get fourth order stiffly accurate IMEX method.
     """
