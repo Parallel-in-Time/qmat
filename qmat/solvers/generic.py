@@ -63,7 +63,14 @@ class NonLinear():
         """
         Solve u - a*evalF(u, t) = b using uInit as initial guess and storing u into out
         """
-        np.copyto(out, self.DEFAULT_FSOLVE(lambda u: u - a*self.evalF(u, t) - b, uInit))
+        np.copyto(
+            out,
+            self.DEFAULT_FSOLVE(
+                lambda u:
+                    u - a*self.evalF(u.reshape(self.uShape), t).ravel() - b.ravel(),
+                uInit.ravel()
+                ).reshape(self.uShape)
+            )
 
 
     @staticmethod
