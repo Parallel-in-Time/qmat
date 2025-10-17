@@ -895,7 +895,7 @@ class ARK222EDIRK(RK):
 @registerRK
 class ARK222ERK(ARK222EDIRK):
     """
-    2nd-order 2-stage ERK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.6]`_.
+    2nd-order 2-stages ERK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.6]`_.
     Use as explicit part for ARK scheme in combination with ARK222EDIRK.
     """
     A = np.array([[0,  0 , 0],
@@ -907,7 +907,7 @@ class ARK222ERK(ARK222EDIRK):
 @registerRK
 class ARK443ESDIRK(RK):
     """
-    3rd-order 4-stage ESDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.8] <https://doi.org/10.1016/S0168-9274(97)00056-1>`_.
+    3rd-order 4-stages ESDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.8] <https://doi.org/10.1016/S0168-9274(97)00056-1>`_.
     Use as implicit part for ARK scheme in combination with ARK443ERK.
     """
 
@@ -929,7 +929,7 @@ class ARK443ESDIRK(RK):
 @registerRK
 class ARK443ERK(ARK443ESDIRK):
     """
-    3rd-order 4-stage ERK scheme `[Ascher, Ruuth & Spiteri, 1997 - sec 2.8]`_.
+    3rd-order 4-stages ERK scheme `[Ascher, Ruuth & Spiteri, 1997 - sec 2.8]`_.
     Use as explicit part for ARK scheme in combination with ARK443ESDIRK.
     """
     A = np.array([[  0  ,   0  ,  0 ,   0 , 0],
@@ -942,7 +942,7 @@ class ARK443ERK(ARK443ESDIRK):
 @registerRK
 class ARK343ESDIRK(RK):
     """
-    3rd-order 3-stage ESDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.7]`_.
+    3rd-order 3-stages ESDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.7]`_.
     Use as implicit part for ARK scheme in combination with ARK443ERK.
     """
 
@@ -962,13 +962,16 @@ class ARK343ESDIRK(RK):
 @registerRK
 class ARK343ERK(ARK343ESDIRK):
     """
-    3rd-order 4-stage ERK scheme `[Ascher, Ruuth & Spiteri, 1997 - sec 2.7]`_.
+    4rd-order 4-stages ERK scheme `[Ascher, Ruuth & Spiteri, 1997 - sec 2.7]`_.
     Use as explicit part for ARK scheme in combination with ARK343ESDIRK.
     """
     A = np.array([[ 0,            0,            0,            0 ],
                   [ 0.4358665215, 0,            0,            0 ],
                   [ 0.3212788860, 0.3966543747, 0,            0 ],
                   [ -0.105858296, 0.5529291479, 0.5529291479, 0 ]])
+
+    @property
+    def order(self)->int: return 4
 
 
 @registerRK
