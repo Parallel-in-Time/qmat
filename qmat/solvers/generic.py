@@ -8,6 +8,7 @@ import scipy.optimize as sco
 from scipy.linalg import blas
 
 from qmat.solvers.dahlquist import Dahlquist
+from qmat.lagrange import LagrangeApproximation
 
 
 class LinearMultiNode():
@@ -125,14 +126,14 @@ class LinearMultiNode():
 
             # step update (if not, uNum[i+1] is already the last stage)
             if weights is not None:
-                uNum[i+1] = uNum[i]
+                np.copyto(uNum[i+1], uNum[i])
                 for m in range(nNodes):
                     self.axpy(a=weights[m], x=fEvals[m], y=uNum[i+1])
 
         return uNum
 
 
-    def solveSDC(self, Q, weights, QDelta, nSweeps, uNum=None):
+    def solveSDC(self, nSweeps, Q, weights, QDelta, uNum=None):
         nNodes, Q, weights, QDelta, nSweeps = Dahlquist.checkCoeffSDC(Q, weights, QDelta, nSweeps)
 
         for qDelta in QDelta:
@@ -200,7 +201,7 @@ class LinearMultiNode():
 
             # step update (if not, uNum[i+1] is already the last stage)
             if weights is not None:
-                uNum[i+1] = uNum[i]
+                np.copyto(uNum[i+1], uNum[i])
                 for m in range(nNodes):
                     self.axpy(a=weights[m], x=fK1[m], y=uNum[i+1])
 
@@ -219,7 +220,7 @@ class GenericMultiNode(LinearMultiNode):
     nStages = nNodes
 
 
-    def evalPsi(self, uVals, fEvals, out, t0=0):
+    def evalPhi(self, uVals, fEvals, out, t0=0):
         raise NotImplementedError(
             "specialized Integrator must implement its evalPsi method")
 
@@ -229,7 +230,7 @@ class GenericMultiNode(LinearMultiNode):
         def func(u:np.ndarray):
             u = u.reshape(self.uShape)
             res = np.empty_like(u)
-            self.evalPsi([*uPrev, u], fEvals, out=res, t0=t0)
+            self.evalPhi([*uPrev, u], fEvals, out=res, t0=t0)
             res *= -1
             res += u
             res -= rhs
@@ -268,7 +269,7 @@ class GenericMultiNode(LinearMultiNode):
             # loop on nodes
             for m in range(self.nNodes):
                 self.nodeSolve(
-                    [uNum[i], *uNodes[:m]], fEvals[:m+1], out=uNodes[m], t0=times[i])
+                    [uNum[i], *uNodes[:m]], fEvals[:m+1], rhs=uNum[i], out=uNodes[m], t0=times[i])
                 self.evalF(u=uNodes[m], t=times[i]+tau[m], out=fEvals[m+1])
 
             # step update
@@ -277,11 +278,24 @@ class GenericMultiNode(LinearMultiNode):
         return uNum
 
 
-    def solveSDC(self, Q, weights, nSweeps, uNum=None):
+    def solveSDC(self, nSweeps, Q=None, weights=None, uNum=None):
+
+        if Q is None:
+            approx = LagrangeApproximation(self.nodes)
+            Q = approx.getIntegrationMatrix([(0, tau) for tau in self.nodes])
+            if weights is True:
+                weights = approx.getIntegrationMatrix([(0, 1)]).ravel()
+            else:
+                weights = None
+        else:
+            nNodes, Q, weights = Dahlquist.checkCoeff(Q, weights)
+
+            assert nNodes == self.nNodes, "solver and Q do not have the same number of nodes"
+            assert np.allclose(Q.sum(axis=1), self.nodes), "solver and Q do not have the same nodes"
 
         Q = self.dt*Q
         if weights is not None:
-            weights = self.dt*np.asarray(weights)
+            weights = self.dt*weights
 
         if uNum is None:
             uNum = np.zeros((self.nSteps+1, *self.uShape), dtype=self.dtype)
@@ -293,7 +307,7 @@ class GenericMultiNode(LinearMultiNode):
         fEvals = [[np.zeros(self.uShape, dtype=self.dtype)
                    for _ in range(self.nNodes+1)]
                   for _ in range(2)]
-        self.evalF(uNum[0], self.t0, out=fEvals[0][0])
+
 
         times = np.linspace(self.t0, self.tEnd, self.nSteps+1)
         tau = self.dt*self.nodes
@@ -303,11 +317,12 @@ class GenericMultiNode(LinearMultiNode):
 
             # copy initialization
             np.copyto(uNodes[0], uNum[i])
+            self.evalF(uNum[i], self.t0, out=fEvals[0][0])
             np.copyto(fEvals[1][0], fEvals[0][0])   # u_0^{1} = u_0^{0}
             for m in range(self.nNodes):
                 np.copyto(fEvals[0][m+1], fEvals[0][0])  # u_m^{k} = u_0^{0}
 
-            uTmp = uNum[i+1]
+            uTmp = uNum[i+1]    # use next step as buffer for k correction term
 
             # loop on sweeps (iterations)
             for _ in range(nSweeps):
@@ -327,7 +342,7 @@ class GenericMultiNode(LinearMultiNode):
                         self.axpy(a=Q[m, j], x=fK[j], y=rhs)
 
                     # substract k correction term
-                    self.evalPsi(
+                    self.evalPhi(
                         [uNum[i], *uK0[:m+1]], fK0[:m+2], out=uTmp, t0=times[i])
                     rhs -= uTmp
 
@@ -344,8 +359,8 @@ class GenericMultiNode(LinearMultiNode):
 
             # step update
             if weights is not None:
-                uNum[i+1] = uNum[i]
-                fK = fEvals[0][1:]  # note : ignore f(u0) term in fK0
+                np.copyto(uNum[i+1], uNum[i])
+                fK = fK1[1:]  # note : ignore f(u0) term in fK0
                 for m in range(self.nNodes):
                     self.axpy(a=weights[m], x=fK[m], y=uNum[i+1])
             else:
@@ -357,43 +372,42 @@ class GenericMultiNode(LinearMultiNode):
 
 class ForwardEuler(GenericMultiNode):
 
-    def evalPsi(self, uVals, fEvals, out, t0=0):
+    def evalPhi(self, uVals, fEvals, out, t0=0):
         m = len(uVals) - 1
         assert m > 0
         assert len(fEvals) in [m, m+1]
 
         tau = [t0] + (t0 + self.dt*self.nodes).tolist()
 
-        # u0 + dt1 f0 + dt2 f1 + ... + dtm f{m-1}
-        np.copyto(out, uVals[0])
-        for i in range(m):
+        # dt1 f0 + dt2 f1 + ... + dtm f{m-1}
+        np.copyto(out, fEvals[0])
+        out *= tau[1]-tau[0]
+        for i in range(1, m):
             self.axpy(a=tau[i+1]-tau[i], x=fEvals[i], y=out)
 
 
     def nodeSolve(self, uPrev, fEvals, out, rhs=0, t0=0):
-        self.evalPsi([*uPrev, out], fEvals, out, t0=t0)
+        self.evalPhi([*uPrev, out], fEvals, out, t0=t0)
         out += rhs
+
 
 
 class BackwardEuler(GenericMultiNode):
 
-    def evalPsi(self, uVals, fEvals, out, t0=0):
+    def evalPhi(self, uVals, fEvals, out, t0=0):
         m = len(uVals) - 1
         assert m > 0
         assert len(fEvals) in [m, m+1]
 
         tau = [t0] + (t0 + self.dt*self.nodes).tolist()
 
-        # dtm f{m} + ... + dt2 f2 + dt1 f1 + u0
+        # dt1 f1 + dt2 f2 + ... + dtm f{m}
         if len(fEvals) == m:
-            # f{m} not given, must evaluate and sum with the other terms
-            self.evalF(uVals[m], tau[m], out=out)
-            out *= tau[m]-tau[m-1]
-            for i in range(m-1):
-                self.axpy(a=tau[i+1]-tau[i], x=fEvals[i+1], y=out)
-            out += uVals[0]
+            self.evalF(uVals[m], tau[m], out=out)   # f{m} not given
         else:
-            # f{m} given, use its value
-            np.copyto(out, uVals[0])
-            for i in range(m):
-                self.axpy(a=tau[i+1]-tau[i], x=fEvals[i+1], y=out)
+            np.copyto(out, fEvals[-1])   # f{m} given, use its value
+        out *= tau[m]-tau[m-1]
+        for i in range(m-1):
+            self.axpy(a=tau[i+1]-tau[i], x=fEvals[i+1], y=out)
+
+    # TODO : override nodeSolve for better efficiency

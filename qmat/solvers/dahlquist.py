@@ -32,6 +32,8 @@ class Dahlquist():
             weights = np.asarray(weights)
             assert weights.ndim == 1, "weights must be a 1D vector"
             assert weights.size == nNodes, "weights size is not the same as the node size"
+        else:
+            assert np.allclose(Q.sum(axis=1)[-1], 1), "last node must be 1 if weights are not given"
 
         return nNodes, Q, weights
 
@@ -40,7 +42,7 @@ class Dahlquist():
         nNodes, Q, weights = self.checkCoeff(Q, weights)
 
         # Collocation problem matrix
-        A = np.eye(nNodes) - self.lam[..., None, None]*self.dt*Q 
+        A = np.eye(nNodes) - self.lam[..., None, None]*self.dt*Q
 
         uNum = np.zeros((self.nSteps+1, *self.uShape), dtype=self.uDtype)
         uNum[0] = self.u0
@@ -67,6 +69,8 @@ class Dahlquist():
             weights = np.asarray(weights)
             assert weights.ndim == 1, "weights must be a 1D vector"
             assert weights.size == nNodes, "weights size is not the same as the node size"
+        else:
+            assert np.allclose(nodes[-1], 1), "last node must be 1 if weights are not given"
 
         QDelta = np.asarray(QDelta)
         if QDelta.ndim == 3:
@@ -96,7 +100,7 @@ class Dahlquist():
 
                 b = uNum[i][..., None, None] \
                     + self.lam[..., None, None]*self.dt*(Q - QDelta[k]) @ uNodes
-                
+
                 # b has shape [..., nNodes, 1]
                 # P[k] has shape [..., nNodes, nNodes]
                 # output has shape [..., nNodes, 1]

@@ -298,7 +298,7 @@ class LagrangeApproximation(object):
         """Wether the points have duplicates or not"""
         return self.nPoints > self.nUniquePoints
 
-    def getInterpolationMatrix(self, times, duplicates=True):
+    def getInterpolationMatrix(self, times, duplicates=True) -> np.ndarray:
         r"""
         Compute the interpolation matrix for a given set of discrete "time"
         points.
@@ -354,7 +354,7 @@ class LagrangeApproximation(object):
         return P
 
 
-    def getIntegrationMatrix(self, intervals, numQuad='FEJER', duplicates=True):
+    def getIntegrationMatrix(self, intervals, numQuad='FEJER', duplicates=True) -> np.ndarray:
         r"""
         Compute the integration matrix for a given set of intervals.
 
@@ -437,7 +437,7 @@ class LagrangeApproximation(object):
 
         return Q
 
-    def getDerivativeMatrix(self, order=1, duplicates=True):
+    def getDerivativeMatrix(self, order=1, duplicates=True) -> np.ndarray:
         r"""
         Generate derivative matrix of first or second order (or both) based on
         the Lagrange interpolant.
@@ -531,7 +531,7 @@ class LagrangeApproximation(object):
         else:
             return D1, D2
 
-    def getDerivationMatrix(self, *args, **kwargs):
+    def getDerivationMatrix(self, *args, **kwargs) -> np.ndarray:
         import warnings
         warnings.warn("Function `getDerivationMatrix` is deprecated. Use `getDerivativeMatrix` instead!", DeprecationWarning)
         return self.getDerivativeMatrix(*args, **kwargs)
