@@ -1,7 +1,8 @@
 import numpy as np
+from qmat.playground.diff_eqs.de_solver import DESolver
 
 
-class Burgers:
+class Burgers(DESolver):
     """
     Class to handle the 1D viscous Burgers' equation.
     """
