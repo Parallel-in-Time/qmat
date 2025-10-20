@@ -7,8 +7,6 @@ import numpy as np
 import scipy.optimize as sco
 from scipy.linalg import blas
 
-from collections import deque
-
 from qmat.solvers.dahlquist import Dahlquist
 
 
@@ -148,9 +146,8 @@ class LinearMultiNode():
             uNum[0] = self.u0
 
         rhs = np.zeros(self.uShape, dtype=self.dtype)
-        fEvals = deque([
-            np.zeros((nNodes, *self.uShape), dtype=self.dtype)
-            for _ in range(2)])
+        fEvals = [np.zeros((nNodes, *self.uShape), dtype=self.dtype)
+                  for _ in range(2)]
 
         times = np.linspace(self.t0, self.tEnd, self.nSteps+1)
         tau = Q.sum(axis=1)
@@ -199,7 +196,7 @@ class LinearMultiNode():
                     self.evalF(u=uNode, t=tNode, out=fK1[m])
 
                 # invert fK0 and fK1 for the next sweep
-                fEvals.rotate()
+                fEvals[0], fEvals[1] = fEvals[1], fEvals[0]
 
             # step update (if not, uNum[i+1] is already the last stage)
             if weights is not None:
@@ -222,17 +219,17 @@ class GenericMultiNode(LinearMultiNode):
     nStages = nNodes
 
 
-    def evalPsi(self, u, u0, fEvals, out, t0=0):
+    def evalPsi(self, uVals, fEvals, out, t0=0):
         raise NotImplementedError(
             "specialized Integrator must implement its evalPsi method")
 
-    def nodeSolve(self, u0, fEvals, out, rhs=0, t0=0):
+    def nodeSolve(self, uPrev, fEvals, out, rhs=0, t0=0):
         """solve u-psi(u, u0, fEvals) = rhs"""
 
         def func(u:np.ndarray):
             u = u.reshape(self.uShape)
             res = np.empty_like(u)
-            self.evalPsi(u, u0, fEvals, out=res, t0=t0)
+            self.evalPsi([*uPrev, u], fEvals, out=res, t0=t0)
             res *= -1
             res += u
             res -= rhs
@@ -242,8 +239,9 @@ class GenericMultiNode(LinearMultiNode):
         np.copyto(out, sol)
 
 
-    def stepUpdate(self, u0, fEvals, out, t0=0):
-        pass
+    def stepUpdate(self, u0, uNodes, fEvals, out):
+        np.copyto(out, uNodes[-1])
+        fEvals[0], fEvals[-1] = fEvals[-1], fEvals[0]
 
 
     def solve(self, uNum=None):
@@ -251,7 +249,10 @@ class GenericMultiNode(LinearMultiNode):
             uNum = np.zeros((self.nSteps+1, *self.uShape), dtype=self.dtype)
             uNum[0] = self.u0
 
-        fEvals = np.zeros((self.nNodes, *self.uShape), dtype=self.dtype)
+        uNodes = np.zeros((self.nNodes, *self.uShape), dtype=self.dtype)
+        fEvals = [np.zeros(self.uShape, dtype=self.dtype)
+                  for _ in range(self.nNodes+1)]
+        self.evalF(uNum[0], self.t0, out=fEvals[0])
 
         times = np.linspace(self.t0, self.tEnd, self.nSteps+1)
         tau = self.dt*self.nodes
@@ -259,16 +260,18 @@ class GenericMultiNode(LinearMultiNode):
         # time-stepping loop
         for i in range(self.nSteps):
 
-            uNode = uNum[i+1]   # use next step as buffer
+            # initialize first node with starting value for step
+            np.copyto(uNodes[0], uNum[i])
 
             # loop on nodes
             for m in range(self.nNodes):
-                tNode = times[i] + tau[m]
-                self.nodeSolve(uNum[i], fEvals[:m+1], out=uNode, t0=times[i])
-                self.evalF(uNode, tNode, out=fEvals[m])
+                self.nodeSolve(
+                    [uNum[i], *uNodes[:m]], fEvals[:m+1], out=uNodes[m], t0=times[i])
+                self.evalF(u=uNodes[m], t=times[i]+tau[m], out=fEvals[m+1])
 
-            # step update (no-op per default)
-            self.stepUpdate(uNum[i], fEvals, out=uNum[i+1], t0=times[i])
+            # step update
+            self.stepUpdate(uNum[i], uNodes, fEvals, out=uNum[i+1])
+
 
         return uNum
 
@@ -282,10 +285,11 @@ class GenericMultiNode(LinearMultiNode):
             uNum[0] = self.u0
 
         rhs = np.zeros(self.uShape, dtype=self.dtype)
-        uNodes = deque([
-            np.zeros((self.nNodes, *self.uShape), dtype=self.dtype)
-            for _ in range(2)])
-        fEvals = np.zeros((self.nNodes, *self.uShape), dtype=self.dtype)
+        uNodes = [np.zeros((self.nNodes, *self.uShape), dtype=self.dtype)
+                  for _ in range(2)]
+        fEvals = [[np.zeros(self.uShape, dtype=self.dtype)
+                   for _ in range(self.nNodes+1)]
+                  for _ in range(2)]
 
         times = np.linspace(self.t0, self.tEnd, self.nSteps+1)
         tau = self.dt*self.nodes
@@ -344,159 +348,35 @@ class GenericMultiNode(LinearMultiNode):
 
 class ForwardEuler(GenericMultiNode):
 
-    def evalPsi(self, u, u0, fEvals, out, t0=0):
-        m = len(fEvals) - 1
+    def evalPsi(self, uVals, fEvals, out, t0=0):
+        m = len(uVals) - 1
         assert m > 0
+        assert len(fEvals) == m
+
         tau = [t0] + (t0 + self.dt*self.nodes).tolist()
-        np.copyto(out, u0)
+
+        # u0 + dt1 f0 + dt2 f1 + ... + dtm f{m-1}
+        np.copyto(out, uVals[0])
         for i in range(m):
-            dTau = tau[i+1] - tau[i]
-            self.axpy(a=dTau, x=fEvals[i], y=out)
+            self.axpy(a=tau[i+1]-tau[i], x=fEvals[i], y=out)
 
 
-    def nodeSolve(self, *uPrev, out, rhs=0, t0=0):
-        self.evalPsi(*uPrev, out, out=out, t0=t0)
+    def nodeSolve(self, uPrev, fEvals, out, rhs=0, t0=0):
+        self.evalPsi([*uPrev, out], fEvals, out, t0=t0)
         out += rhs
 
 
 class BackwardEuler(GenericMultiNode):
 
-    def evalPsi(self, u, u0, fEvals, out, t0=0):
-        m = len(fEvals) - 1
+    def evalPsi(self, uVals, fEvals, out, t0=0):
+        m = len(uVals) - 1
         assert m > 0
+        assert len(fEvals) == m
+
         tau = [t0] + (t0 + self.dt*self.nodes).tolist()
-        # evaluate current
-        self.evalF(u, tau[m], out=out)
 
-        np.copyto(out, u0)
-        for i in range(m):
-            dTau = tau[i+1] - tau[i]
-            self.axpy(a=dTau, x=fEvals[i], y=out)
-
-
-if __name__ == "__main__":
-    import matplotlib.pyplot as plt
-    from time import time
-
-    from qmat import genQCoeffs, QDELTA_GENERATORS
-    from qmat.qcoeff.collocation import Collocation
-
-    pType = "Dahlquist"
-
-    if pType == "Dahlquist":
-        lam = 1j
-
-        def evalF(u, t, out):
-            out[0] = u[0]*lam.real - u[1]*lam.imag
-            out[1] = u[1]*lam.real + u[0]*lam.imag
-
-        u0 = np.array([1, 0], dtype=float)
-        fSolve = None
-
-
-    elif pType == "Lorenz":
-        sigma = 10
-        rho = 28
-        beta = 8/3
-
-        def evalF(u, t, out):
-            x, y, z = u
-            out[0] = sigma*(y - x)
-            out[1] = x*(rho - z) - y
-            out[2] = x*y - beta*z
-
-        u0 = np.array([5, -5, 20], dtype=float)
-
-        newton = {
-            "maxIter": 99,
-            "tolerance": 1e-9,
-            }
-
-        gemv = blas.get_blas_funcs("gemv", dtype=u0.dtype)
-
-        def fSolve(a, rhs, t, out):
-
-            rhsX, rhsY, rhsZ = rhs
-            a2 = a**2
-            a3 = a**3
-
-            for n in range(newton["maxIter"]):
-                x, y, z = out
-
-                res = np.array([
-                    x - a*sigma*(y - x)     - rhsX,
-                    y - a*(x*(rho - z) - y) - rhsY,
-                    z - a*(x*y - beta*z)    - rhsZ,
-                ])
-
-                resNorm = np.linalg.norm(res, np.inf)
-                if resNorm <= newton["tolerance"]:
-                    break
-                if np.isnan(resNorm):
-                    break
-
-                factor = -1.0 / (
-                    a3*sigma*(x*(x + y) + beta*(-rho + z + 1))
-                    + a2*(beta*sigma + beta - rho*sigma + sigma + x**2 + sigma*z)
-                    + a*(beta + sigma + 1) + 1
-                )
-
-                jacInv = factor * np.array([
-                    [
-                        beta*a2 + a2*(x**2) + beta*a + a + 1,
-                        beta*a2*sigma + a*sigma,
-                        -a2*sigma*x,
-                    ],
-                    [
-                        beta*a2*rho - a2*x*y - beta*a2*z + a*rho - a*z,
-                        beta*a2*sigma + beta*a + a*sigma + 1,
-                        -(a2*sigma + a)*x,
-                    ],
-                    [
-                        a2*rho*x - a2*x*z + a2*y + a*y,
-                        a2*sigma*x + a2*sigma*y + a*x,
-                        -a2*rho*sigma + a2*sigma*(1 + z) + a*sigma + a + 1,
-                    ],
-                ])
-
-                # out += jacInv @ res
-                gemv(alpha=1.0, a=jacInv, x=res, beta=1.0, y=out, overwrite_y=True)
-
-            fSolve = None
-
-
-    nodes, weights, Q = genQCoeffs("FE")
-
-    coll = Collocation(nNodes=4, nodeType="LEGENDRE", quadType="RADAU-RIGHT")
-    gen = QDELTA_GENERATORS["FE"](qGen=coll)
-    nSweeps = 2
-    QDelta = gen.genCoeffs(k=[i+1 for i in range(nSweeps)])
-
-
-    nSteps = 1
-    tEnd = np.pi/10
-    prob = LinearMultiNode(u0, evalF, fSolve=fSolve, tEnd=tEnd, nSteps=nSteps)
-
-    from qmat.solvers.generic import ForwardEuler
-
-    solver = ForwardEuler(
-        u0, evalF, nodes=coll.nodes, fSolve=fSolve,
-        tEnd=tEnd, nSteps=nSteps)
-
-    plt.figure(1)
-    plt.clf()
-
-    tBeg = time()
-    # uNum = prob.solve(Q, weights)
-    # uNum = solver.solve()
-
-    uNum = prob.solveSDC(coll.Q, None, QDelta, nSweeps=nSweeps)
-    plt.plot(uNum[:, 0], uNum[:, 1], label="ref")
-
-    uNum = solver.solveSDC(coll.Q, None, nSweeps=nSweeps)
-    plt.plot(uNum[:, 0], uNum[:, 1], label="integrator")
-
-    plt.legend()
-    tWall = time()-tBeg
-    tWall /= nSteps * np.size(u0)
-    print(f"tWallScaled : {tWall:1.2e}s")
+        # dtm f{m} + ... + dt2 f2 + dt1 f1 + u0
+        self.evalF(uVals[-1], tau[m+1], out=out)
+        for i in range(m-1):
+            self.axpy(a=tau[i+1]-tau[i], x=fEvals[i+1], y=out)
+        out += uVals[0]
