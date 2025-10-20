@@ -240,6 +240,8 @@ class GenericMultiNode(LinearMultiNode):
 
 
     def stepUpdate(self, u0, uNodes, fEvals, out):
+        """Update end-step solution and ensure that fEvals[0] contains its evaluation"""
+        assert self.nodes[-1] == 1
         np.copyto(out, uNodes[-1])
         fEvals[0], fEvals[-1] = fEvals[-1], fEvals[0]
 
@@ -272,13 +274,14 @@ class GenericMultiNode(LinearMultiNode):
             # step update
             self.stepUpdate(uNum[i], uNodes, fEvals, out=uNum[i+1])
 
-
         return uNum
 
 
     def solveSDC(self, Q, weights, nSweeps, uNum=None):
 
         Q = self.dt*Q
+        if weights is not None:
+            weights = self.dt*np.asarray(weights)
 
         if uNum is None:
             uNum = np.zeros((self.nSteps+1, *self.uShape), dtype=self.dtype)
@@ -290,6 +293,7 @@ class GenericMultiNode(LinearMultiNode):
         fEvals = [[np.zeros(self.uShape, dtype=self.dtype)
                    for _ in range(self.nNodes+1)]
                   for _ in range(2)]
+        self.evalF(uNum[0], self.t0, out=fEvals[0][0])
 
         times = np.linspace(self.t0, self.tEnd, self.nSteps+1)
         tau = self.dt*self.nodes
@@ -299,16 +303,17 @@ class GenericMultiNode(LinearMultiNode):
 
             # copy initialization
             np.copyto(uNodes[0], uNum[i])
-            self.evalF(uNum[i], t=times[i], out=fEvals[0])
-            np.copyto(fEvals[1:], fEvals[0])
+            np.copyto(fEvals[1][0], fEvals[0][0])   # u_0^{1} = u_0^{0}
+            for m in range(self.nNodes):
+                np.copyto(fEvals[0][m+1], fEvals[0][0])  # u_m^{k} = u_0^{0}
 
             uTmp = uNum[i+1]
 
             # loop on sweeps (iterations)
-            for k in range(nSweeps):
+            for _ in range(nSweeps):
 
-                uK0 = uNodes[0]
-                uK1 = uNodes[1]
+                uK0, uK1 = uNodes
+                fK0, fK1 = fEvals
 
                 # loop on nodes (stages)
                 for m in range(self.nNodes):
@@ -317,30 +322,34 @@ class GenericMultiNode(LinearMultiNode):
                     np.copyto(rhs, uNum[i])
 
                     # add quadrature terms
+                    fK = fK0[1:]  # note : ignore f(u0) term in fK0
                     for j in range(self.nNodes):
-                        self.axpy(a=Q[m, j], x=fEvals[j], y=rhs)
+                        self.axpy(a=Q[m, j], x=fK[j], y=rhs)
 
                     # substract k correction term
-                    if k == 0:
-                        self.axpy(a=-tau[m], x=fEvals[0], y=rhs)
-                        rhs -= uNum[i]
-                    else:
-                        self.evalPsi(uNum[i], *uK0[:m+1], out=uTmp, t0=times[i])
-                        rhs -= uTmp
+                    self.evalPsi(
+                        [uNum[i], *uK0[:m+1]], fK0[:m+2], out=uTmp, t0=times[i])
+                    rhs -= uTmp
 
                     # solve with k+1 correction
                     self.nodeSolve(
-                        uNum[i], *uK1[:m], out=uK1[m], rhs=rhs, t0=times[i])
+                        [uNum[i], *uK1[:m]], fK1[:m+1], out=uK1[m], rhs=rhs, t0=times[i])
 
-                # compute f evals
+                    # evalF on k+1 node solution
+                    self.evalF(uK1[m], t=times[i]+tau[m], out=fK1[m+1])
+
+                # invert uK0/fK0 and uK1/fK1 for next sweep
+                fEvals[0], fEvals[1] = fEvals[1], fEvals[0]
+                uNodes[0], uNodes[1] = uNodes[1], uNodes[0]
+
+            # step update
+            if weights is not None:
+                uNum[i+1] = uNum[i]
+                fK = fEvals[0][1:]  # note : ignore f(u0) term in fK0
                 for m in range(self.nNodes):
-                    self.evalF(uK1[m], t=times[i]+tau[m], out=fEvals[m])
-
-                # invert uK0 and uK1 for next sweep
-                uNodes.rotate()
-
-            # step update (copy of last node solution per default)
-            self.stepUpdate(*uK1, out=uNum[i+1], t0=times[i])
+                    self.axpy(a=weights[m], x=fK[m], y=uNum[i+1])
+            else:
+                self.stepUpdate(uNum[i], uNodes[0], fEvals[0], out=uNum[i+1])
 
         return uNum
 
@@ -351,7 +360,7 @@ class ForwardEuler(GenericMultiNode):
     def evalPsi(self, uVals, fEvals, out, t0=0):
         m = len(uVals) - 1
         assert m > 0
-        assert len(fEvals) == m
+        assert len(fEvals) in [m, m+1]
 
         tau = [t0] + (t0 + self.dt*self.nodes).tolist()
 
@@ -371,12 +380,20 @@ class BackwardEuler(GenericMultiNode):
     def evalPsi(self, uVals, fEvals, out, t0=0):
         m = len(uVals) - 1
         assert m > 0
-        assert len(fEvals) == m
+        assert len(fEvals) in [m, m+1]
 
         tau = [t0] + (t0 + self.dt*self.nodes).tolist()
 
         # dtm f{m} + ... + dt2 f2 + dt1 f1 + u0
-        self.evalF(uVals[-1], tau[m+1], out=out)
-        for i in range(m-1):
-            self.axpy(a=tau[i+1]-tau[i], x=fEvals[i+1], y=out)
-        out += uVals[0]
+        if len(fEvals) == m:
+            # f{m} not given, must evaluate and sum with the other terms
+            self.evalF(uVals[m], tau[m], out=out)
+            out *= tau[m]-tau[m-1]
+            for i in range(m-1):
+                self.axpy(a=tau[i+1]-tau[i], x=fEvals[i+1], y=out)
+            out += uVals[0]
+        else:
+            # f{m} given, use its value
+            np.copyto(out, uVals[0])
+            for i in range(m):
+                self.axpy(a=tau[i+1]-tau[i], x=fEvals[i+1], y=out)
