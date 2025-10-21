@@ -53,7 +53,7 @@ class Dahlquist():
             uNodes = np.linalg.solve(A, b[..., None])[..., 0]
             if weights is not None:
                 uNum[i+1] = uNum[i]
-                uNum[i+1] += self.dt*np.dot(self.lamI[..., None]*uNodes, weights)
+                uNum[i+1] += self.dt*np.dot(self.lam[..., None]*uNodes, weights)
             else:
                 uNum[i+1] = uNodes[..., -1]
 

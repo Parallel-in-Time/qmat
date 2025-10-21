@@ -77,6 +77,9 @@ pythonpath = [
 relative_files = true
 concurrency = ['multiprocessing']
 source = ['qmat']
+omit = [
+    '*/qmat/playgrounds/*'
+]
 
 [tool.coverage.report]
 skip_empty = true
