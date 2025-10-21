@@ -2,10 +2,12 @@ import numpy as np
 from qmat.playground.diff_eqs.de_solver import DESolver
 
 
-class Dahlquist(DESolver):
+class Dahlquist2(DESolver):
     """
-    Standard Dahlquist test equation with two eigenvalues.
-    d/dt u(t) = (lam1 + lam2) * u(t)
+    Modified Dahlquist test equation with superposition of two
+    frequencies in the solution u(t).
+
+    u(t) = 0.5*(exp(lam1*t) + exp(lam2*t)) * u(0)
     """
 
     def __init__(self, lam1: complex, lam2: complex):
@@ -19,12 +21,16 @@ class Dahlquist(DESolver):
         return np.array([1.0 + 0.0j])
 
     def du_dt(self, u: np.ndarray, t: float) -> np.ndarray:
-        retval = (self.lam1 + self.lam2) * u
+        retval = (
+            (self.lam1 * np.exp(t * self.lam1) + self.lam2 * np.exp(t * self.lam2))
+            / (np.exp(t * self.lam1) + np.exp(t * self.lam2))
+            * u
+        )
         assert retval.shape == u.shape
         return retval
 
     def u_solution(self, u0: np.ndarray, t: float) -> np.ndarray:
         assert isinstance(t, float)
-        retval = (np.exp(t * (self.lam1 + self.lam2))) * u0
+        retval = 0.5*(np.exp(t * self.lam1) + np.exp(t * self.lam2)) * u0
         assert retval.shape == u0.shape
         return retval

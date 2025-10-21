@@ -1,5 +1,6 @@
 import numpy as np
 from qmat.playground.diff_eqs.de_solver import DESolver
+from qmat.playground.time_integration.rk_integration import RKIntegration
 
 
 class Burgers(DESolver):
@@ -58,7 +59,7 @@ class Burgers(DESolver):
 
         return u0
 
-    def eval_f(self, u: np.ndarray) -> np.ndarray:
+    def du_dt(self, u: np.ndarray, t: float) -> np.ndarray:
         """Evaluate the right-hand side of the 1D viscous Burgers' equation.
 
         Parameters
@@ -82,7 +83,7 @@ class Burgers(DESolver):
         f = -u * du_dx + self._nu * d2u_dx2
         return f
 
-    def analytical_integration(self, u0: np.ndarray, t: float) -> np.ndarray:
+    def u_solution(self, u0: np.ndarray, t: float) -> np.ndarray:
         """Compute the analytical solution of the 1D viscous Burgers' equation at time `t`.
 
         See
@@ -128,41 +129,6 @@ class Burgers(DESolver):
 
         u1_hat = -2.0 * self._nu * phi_hat * self._d_dx_
         return np.fft.ifft(u1_hat).real
-
-    def step_rk1(self, u: np.ndarray, dt: float) -> np.ndarray:
-        # Forward Euler
-        return u + dt * self.eval_f(u)
-
-    def step_rk1_n(self, u: np.ndarray, dt: float, n: int) -> np.ndarray:
-        for _ in range(n):
-            u = self.step_rk1(u, dt)
-        return u
-
-    def step_rk2(self, u: np.ndarray, dt: float) -> np.ndarray:
-        # Heun's method
-        k1 = self.eval_f(u)
-        k2 = self.eval_f(u + 0.5 * dt * k1)
-        return u + dt * k2
-
-    def step_rk2_n(self, u: np.ndarray, dt: float, n: int) -> np.ndarray:
-        for _ in range(n):
-            u = self.step_rk2(u, dt)
-        return u
-
-    def step_rk4(self, u: np.ndarray, dt: float) -> np.ndarray:
-        # RK4 stages
-        k1 = self.eval_f(u)
-        k2 = self.eval_f(u + 0.5 * dt * k1)
-        k3 = self.eval_f(u + 0.5 * dt * k2)
-        k4 = self.eval_f(u + dt * k3)
-
-        # Update solution
-        return u + dt * (k1 + 2 * k2 + 2 * k3 + k4) / 6
-
-    def step_rk4_n(self, u: np.ndarray, dt: float, n: int) -> np.ndarray:
-        for _ in range(n):
-            u = self.step_rk4(u, dt)
-        return u
 
     def test(self):
         """

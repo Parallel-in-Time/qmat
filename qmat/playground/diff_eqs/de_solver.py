@@ -5,7 +5,7 @@ import numpy as np
 class DESolver(ABC):
 
     @abstractmethod
-    def eval_f(self, u: np.ndarray) -> np.ndarray:
+    def du_dt(self, u: np.ndarray, t: float) -> np.ndarray:
         """Evaluate the right-hand side of the 1D viscous Burgers' equation.
 
         Parameters

@@ -2,15 +2,16 @@
 import numpy as np
 from qmat.playground.diff_eqs.burgers import Burgers
 from qmat.playground.time_integration.sdc_integration import SDCIntegration
+from qmat.playground.time_integration.rk_integration import RKIntegration
 
 
-def test_sdc_burgers():
+def test_burgers():
     N = 128
     nu = 0.2
 
     T: float = 4.0
+    t: float = 0.0  # Starting point in time
     domain_size: float = 2.0 * np.pi
-    t = np.linspace(0, domain_size, N, endpoint=False)
 
     burgers: Burgers = Burgers(N=N, nu=nu, domain_size=domain_size)
     u0 = burgers.initial_u0("sine")
@@ -23,11 +24,11 @@ def test_sdc_burgers():
         print("="*80)
         results = []
 
-        u_analytical = burgers.analytical_integration(u0, t=T)
+        u_analytical = burgers.u_solution(u0, t=T)
 
         for nt in range(4):
 
-            num_timesteps = 2**nt * 1000
+            num_timesteps = 2**nt * 500
             print(f"Running simulation with num_timesteps={num_timesteps}")
 
             dt = T / num_timesteps
@@ -37,18 +38,13 @@ def test_sdc_burgers():
 
             u = u0.copy()
 
-            if time_integration == "rk1":
-                u = burgers.step_rk1_n(u, dt, num_timesteps)
-
-            elif time_integration == "rk2":
-                u = burgers.step_rk2_n(u, dt, num_timesteps)
-
-            elif time_integration == "rk4":
-                u = burgers.step_rk4_n(u, dt, num_timesteps)
+            if time_integration in RKIntegration.supported_methods:
+                rki = RKIntegration(method=time_integration)
+                u = rki.integrate_n(u, t, dt, num_timesteps, burgers)
 
             elif time_integration == "sdc":
                 sdci = SDCIntegration(num_nodes=3, node_type="LEGENDRE", quad_type="LOBATTO")
-                u = sdci.integrate_n(u, dt, num_timesteps, burgers)
+                u = sdci.integrate_n(u, t, dt, num_timesteps, burgers)
 
             else:
                 raise Exception("TODO")
@@ -65,12 +61,18 @@ def test_sdc_burgers():
 
             print(f" - N={r["N"]}, dt={r["dt"]:.6e}, error={r["error"]:.6e}, conv={conv}")
             prev_error = r["error"]
+            r["conv"] = conv
 
         if time_integration == "rk1":
             assert results[-1]["error"] < 1e-4
+            assert np.abs(results[-1]["conv"]-1.0) < 1e-3
+
         elif time_integration == "rk2":
-            assert results[-1]["error"] < 1e-8
+            assert results[-1]["error"] < 1e-7
+            assert np.abs(results[-1]["conv"]-2.0) < 1e-3
+
         elif time_integration == "rk4":
             assert results[-1]["error"] < 1e-14
+
         elif time_integration == "sdc":
             assert results[-1]["error"] < 1e-14
