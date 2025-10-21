@@ -11,11 +11,14 @@ from qmat.solvers.dahlquist import Dahlquist
 from qmat.lagrange import LagrangeApproximation
 
 
-class Problem():
+class DiffOperator():
 
     def __init__(self, u0):
-        u0 = np.asarray(u0)
-        if u0.size < 1e3:
+        for name in ["u0", "innerSolver"]:
+            assert not hasattr(self, name), \
+                f"{name} attribute is reserved for the base DiffOperator class"
+        self.u0 = np.asarray(u0)
+        if self.u0.size < 1e3:
             self.innerSolver = sco.fsolve
         else:
             self.innerSolver = sco.newton_krylov
@@ -29,11 +32,15 @@ class Problem():
         return self.u0.dtype
 
     def evalF(self, u:np.ndarray, t:float, out:np.ndarray):
+        """
+        Evaluate f(u,t) and store the result into out
+        """
         raise NotImplementedError("evalF must be provided")
 
     def fSolve(self, a:float, rhs:np.ndarray, t:float, out:np.ndarray):
         """
-        Solve u - a*f(u, t) = rhs using out as initial guess and storing the final solution into it
+        Solve u - a*f(u, t) = rhs using out as initial guess
+        and store the result into out
         """
 
         def func(u:np.ndarray):
@@ -51,7 +58,6 @@ class Problem():
 
     def test(self, t0=0, dt=1e-1, eps=1e-3):
         u0 = self.u0
-
         try:
             uEval = np.zeros_like(u0)
             self.evalF(u=u0, t=t0, out=uEval)
@@ -74,73 +80,36 @@ class Problem():
 
 class LinearMultiNode():
 
-    def __init__(self, u0, evalF, fSolve=None, tEnd=1, nSteps=1, t0=0):
-        u0 = np.asarray(u0)
-        if u0.size < 1e3:
-            self.innerSolver = sco.fsolve
-        else:
-            self.innerSolver = sco.newton_krylov
-        self.u0 = u0
-
+    def __init__(self, diffOp:DiffOperator, tEnd=1, nSteps=1, t0=0, testDiffOp=True):
+        assert isinstance(diffOp, DiffOperator)
+        self.diffOp = diffOp
+        if testDiffOp:
+            self.diffOp.test()
+        self.axpy = blas.get_blas_funcs('axpy', dtype=self.dtype)
 
         self.t0 = t0
         self.tEnd = tEnd
         self.nSteps = nSteps
         self.dt = (tEnd-t0)/nSteps
 
-        try:
-            uEval = np.zeros_like(u0)
-            evalF(u=u0, t=t0, out=uEval)
-        except:
-            raise ValueError("evalF cannot be properly evaluated into an array like u0")
-        self.evalF = evalF
-
-        if fSolve is not None:
-            self.fSolve = fSolve
-        try:
-            dt = 1e-1
-            uEval *= -dt
-            uEval += u0
-            uSolve = np.copy(u0)
-            uSolve += 1e-3*np.linalg.norm(uSolve, np.inf)
-            self.fSolve(a=dt, rhs=uEval, t=t0, out=uSolve)
-        except:
-            raise ValueError("fSolve cannot be properly evaluated into an array like u0")
-        np.testing.assert_allclose(
-            uSolve, u0, err_msg="fSolve does not satisfy the fixed-point problem with u0",
-            atol=1e-15)
-
-        self.axpy = blas.get_blas_funcs('axpy', dtype=self.dtype)
+    @property
+    def u0(self):
+        return self.diffOp.u0
 
     @property
     def uShape(self):
-        return self.u0.shape
+        return self.diffOp.uShape
 
     @property
     def dtype(self):
-        return self.u0.dtype
+        return self.diffOp.dtype
 
     def evalF(self, u:np.ndarray, t:float, out:np.ndarray):
-        raise NotImplementedError("evalF must be provided")
+        self.diffOp.evalF(u, t, out)
 
 
     def fSolve(self, a:float, rhs:np.ndarray, t:float, out:np.ndarray):
-        """
-        Solve u - a*f(u, t) = rhs using out as initial guess and storing the final solution into it
-        """
-
-        def func(u:np.ndarray):
-            """compute res = u - a*f(u,t) - rhs"""
-            u = u.reshape(self.uShape)
-            res = np.empty_like(u)
-            self.evalF(u, t, out=res)
-            res *= -a
-            res += u
-            res -= rhs
-            return res.ravel()
-
-        sol = self.innerSolver(func, out.ravel()).reshape(self.uShape)
-        np.copyto(out, sol)
+        self.diffOp.fSolve(a, rhs, t, out)
 
 
     @staticmethod
@@ -273,22 +242,21 @@ class LinearMultiNode():
 
 class GenericMultiNode(LinearMultiNode):
 
-    def __init__(self, u0, evalF, nodes, fSolve=None, tEnd=1, nSteps=1, t0=0):
-        super().__init__(u0, evalF, fSolve, tEnd, nSteps, t0)
+    def __init__(self, diffOp:DiffOperator, nodes, tEnd=1, nSteps=1, t0=0):
+        super().__init__(diffOp, tEnd, nSteps, t0)
         self.nodes = np.asarray(nodes, dtype=float)
 
     @property
     def nNodes(self):
         return self.nodes.size
-    nStages = nNodes
 
 
     def evalPhi(self, uVals, fEvals, out, t0=0):
         raise NotImplementedError(
             "specialized Integrator must implement its evalPsi method")
 
-    def nodeSolve(self, uPrev, fEvals, out, rhs=0, t0=0):
-        """solve u-psi(u, u0, fEvals) = rhs"""
+    def phiSolve(self, uPrev, fEvals, out, rhs=0, t0=0):
+        """solve u-phi(u, u0, fEvals) = rhs"""
 
         def func(u:np.ndarray):
             u = u.reshape(self.uShape)
@@ -331,7 +299,7 @@ class GenericMultiNode(LinearMultiNode):
 
             # loop on nodes
             for m in range(self.nNodes):
-                self.nodeSolve(
+                self.phiSolve(
                     [uNum[i], *uNodes[:m]], fEvals[:m+1], rhs=uNum[i], out=uNodes[m], t0=times[i])
                 self.evalF(u=uNodes[m], t=times[i]+tau[m], out=fEvals[m+1])
 
@@ -410,7 +378,7 @@ class GenericMultiNode(LinearMultiNode):
                     rhs -= uTmp
 
                     # solve with k+1 correction
-                    self.nodeSolve(
+                    self.phiSolve(
                         [uNum[i], *uK1[:m]], fK1[:m+1], out=uK1[m], rhs=rhs, t0=times[i])
 
                     # evalF on k+1 node solution
@@ -430,57 +398,3 @@ class GenericMultiNode(LinearMultiNode):
                 self.stepUpdate(uNum[i], uNodes[0], fEvals[0], out=uNum[i+1])
 
         return uNum
-
-
-
-class ForwardEuler(GenericMultiNode):
-
-    def evalPhi(self, uVals, fEvals, out, t0=0):
-        m = len(uVals) - 1
-        assert m > 0
-        assert len(fEvals) in [m, m+1]
-
-        tau = [t0] + (t0 + self.dt*self.nodes).tolist()
-
-        # dt1 f0 + dt2 f1 + ... + dtm f{m-1}
-        np.copyto(out, fEvals[0])
-        out *= tau[1]-tau[0]
-        for i in range(1, m):
-            self.axpy(a=tau[i+1]-tau[i], x=fEvals[i], y=out)
-
-
-    def nodeSolve(self, uPrev, fEvals, out, rhs=0, t0=0):
-        self.evalPhi([*uPrev, out], fEvals, out, t0=t0)
-        out += rhs
-
-
-
-class BackwardEuler(GenericMultiNode):
-
-    def evalPhi(self, uVals, fEvals, out, t0=0):
-        m = len(uVals) - 1
-        assert m > 0
-        assert len(fEvals) in [m, m+1]
-
-        tau = [t0] + (t0 + self.dt*self.nodes).tolist()
-
-        # dt1 f1 + dt2 f2 + ... + dtm f{m}
-        if len(fEvals) == m:
-            self.evalF(uVals[m], tau[m], out=out)   # f{m} not given
-        else:
-            np.copyto(out, fEvals[-1])   # f{m} given, use its value
-        out *= tau[m]-tau[m-1]
-        for i in range(m-1):
-            self.axpy(a=tau[i+1]-tau[i], x=fEvals[i+1], y=out)
-
-    def nodeSolve(self, uPrev, fEvals, out, rhs=0, t0=0):
-        assert len(uPrev) == len(fEvals)
-        m = len(uPrev)
-        assert m > 0
-        tau = [t0] + (t0 + self.dt*self.nodes).tolist()
-
-        rhs = np.zeros_like(out) + rhs
-        for i in range(m-1):
-            self.axpy(a=tau[i+1]-tau[i], x=fEvals[i+1], y=rhs)
-
-        self.fSolve(tau[m]-tau[m-1], rhs, tau[m], out)
