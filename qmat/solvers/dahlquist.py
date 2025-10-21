@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Submodule containing various solvers for the Dahlquist equation that can be used with `qmat`-generated coefficients.
+Submodule containing various solvers for the Dahlquist equation
+that can make use of `qmat`-generated coefficients.
 """
 import numpy as np
 

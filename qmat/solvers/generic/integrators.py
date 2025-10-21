@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Specialized implementations of GenericMultiNode solver
+Specialized implementations of GenericMultiNode solvers
 """
 import numpy as np
 

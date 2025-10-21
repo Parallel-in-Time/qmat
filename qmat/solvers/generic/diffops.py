@@ -8,10 +8,10 @@ Created on Tue Oct 21 17:00:11 2025
 import numpy as np
 from scipy.linalg import blas
 
-from qmat.solvers.generic import DiffOperator
+from qmat.solvers.generic import DiffOp
 
 
-class Dahlquist(DiffOperator):
+class Dahlquist(DiffOp):
 
     def __init__(self, lam=1j):
         self.lam = lam
@@ -25,20 +25,51 @@ class Dahlquist(DiffOperator):
         out[1] = u[1]*lam.real + u[0]*lam.imag
 
 
-class Lorenz(DiffOperator):
+class Lorenz(DiffOp):
+    r"""
+    RHS of the Lorentz system, which can be written :
+
+    .. math::
+        \frac{dx}{dt} = \sigma (y-x), \; \frac{dy}{dt} = x (\rho - z) - y,
+        \; \frac{dz}{dt} = xy - \beta z,
+
+    with starting initial solution :math:`u_0=(x_0,y_0,z_0)=(5, -5, 20)`.
+    Considering the three dimensional vector :math:`u=(x,y,z)`, the formal
+    expression of :math:`f` is then
+
+    .. math::
+        f(u,t) = [ \sigma (y-x), x (\rho - z) - y, xy - \beta z ]
+
+    Parameters
+    ----------
+    sigma: float, optional
+        The :math:`\sigma` parameter (default=10).
+    rho: float, optional
+        The :math:`\rho` parameter (default=28).
+    beta: float, optional
+        The :math:`\beta` parameter (default=8/3).
+    nativeFSolve: bool, optional
+        Wether or not using the native fSolve method (default is False).
+    """
 
     def __init__(self, sigma=10, rho=28, beta=8/3, nativeFSolve=False):
         self.params = [sigma, rho, beta]
+        r"""list containing :math:`\sigma`, :math:`\rho` and :math:`\beta`"""
+
         self.newton = {
             "maxIter": 99,
             "tolerance": 1e-9,
             }
+        """parameters for the Newton iteration used in native fSolve"""
+
         u0 = np.array([5, -5, 20], dtype=float)
         self.gemv = blas.get_blas_funcs("gemv", dtype=u0.dtype)
-        super().__init__(u0)
+        """level-2 blas gemv function used in the native solver (just for flex, doesn't bring anything)"""
 
+        super().__init__(u0)
         if nativeFSolve:
             self.fSolve = self.fSolve_NATIVE
+
 
     def evalF(self, u, t, out):
         sigma, rho, beta = self.params
@@ -98,7 +129,7 @@ class Lorenz(DiffOperator):
             self.gemv(alpha=1.0, a=jacInv, x=res, beta=1.0, y=out, overwrite_y=True)
 
 
-class ProtheroRobinson(DiffOperator):
+class ProtheroRobinson(DiffOp):
     r"""
     Implement the Prothero-Robinson problem:
 
@@ -149,11 +180,15 @@ class ProtheroRobinson(DiffOperator):
             "maxIter": 200,
             "tolerance": 5e-15,
             }
-        self.evalF = self.evalF_LIN if nonLinear else self.evalF_NONLIN
+        self.evalF = self.evalF_NONLIN if nonLinear else self.evalF_LIN
         self.jac = self.jac_NONLIN if nonLinear else self.jac_LIN
         if nativeFSolve:
             self.fSolve = self.fSolve_NATIVE
         super().__init__([self.g(0)])
+
+    @property
+    def nonLinear(self):
+        return self.evalF == self.evalF_LIN
 
     # -------------------------------------------------------------------------
     # g function (analytical solution), and its first derivative

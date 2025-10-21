@@ -18,9 +18,9 @@ from qmat.solvers.generic.diffops import Dahlquist, Lorenz, ProtheroRobinson
 from qmat.solvers.generic.integrators import ForwardEuler, BackwardEuler
 
 
-pType = "ProtheroRobinson"
+pType = "Lorenz"
 nPeriod = 1
-nSteps = nPeriod*10000
+nSteps = nPeriod*1000
 tEnd = nPeriod*np.pi
 
 corr = "FE"
@@ -34,7 +34,8 @@ if pType == "Dahlquist":
 elif pType == "Lorenz":
     diffOp = Lorenz()
 elif pType == "ProtheroRobinson":
-    diffOp = ProtheroRobinson(nonLinear=True)
+    nSteps *= 10
+    diffOp = ProtheroRobinson(nonLinear=False)
 nDOF = diffOp.u0.size
 
 nodes, weights, Q = genQCoeffs(corr)

@@ -11,12 +11,14 @@ from qmat.solvers.dahlquist import Dahlquist
 from qmat.lagrange import LagrangeApproximation
 
 
-class DiffOperator():
-
+class DiffOp():
+    """
+    Base class for Differential Operators
+    """
     def __init__(self, u0):
         for name in ["u0", "innerSolver"]:
             assert not hasattr(self, name), \
-                f"{name} attribute is reserved for the base DiffOperator class"
+                f"{name} attribute is reserved for the base DiffOp class"
         self.u0 = np.asarray(u0)
         if self.u0.size < 1e3:
             self.innerSolver = sco.fsolve
@@ -80,8 +82,8 @@ class DiffOperator():
 
 class LinearMultiNode():
 
-    def __init__(self, diffOp:DiffOperator, tEnd=1, nSteps=1, t0=0, testDiffOp=True):
-        assert isinstance(diffOp, DiffOperator)
+    def __init__(self, diffOp:DiffOp, tEnd=1, nSteps=1, t0=0, testDiffOp=True):
+        assert isinstance(diffOp, DiffOp)
         self.diffOp = diffOp
         if testDiffOp:
             self.diffOp.test()
@@ -242,7 +244,7 @@ class LinearMultiNode():
 
 class GenericMultiNode(LinearMultiNode):
 
-    def __init__(self, diffOp:DiffOperator, nodes, tEnd=1, nSteps=1, t0=0):
+    def __init__(self, diffOp:DiffOp, nodes, tEnd=1, nSteps=1, t0=0):
         super().__init__(diffOp, tEnd, nSteps, t0)
         self.nodes = np.asarray(nodes, dtype=float)
 
