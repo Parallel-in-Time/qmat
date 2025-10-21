@@ -1,6 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from qmat.playground.diff_eqs.two_freq import TwoFreq
+from qmat.playgrounds.martin.diff_eqs.two_freq import TwoFreq
 
 
 N = 500

@@ -1,7 +1,7 @@
 import numpy as np
-from qmat.playground.diff_eqs.two_freq import TwoFreq
+from qmat.playgrounds.martin.diff_eqs.two_freq import TwoFreq
 from time_integration.sdc_integration import SDCIntegration
-from qmat.playground.time_integration.rk_integration import RKIntegration
+from qmat.playgrounds.martin.time_integration.rk_integration import RKIntegration
 from matplotlib import pyplot as plt
 
 

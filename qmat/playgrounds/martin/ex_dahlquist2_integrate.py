@@ -1,8 +1,8 @@
 import numpy as np
-from qmat.playground.diff_eqs.dahlquist2 import Dahlquist2
-#from qmat.playground.diff_eqs.dahlquist import Dahlquist
+from qmat.playgrounds.martin.diff_eqs.dahlquist2 import Dahlquist2
+#from qmat.playgrounds.martin.diff_eqs.dahlquist import Dahlquist
 from time_integration.sdc_integration import SDCIntegration
-from qmat.playground.time_integration.rk_integration import RKIntegration
+from qmat.playgrounds.martin.time_integration.rk_integration import RKIntegration
 from matplotlib import pyplot as plt
 
 

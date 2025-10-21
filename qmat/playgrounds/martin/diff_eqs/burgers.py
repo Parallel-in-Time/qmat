@@ -1,6 +1,6 @@
 import numpy as np
-from qmat.playground.diff_eqs.de_solver import DESolver
-from qmat.playground.time_integration.rk_integration import RKIntegration
+from qmat.playgrounds.martin.diff_eqs.de_solver import DESolver
+from qmat.playgrounds.martin.time_integration.rk_integration import RKIntegration
 
 
 class Burgers(DESolver):

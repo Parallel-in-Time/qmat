@@ -1,15 +1,15 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from qmat.playground.diff_eqs.dahlquist2 import Dahlquist2
+from qmat.playgrounds.martin.diff_eqs.dahlquist import Dahlquist
 
 
 N = 500
 u0 = np.array([1.0])
 t: np.array = np.linspace(0, 4*np.pi, N, endpoint=False)
 
-dahlquist2: Dahlquist2 = Dahlquist2(lam1=20.0j, lam2=1.0j, s=0.1)
+dahlquist: Dahlquist = Dahlquist(lam1=20.0j, lam2=1.0j)
 
-u_eval = np.array([dahlquist2.u_solution(u0, _) for _ in t])
+u_eval = np.array([dahlquist.u_solution(u0, _) for _ in t])
 
 
 plt.plot(t, np.real(u_eval), label="Re(u)")

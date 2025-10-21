@@ -4,9 +4,9 @@
 
 
 import numpy as np
-from qmat.playground.diff_eqs.burgers import Burgers
-from qmat.playground.time_integration.sdc_integration import SDCIntegration
-from qmat.playground.time_integration.rk_integration import RKIntegration
+from qmat.playgrounds.martin.diff_eqs.burgers import Burgers
+from qmat.playgrounds.martin.time_integration.sdc_integration import SDCIntegration
+from qmat.playgrounds.martin.time_integration.rk_integration import RKIntegration
 
 
 from matplotlib import pyplot as plt

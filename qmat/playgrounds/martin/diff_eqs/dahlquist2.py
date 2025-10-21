@@ -1,5 +1,5 @@
 import numpy as np
-from qmat.playground.diff_eqs.de_solver import DESolver
+from qmat.playgrounds.martin.diff_eqs.de_solver import DESolver
 
 
 class Dahlquist2(DESolver):

@@ -1,22 +1,16 @@
-
 import numpy as np
-from qmat.playground.diff_eqs.burgers import Burgers
-from qmat.playground.time_integration.sdc_integration import SDCIntegration
-from qmat.playground.time_integration.rk_integration import RKIntegration
+from qmat.playgrounds.martin.diff_eqs.two_freq import TwoFreq
+from time_integration.sdc_integration import SDCIntegration
+from qmat.playgrounds.martin.time_integration.rk_integration import RKIntegration
 
 
-def test_burgers():
-    N = 128
-    nu = 0.2
+def test_dahlquist2():
+    T: float = 4 * np.pi  # Time interval
+    T: float = 0.5  # Time interval
+    t: float = 0.0  # Starting time
 
-    T: float = 4.0
-    t: float = 0.0  # Starting point in time
-    domain_size: float = 2.0 * np.pi
-
-    burgers: Burgers = Burgers(N=N, nu=nu, domain_size=domain_size)
-    u0 = burgers.initial_u0("sine")
-
-    burgers.run_tests()
+    two_freq: TwoFreq = TwoFreq(lam1=1.0j, lam2=0.1j)
+    u0 = two_freq.initial_u0()
 
     for time_integration in ["rk1", "rk2", "rk4", "sdc"]:
         print("="*80)
@@ -24,27 +18,27 @@ def test_burgers():
         print("="*80)
         results = []
 
-        u_analytical = burgers.u_solution(u0, t=T)
+        u_analytical = two_freq.u_solution(u0, t=T)
 
-        for nt in range(2, 4):
+        for nt in range(4):
 
-            num_timesteps = 2**nt * 500
+            num_timesteps = 2**nt * 10
             print(f"Running simulation with num_timesteps={num_timesteps}")
 
             dt = T / num_timesteps
 
-            burgers: Burgers = Burgers(N=N, nu=nu, domain_size=domain_size)
-            u0 = burgers.initial_u0("sine")
+            u0 = two_freq.initial_u0()
 
             u = u0.copy()
 
             if time_integration in RKIntegration.supported_methods:
                 rki = RKIntegration(method=time_integration)
-                u = rki.integrate_n(u, t, dt, num_timesteps, burgers)
+
+                u = rki.integrate_n(u, t, dt, num_timesteps, two_freq)
 
             elif time_integration == "sdc":
-                sdci = SDCIntegration(num_nodes=3, node_type="LEGENDRE", quad_type="LOBATTO")
-                u = sdci.integrate_n(u, t, dt, num_timesteps, burgers)
+                sdci = SDCIntegration(num_nodes=3, node_type="LEGENDRE", quad_type="LOBATTO", num_sweeps=2)
+                u = sdci.integrate_n(u, t, dt, num_timesteps, two_freq)
 
             else:
                 raise Exception("TODO")
@@ -64,15 +58,17 @@ def test_burgers():
             r["conv"] = conv
 
         if time_integration == "rk1":
-            assert results[-1]["error"] < 1e-4
-            assert np.abs(results[-1]["conv"]-1.0) < 1e-3
+            assert results[-1]["error"] < 1e-2
+            assert np.abs(results[-1]["conv"]-1.0) < 1e-2
 
         elif time_integration == "rk2":
-            assert results[-1]["error"] < 1e-7
+            assert results[-1]["error"] < 1e-5
             assert np.abs(results[-1]["conv"]-2.0) < 1e-3
 
         elif time_integration == "rk4":
-            assert results[-1]["error"] < 1e-14
+            assert results[-1]["error"] < 1e-11
+            assert np.abs(results[-1]["conv"]-4.0) < 1e-2
 
         elif time_integration == "sdc":
-            assert results[-1]["error"] < 1e-14
+            assert results[-1]["error"] < 1e-5
+            assert np.abs(results[-1]["conv"]-3.0) < 1e-3

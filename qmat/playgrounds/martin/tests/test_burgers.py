@@ -1,16 +1,22 @@
+
 import numpy as np
-from qmat.playground.diff_eqs.dahlquist import Dahlquist
-from time_integration.sdc_integration import SDCIntegration
-from qmat.playground.time_integration.rk_integration import RKIntegration
+from qmat.playgrounds.martin.diff_eqs.burgers import Burgers
+from qmat.playgrounds.martin.time_integration.sdc_integration import SDCIntegration
+from qmat.playgrounds.martin.time_integration.rk_integration import RKIntegration
 
 
-def test_dahlquist():
-    u0 = np.array([1.0])  # Initial condition
-    T: float = 4 * np.pi  # Time interval
-    T: float = 0.5  # Time interval
-    t: float = 0.0  # Starting time
+def test_burgers():
+    N = 128
+    nu = 0.2
 
-    dahlquist: Dahlquist = Dahlquist(lam1=1.0j, lam2=0.1j)
+    T: float = 4.0
+    t: float = 0.0  # Starting point in time
+    domain_size: float = 2.0 * np.pi
+
+    burgers: Burgers = Burgers(N=N, nu=nu, domain_size=domain_size)
+    u0 = burgers.initial_u0("sine")
+
+    burgers.run_tests()
 
     for time_integration in ["rk1", "rk2", "rk4", "sdc"]:
         print("="*80)
@@ -18,27 +24,27 @@ def test_dahlquist():
         print("="*80)
         results = []
 
-        u_analytical = dahlquist.u_solution(u0, t=T)
+        u_analytical = burgers.u_solution(u0, t=T)
 
-        for nt in range(4):
+        for nt in range(2, 4):
 
-            num_timesteps = 2**nt * 10
+            num_timesteps = 2**nt * 500
             print(f"Running simulation with num_timesteps={num_timesteps}")
 
             dt = T / num_timesteps
 
-            u0 = dahlquist.initial_u0()
+            burgers: Burgers = Burgers(N=N, nu=nu, domain_size=domain_size)
+            u0 = burgers.initial_u0("sine")
 
             u = u0.copy()
 
             if time_integration in RKIntegration.supported_methods:
                 rki = RKIntegration(method=time_integration)
-
-                u = rki.integrate_n(u, t, dt, num_timesteps, dahlquist)
+                u = rki.integrate_n(u, t, dt, num_timesteps, burgers)
 
             elif time_integration == "sdc":
-                sdci = SDCIntegration(num_nodes=3, node_type="LEGENDRE", quad_type="LOBATTO", num_sweeps=1)
-                u = sdci.integrate_n(u, t, dt, num_timesteps, dahlquist)
+                sdci = SDCIntegration(num_nodes=3, node_type="LEGENDRE", quad_type="LOBATTO")
+                u = sdci.integrate_n(u, t, dt, num_timesteps, burgers)
 
             else:
                 raise Exception("TODO")
@@ -58,17 +64,15 @@ def test_dahlquist():
             r["conv"] = conv
 
         if time_integration == "rk1":
-            assert results[-1]["error"] < 1e-2
-            assert np.abs(results[-1]["conv"]-1.0) < 1e-2
+            assert results[-1]["error"] < 1e-4
+            assert np.abs(results[-1]["conv"]-1.0) < 1e-3
 
         elif time_integration == "rk2":
-            assert results[-1]["error"] < 1e-4
+            assert results[-1]["error"] < 1e-7
             assert np.abs(results[-1]["conv"]-2.0) < 1e-3
 
         elif time_integration == "rk4":
-            assert results[-1]["error"] < 1e-9
-            assert np.abs(results[-1]["conv"]-4.0) < 1e-4
+            assert results[-1]["error"] < 1e-14
 
         elif time_integration == "sdc":
-            assert results[-1]["error"] < 1e-4
-            assert np.abs(results[-1]["conv"]-2.0) < 1e-3
+            assert results[-1]["error"] < 1e-14
