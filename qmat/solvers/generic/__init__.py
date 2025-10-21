@@ -6,9 +6,14 @@ Submodule containing various generic solvers that can be used with `qmat`-genera
 import numpy as np
 import scipy.optimize as sco
 from scipy.linalg import blas
+from typing import TypeVar
 
 from qmat.solvers.dahlquist import Dahlquist
 from qmat.lagrange import LagrangeApproximation
+from qmat.utils import checkOverriding, storeClass
+
+
+T = TypeVar("T")
 
 
 class DiffOp():
@@ -58,11 +63,18 @@ class DiffOp():
         sol = self.innerSolver(func, out.ravel()).reshape(self.uShape)
         np.copyto(out, sol)
 
-    def test(self, t0=0, dt=1e-1, eps=1e-3):
-        u0 = self.u0
+    @classmethod
+    def test(cls, t0=0, dt=1e-1, eps=1e-3, instance=None):
+        if instance is None:
+            try:
+                instance = cls()
+            except:
+                raise TypeError(f"{cls} cannot be instantiated with default parameters")
+
+        u0 = instance.u0
         try:
             uEval = np.zeros_like(u0)
-            self.evalF(u=u0, t=t0, out=uEval)
+            instance.evalF(u=u0, t=t0, out=uEval)
         except:
             raise ValueError("evalF cannot be properly evaluated into an array like u0")
 
@@ -72,7 +84,7 @@ class DiffOp():
             uEval += u0
             uSolve = np.copy(u0)
             uSolve += eps*np.linalg.norm(uSolve, np.inf)
-            self.fSolve(a=dt, rhs=uEval, t=t0, out=uSolve)
+            instance.fSolve(a=dt, rhs=uEval, t=t0, out=uSolve)
         except:
             raise ValueError("fSolve cannot be properly evaluated into an array like u0")
         np.testing.assert_allclose(
@@ -80,13 +92,21 @@ class DiffOp():
             atol=1e-15)
 
 
+DIFFOPS: dict[str, type[DiffOp]] = {}
+"""Dictionary containing all specialized :class:`DiffOp` classes"""
+
+def registerDiffOp(cls: type[T]) -> type[T]:
+    """Class decorator to register a specialized :class:`DiffOp` class in `qmat`"""
+    checkOverriding(cls, "evalF", isProperty=False)
+    storeClass(cls, DIFFOPS)
+    return cls
+
+
 class LinearMultiNode():
 
-    def __init__(self, diffOp:DiffOp, tEnd=1, nSteps=1, t0=0, testDiffOp=True):
+    def __init__(self, diffOp:DiffOp, tEnd=1, nSteps=1, t0=0):
         assert isinstance(diffOp, DiffOp)
         self.diffOp = diffOp
-        if testDiffOp:
-            self.diffOp.test()
         self.axpy = blas.get_blas_funcs('axpy', dtype=self.dtype)
 
         self.t0 = t0

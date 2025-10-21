@@ -8,9 +8,10 @@ Created on Tue Oct 21 17:00:11 2025
 import numpy as np
 from scipy.linalg import blas
 
-from qmat.solvers.generic import DiffOp
+from qmat.solvers.generic import DiffOp, registerDiffOp, DIFFOPS
 
 
+@registerDiffOp
 class Dahlquist(DiffOp):
 
     def __init__(self, lam=1j):
@@ -25,6 +26,7 @@ class Dahlquist(DiffOp):
         out[1] = u[1]*lam.real + u[0]*lam.imag
 
 
+@registerDiffOp
 class Lorenz(DiffOp):
     r"""
     RHS of the Lorentz system, which can be written :
@@ -69,6 +71,12 @@ class Lorenz(DiffOp):
         super().__init__(u0)
         if nativeFSolve:
             self.fSolve = self.fSolve_NATIVE
+
+
+    @classmethod
+    def test(cls):
+        super().test(instance=cls())
+        super().test(instance=cls(nativeFSolve=True))
 
 
     def evalF(self, u, t, out):
@@ -129,6 +137,7 @@ class Lorenz(DiffOp):
             self.gemv(alpha=1.0, a=jacInv, x=res, beta=1.0, y=out, overwrite_y=True)
 
 
+@registerDiffOp
 class ProtheroRobinson(DiffOp):
     r"""
     Implement the Prothero-Robinson problem:
@@ -186,9 +195,16 @@ class ProtheroRobinson(DiffOp):
             self.fSolve = self.fSolve_NATIVE
         super().__init__([self.g(0)])
 
+    @classmethod
+    def test(cls):
+        default = cls()
+        assert not default.nonLinear, "default ProtheroRobinson DiffOp is not linear"
+        super().test(instance=default)
+        super().test(instance=cls(nativeFSolve=True))
+
     @property
     def nonLinear(self):
-        return self.evalF == self.evalF_LIN
+        return self.evalF == self.evalF_NONLIN
 
     # -------------------------------------------------------------------------
     # g function (analytical solution), and its first derivative
@@ -202,6 +218,9 @@ class ProtheroRobinson(DiffOp):
     # -------------------------------------------------------------------------
     # f(u,t) and Jacobian functions
     # -------------------------------------------------------------------------
+    def evalF(self, u, t, out):
+        raise NotImplementedError("evalF was not set on initialization")
+
     def evalF_LIN(self, u, t, out):
         np.copyto(out, -self.epsilon**(-1) * (u - self.g(t)) + self.dg(t))
 
@@ -209,7 +228,7 @@ class ProtheroRobinson(DiffOp):
         np.copyto(out, -self.epsilon**(-1) * (u**3 - self.g(t)**3) + self.dg(t))
 
     def jac(self, u, t):
-        raise NotImplementedError()
+        raise NotImplementedError("jac was not set on initialization")
 
     def jac_LIN(self, u, t):
         return -self.epsilon**(-1)
@@ -235,3 +254,5 @@ class ProtheroRobinson(DiffOp):
 
             jac = 1 - a * self.jac(u, t)
             u -= res / jac
+
+assert len(DIFFOPS) > 0, "something is wrong with DiffOp registration"
