@@ -16,7 +16,7 @@ class Dahlquist(DESolver):
         self.lam2: float = lam2
 
     def initial_u0(self, mode: str = None) -> np.ndarray:
-        return np.array([1.0 + 0.0j])
+        return np.array([1.0 + 0.0j], dtype=np.complex128)
 
     def du_dt(self, u: np.ndarray, t: float) -> np.ndarray:
         retval = (self.lam1 + self.lam2) * u

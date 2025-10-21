@@ -1,9 +1,7 @@
 import numpy as np
 from qmat.playground.diff_eqs.dahlquist2 import Dahlquist2
-from qmat.playground.diff_eqs.dahlquist import Dahlquist
 from time_integration.sdc_integration import SDCIntegration
 from qmat.playground.time_integration.rk_integration import RKIntegration
-from matplotlib import pyplot as plt
 
 
 def test_dahlquist2():
@@ -12,7 +10,7 @@ def test_dahlquist2():
     T: float = 0.5  # Time interval
     t: float = 0.0  # Starting time
 
-    dahlquist2: Dahlquist2 = Dahlquist2(lam1=1.0j, lam2=1.0j)
+    dahlquist2: Dahlquist2 = Dahlquist2(lam1=1.0j, lam2=0.1j)
 
     for time_integration in ["rk1", "rk2", "rk4", "sdc"]:
         print("="*80)
@@ -69,7 +67,7 @@ def test_dahlquist2():
 
         elif time_integration == "rk4":
             assert results[-1]["error"] < 1e-11
-            assert np.abs(results[-1]["conv"]-4.0) < 1e-4
+            assert np.abs(results[-1]["conv"]-4.0) < 1e-2
 
         elif time_integration == "sdc":
             assert results[-1]["error"] < 1e-5

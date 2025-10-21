@@ -2,16 +2,15 @@ import numpy as np
 from qmat.playground.diff_eqs.dahlquist import Dahlquist
 from time_integration.sdc_integration import SDCIntegration
 from qmat.playground.time_integration.rk_integration import RKIntegration
-from matplotlib import pyplot as plt
 
 
-def test_dahlquist2():
+def test_dahlquist():
     u0 = np.array([1.0])  # Initial condition
     T: float = 4 * np.pi  # Time interval
     T: float = 0.5  # Time interval
     t: float = 0.0  # Starting time
 
-    dahlquist: Dahlquist = Dahlquist(lam1=1.0j, lam2=1.0j)
+    dahlquist: Dahlquist = Dahlquist(lam1=1.0j, lam2=0.1j)
 
     for time_integration in ["rk1", "rk2", "rk4", "sdc"]:
         print("="*80)

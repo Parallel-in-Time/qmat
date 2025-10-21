@@ -10,20 +10,27 @@ class Dahlquist2(DESolver):
     u(t) = 0.5*(exp(lam1*t) + exp(lam2*t)) * u(0)
     """
 
-    def __init__(self, lam1: complex, lam2: complex):
-        # Lambda 1
-        self.lam1: float = lam1
+    def __init__(self, lam1: complex, lam2: complex, s: float = 0.6):
+        """
+        :param lam1: First eigenvalue (complex)
+        :param lam2: Second eigenvalue (complex)
+        :param s: Weighting between the two exponentials in the solution
+        """
+        self.lam1: complex = lam1
+        self.lam2: complex = lam2
+        # Weighting between the two exponentials in the solution
+        # to avoid division by 0
+        self.s: float = s
 
-        # Lambda 2
-        self.lam2: float = lam2
+        assert 0 <= self.s <= 1, "s must be in [0,1]"
 
     def initial_u0(self, mode: str = None) -> np.ndarray:
-        return np.array([1.0 + 0.0j])
+        return np.array([1.0 + 0.0j], dtype=np.complex128)
 
     def du_dt(self, u: np.ndarray, t: float) -> np.ndarray:
         retval = (
-            (self.lam1 * np.exp(t * self.lam1) + self.lam2 * np.exp(t * self.lam2))
-            / (np.exp(t * self.lam1) + np.exp(t * self.lam2))
+            (self.lam1 * self.s * np.exp(t * self.lam1) + self.lam2 * (1.0 - self.s) * np.exp(t * self.lam2))
+            / (self.s * np.exp(t * self.lam1) + (1.0 - self.s) * np.exp(t * self.lam2))
             * u
         )
         assert retval.shape == u.shape
@@ -31,6 +38,6 @@ class Dahlquist2(DESolver):
 
     def u_solution(self, u0: np.ndarray, t: float) -> np.ndarray:
         assert isinstance(t, float)
-        retval = 0.5*(np.exp(t * self.lam1) + np.exp(t * self.lam2)) * u0
+        retval = (self.s * np.exp(t * self.lam1) + (1.0 - self.s) * np.exp(t * self.lam2)) * u0
         assert retval.shape == u0.shape
         return retval

@@ -53,7 +53,7 @@ if 1:
             u = sdci.integrate_n(u, t, dt, num_timesteps, burgers)
 
         else:
-            raise Exception("TODO")
+            raise Exception(f"Unsupported time integration method '{time_integration}'")
 
         plt.plot(t_, u, label=f"numerical {num_timesteps}", linestyle="dashed")
 
