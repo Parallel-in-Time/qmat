@@ -22,11 +22,9 @@ class ForwardEuler(GenericMultiNode):
         for i in range(1, m):
             self.axpy(a=tau[i+1]-tau[i], x=fEvals[i], y=out)
 
-
     def phiSolve(self, uPrev, fEvals, out, rhs=0, t0=0):
         self.evalPhi([*uPrev, out], fEvals, out, t0=t0)
         out += rhs
-
 
 
 class BackwardEuler(GenericMultiNode):

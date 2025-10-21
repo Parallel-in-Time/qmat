@@ -55,7 +55,7 @@ class Lorenz(DiffOperator):
         a2 = a**2
         a3 = a**3
 
-        for n in range(newton["maxIter"]):
+        for _ in range(newton["maxIter"]):
             x, y, z = out
 
             res = np.array([
@@ -96,3 +96,107 @@ class Lorenz(DiffOperator):
 
             # out += jacInv @ res
             self.gemv(alpha=1.0, a=jacInv, x=res, beta=1.0, y=out, overwrite_y=True)
+
+
+class ProtheroRobinson(DiffOperator):
+    r"""
+    Implement the Prothero-Robinson problem:
+
+    .. math::
+        \frac{du}{dt} = -\frac{u-g(t)}{\epsilon} + \frac{dg}{dt}, \quad u(0) = g(0).,
+
+    with :math:`\epsilon` a stiffness parameter, that makes the problem more stiff
+    the smaller it is (usual taken value is :math:`\epsilon=1e^{-3}`).
+    Exact solution is given by :math:`u(t)=g(t)`, and this implementation uses
+    :math:`g(t)=\cos(t)`.
+
+    Implement also the non-linear form of this problem:
+
+    .. math::
+        \frac{du}{dt} = -\frac{u^3-g(t)^3}{\epsilon} + \frac{dg}{dt}, \quad u(0) = g(0).
+
+    To use an other exact solution, one just have to derivate this class
+    and overload the `g` and `dg` methods. For instance,
+    to use :math:`g(t)=e^{-0.2*t}`, define and use the following class:
+
+    >>> class MyProtheroRobinson(ProtheroRobinson):
+    >>>
+    >>>     def g(self, t):
+    >>>         return np.exp(-0.2 * t)
+    >>>
+    >>>     def dg(self, t):
+    >>>         return (-0.2) * np.exp(-0.2 * t)
+
+    Parameters
+    ----------
+    epsilon : float, optional
+        Stiffness parameter. The default is 1e-3.
+    nonLinear : bool, optional
+        Wether or not to use the non-linear form of the problem. The default is False.
+    nativeFSolve : bool, optional
+        Wether or not use the native fSolver using exact Jacobian. The default is True.
+
+    Reference
+    ---------
+    A. Prothero and A. Robinson, On the stability and accuracy of one-step methods for solving
+    stiff systems of ordinary differential equations, Mathematics of Computation, 28 (1974),
+    pp. 145–162.
+    """
+
+    def __init__(self, epsilon=1e-3, nonLinear=False, nativeFSolve=True):
+        self.epsilon = epsilon
+        self.newton = {
+            "maxIter": 200,
+            "tolerance": 5e-15,
+            }
+        self.evalF = self.evalF_LIN if nonLinear else self.evalF_NONLIN
+        self.jac = self.jac_NONLIN if nonLinear else self.jac_LIN
+        if nativeFSolve:
+            self.fSolve = self.fSolve_NATIVE
+        super().__init__([self.g(0)])
+
+    # -------------------------------------------------------------------------
+    # g function (analytical solution), and its first derivative
+    # -------------------------------------------------------------------------
+    def g(self, t):
+        return np.cos(t)
+
+    def dg(self, t):
+        return -np.sin(t)
+
+    # -------------------------------------------------------------------------
+    # f(u,t) and Jacobian functions
+    # -------------------------------------------------------------------------
+    def evalF_LIN(self, u, t, out):
+        np.copyto(out, -self.epsilon**(-1) * (u - self.g(t)) + self.dg(t))
+
+    def evalF_NONLIN(self, u, t, out):
+        np.copyto(out, -self.epsilon**(-1) * (u**3 - self.g(t)**3) + self.dg(t))
+
+    def jac(self, u, t):
+        raise NotImplementedError()
+
+    def jac_LIN(self, u, t):
+        return -self.epsilon**(-1)
+
+    def jac_NONLIN(self, u, t):
+        return -self.epsilon**(-1) * 3*u**2
+
+    def fSolve_NATIVE(self, a, rhs, t, out):
+        newton = self.newton
+        u = out
+
+        for _ in range(newton["maxIter"]):
+            res = np.array([0.0])
+            self.evalF(u, t, out=res)
+            res *= -a
+            res += u
+            res -= rhs
+            resNorm = np.linalg.norm(res, np.inf)
+            if resNorm <= newton["tolerance"]:
+                break
+            if np.isnan(resNorm):
+                break
+
+            jac = 1 - a * self.jac(u, t)
+            u -= res / jac
