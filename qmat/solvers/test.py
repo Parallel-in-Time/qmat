@@ -15,7 +15,7 @@ from qmat import genQCoeffs, QDELTA_GENERATORS
 from qmat.qcoeff.collocation import Collocation
 from qmat.solvers.generic import LinearMultiNode, BackwardEuler, ForwardEuler
 
-pType = "Dahlquist"
+pType = "Lorenz"
 
 if pType == "Dahlquist":
     lam = 1j
@@ -99,7 +99,7 @@ elif pType == "Lorenz":
         fSolve = None   # because own implementation is cute, but still less efficient
 
 
-corr = "FE"
+corr = "BE"
 
 nodes, weights, Q = genQCoeffs(corr)
 
@@ -111,7 +111,7 @@ useWeights = False
 
 
 nPeriod = 1
-nSteps = nPeriod*10
+nSteps = nPeriod*1000
 tEnd = nPeriod*np.pi
 prob = LinearMultiNode(u0, evalF, fSolve=fSolve, tEnd=tEnd, nSteps=nSteps)
 
@@ -120,24 +120,24 @@ regNodes = [0.25, 0.5, 0.75, 1]
 Solver = BackwardEuler if corr == "BE" else ForwardEuler
 
 solver = Solver(
-    u0, evalF, nodes=coll.nodes, fSolve=fSolve,
-    tEnd=tEnd, nSteps=nSteps)
+    u0, evalF, nodes=regNodes, fSolve=fSolve,
+    tEnd=tEnd, nSteps=nSteps//4)
 
 plt.figure(1)
 plt.clf()
 
 
 tBeg = time()
-# uNumRef = prob.solve(Q, weights)
-uNumRef = prob.solveSDC(nSweeps, coll.Q, coll.weights if useWeights else None, QDelta)
+uNumRef = prob.solve(Q, weights)
+# uNumRef = prob.solveSDC(nSweeps, coll.Q, coll.weights if useWeights else None, QDelta)
 tWall = time()-tBeg
 tWall /= nSteps * np.size(u0)
 print(f"tWallScaled[linear] : {tWall:1.2e}s")
 plt.plot(uNumRef[:, 0], uNumRef[:, 1], label="ref")
 
 tBeg = time()
-# uNum = solver.solve()
-uNum = solver.solveSDC(nSweeps, weights=useWeights)
+uNum = solver.solve()
+# uNum = solver.solveSDC(nSweeps, weights=useWeights)
 plt.plot(uNum[:, 0], uNum[:, 1], label="integrator")
 tWall = time()-tBeg
 tWall /= nSteps * np.size(u0)

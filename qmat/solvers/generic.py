@@ -11,6 +11,67 @@ from qmat.solvers.dahlquist import Dahlquist
 from qmat.lagrange import LagrangeApproximation
 
 
+class Problem():
+
+    def __init__(self, u0):
+        u0 = np.asarray(u0)
+        if u0.size < 1e3:
+            self.innerSolver = sco.fsolve
+        else:
+            self.innerSolver = sco.newton_krylov
+
+    @property
+    def uShape(self):
+        return self.u0.shape
+
+    @property
+    def dtype(self):
+        return self.u0.dtype
+
+    def evalF(self, u:np.ndarray, t:float, out:np.ndarray):
+        raise NotImplementedError("evalF must be provided")
+
+    def fSolve(self, a:float, rhs:np.ndarray, t:float, out:np.ndarray):
+        """
+        Solve u - a*f(u, t) = rhs using out as initial guess and storing the final solution into it
+        """
+
+        def func(u:np.ndarray):
+            """compute res = u - a*f(u,t) - rhs"""
+            u = u.reshape(self.uShape)
+            res = np.empty_like(u)
+            self.evalF(u, t, out=res)
+            res *= -a
+            res += u
+            res -= rhs
+            return res.ravel()
+
+        sol = self.innerSolver(func, out.ravel()).reshape(self.uShape)
+        np.copyto(out, sol)
+
+    def test(self, t0=0, dt=1e-1, eps=1e-3):
+        u0 = self.u0
+
+        try:
+            uEval = np.zeros_like(u0)
+            self.evalF(u=u0, t=t0, out=uEval)
+        except:
+            raise ValueError("evalF cannot be properly evaluated into an array like u0")
+
+        try:
+            dt = dt
+            uEval *= -dt
+            uEval += u0
+            uSolve = np.copy(u0)
+            uSolve += eps*np.linalg.norm(uSolve, np.inf)
+            self.fSolve(a=dt, rhs=uEval, t=t0, out=uSolve)
+        except:
+            raise ValueError("fSolve cannot be properly evaluated into an array like u0")
+        np.testing.assert_allclose(
+            uSolve, u0, err_msg="fSolve does not satisfy the fixed-point problem with u0",
+            atol=1e-15)
+
+
 class LinearMultiNode():
 
     def __init__(self, u0, evalF, fSolve=None, tEnd=1, nSteps=1, t0=0):
@@ -20,6 +81,8 @@ class LinearMultiNode():
         else:
             self.innerSolver = sco.newton_krylov
         self.u0 = u0
+
+
         self.t0 = t0
         self.tEnd = tEnd
         self.nSteps = nSteps
@@ -410,4 +473,14 @@ class BackwardEuler(GenericMultiNode):
         for i in range(m-1):
             self.axpy(a=tau[i+1]-tau[i], x=fEvals[i+1], y=out)
 
-    # TODO : override nodeSolve for better efficiency
+    def nodeSolve(self, uPrev, fEvals, out, rhs=0, t0=0):
+        assert len(uPrev) == len(fEvals)
+        m = len(uPrev)
+        assert m > 0
+        tau = [t0] + (t0 + self.dt*self.nodes).tolist()
+
+        rhs = np.zeros_like(out) + rhs
+        for i in range(m-1):
+            self.axpy(a=tau[i+1]-tau[i], x=fEvals[i+1], y=rhs)
+
+        self.fSolve(tau[m]-tau[m-1], rhs, tau[m], out)
