@@ -10,7 +10,7 @@ t: float = 0.0  # Starting time
 
 time_integration: str = "sdc"
 sdc_micro_time_integration: str = "irk1"
-sdc_num_sweeps: int = 4
+sdc_num_sweeps: int = 2
 
 two_freq: TwoFreq = TwoFreq(lam1=1.0j, lam2=20.0j, lam3=0.5j)
 u0 = two_freq.initial_u0()

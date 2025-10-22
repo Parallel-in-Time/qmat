@@ -22,7 +22,6 @@ class DESolver(ABC):
         pass
 
     # This is optional since not every DE might have a solver for backward Euler
-    # @abstractmethod
     def fSolve(self, rhs: np.ndarray, dt: float, t: float) -> np.ndarray:
         """Solve the right-hand side of an equation implicitly.
 
@@ -47,7 +46,7 @@ class DESolver(ABC):
         u_new : np.ndarray
             Array of shape (N,) representing the solution at the next time step.
         """
-        pass
+        raise Exception("TODO: Implicit solver not implemented for this DE solver.")
 
     @abstractmethod
     def initial_u0(self, mode: str) -> np.ndarray:
