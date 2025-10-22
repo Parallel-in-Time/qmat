@@ -7,8 +7,22 @@ Created on Tue Oct 21 17:00:11 2025
 """
 import numpy as np
 from scipy.linalg import blas
+from typing import TypeVar
 
-from qmat.solvers.generic import DiffOp, registerDiffOp, DIFFOPS
+from qmat.solvers.generic import DiffOp
+from qmat.utils import checkOverriding, storeClass
+
+
+T = TypeVar("T")
+
+DIFFOPS: dict[str, type[DiffOp]] = {}
+"""Dictionary containing all specialized :class:`DiffOp` classes"""
+
+def registerDiffOp(cls: type[T]) -> type[T]:
+    """Class decorator to register a specialized :class:`DiffOp` class in `qmat`"""
+    checkOverriding(cls, "evalF", isProperty=False)
+    storeClass(cls, DIFFOPS)
+    return cls
 
 
 @registerDiffOp
@@ -201,6 +215,8 @@ class ProtheroRobinson(DiffOp):
         assert not default.nonLinear, "default ProtheroRobinson DiffOp is not linear"
         super().test(instance=default)
         super().test(instance=cls(nativeFSolve=True))
+        nonLin = cls(nonLinear=True)
+        super().test(instance=nonLin)
 
     @property
     def nonLinear(self):
@@ -254,5 +270,3 @@ class ProtheroRobinson(DiffOp):
 
             jac = 1 - a * self.jac(u, t)
             u -= res / jac
-
-assert len(DIFFOPS) > 0, "something is wrong with DiffOp registration"

@@ -6,14 +6,9 @@ Submodule containing various generic solvers that can be used with `qmat`-genera
 import numpy as np
 import scipy.optimize as sco
 from scipy.linalg import blas
-from typing import TypeVar
 
 from qmat.solvers.dahlquist import Dahlquist
 from qmat.lagrange import LagrangeApproximation
-from qmat.utils import checkOverriding, storeClass
-
-
-T = TypeVar("T")
 
 
 class DiffOp():
@@ -91,15 +86,9 @@ class DiffOp():
             uSolve, u0, err_msg="fSolve does not satisfy the fixed-point problem with u0",
             atol=1e-15)
 
-
-DIFFOPS: dict[str, type[DiffOp]] = {}
-"""Dictionary containing all specialized :class:`DiffOp` classes"""
-
-def registerDiffOp(cls: type[T]) -> type[T]:
-    """Class decorator to register a specialized :class:`DiffOp` class in `qmat`"""
-    checkOverriding(cls, "evalF", isProperty=False)
-    storeClass(cls, DIFFOPS)
-    return cls
+        # check for nan acceptation
+        uSolve[:] = np.nan
+        instance.fSolve(a=dt, rhs=uEval, t=t0, out=uSolve)
 
 
 class LinearMultiNode():
@@ -143,7 +132,9 @@ class LinearMultiNode():
         nNodes, Q, weights = Dahlquist.checkCoeff(Q, weights)
 
         assert self.lowerTri(Q), "lower triangular matrix Q expected for non-linear solver"
-        Q, weights = self.dt*Q, self.dt*weights
+        Q = self.dt*Q
+        if weights is not None:
+            weights = self.dt*weights
 
         if uNum is None:
             uNum = np.zeros((self.nSteps+1, *self.uShape), dtype=self.dtype)

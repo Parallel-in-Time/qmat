@@ -41,7 +41,8 @@ def testDahlquist(scheme, tEnd, nSteps, dim, lam):
 def testDahlquistSDC(scheme, tEnd, nSteps, nSweeps, weights, dim, lam):
     coll = Q_GENERATORS["Collocation"](nNodes=4, nodeType="LEGENDRE", quadType="RADAU-RIGHT")
     approx = QDELTA_GENERATORS[scheme](qGen=coll)
-    QDelta = approx.genCoeffs(k=[i+1 for i in range(nSweeps)])
+    nIters = [k+1 for k in range(nSweeps)] if scheme == "MIN-SR-FLEX" else nSweeps
+    QDelta = approx.genCoeffs(k=nIters)
 
     lamVals = lam*np.linspace(0, 1, 4**dim).reshape((4,)*dim)
     ref = np.array([solveDahlquistSDC(lam, 1, tEnd, nSteps,
@@ -96,3 +97,40 @@ def testDahlquistIMEX(scheme, tEnd, nSteps, dim, lam):
         detail = " with weights " if weights is not None else ""
         assert np.allclose(sol, ref), \
             f"DahlquistIMEX solver {detail} does not produce the linear combination of IMEX sum"
+
+
+@pytest.mark.parametrize("lam", [1j, -1])
+@pytest.mark.parametrize("dim", [1, 2])
+@pytest.mark.parametrize("weights", [True, False])
+@pytest.mark.parametrize("nSweeps", [1, 4])
+@pytest.mark.parametrize("nSteps", [1, 5])
+@pytest.mark.parametrize("tEnd", [1, 5])
+@pytest.mark.parametrize("scheme", ["BE", "FE", "MIN-SR-FLEX"])
+def testDahlquistIMEXSDC(scheme, tEnd, nSteps, nSweeps, weights, dim, lam):
+    coll = Q_GENERATORS["Collocation"](nNodes=4, nodeType="LEGENDRE", quadType="RADAU-RIGHT")
+    approx = QDELTA_GENERATORS[scheme](qGen=coll)
+    nIters = [k+1 for k in range(nSweeps)] if scheme == "MIN-SR-FLEX" else nSweeps
+    QDelta = approx.genCoeffs(k=nIters)
+
+    lamVals = lam*np.linspace(0, 1, 4**dim).reshape((4,)*dim)
+    ref = np.array([solveDahlquistSDC(lam, 1, tEnd, nSteps,
+                                      nSweeps, coll.Q, QDelta, coll.weights if weights else None)
+                    for lam in lamVals.ravel()]).T.reshape((-1, *lamVals.shape))
+
+    solver = DahlquistIMEX(lamVals, [0], 1, tEnd, nSteps)
+    sol = solver.solveSDC(coll.Q, coll.weights if weights else None, QDelta, QDelta, nSweeps)
+    assert np.allclose(sol, ref), \
+        "DahlquistIMEX SDC solver does not match reference solver for implicit only"
+
+    solver = DahlquistIMEX([0], lamVals, 1, tEnd, nSteps)
+    sol = solver.solveSDC(coll.Q, coll.weights if weights else None, QDelta, QDelta, nSweeps)
+    assert np.allclose(sol, ref), \
+        "DahlquistIMEX SDC solver does not match reference solver for explicit only"
+
+    solver = DahlquistIMEX(lamVals, lamVals, 1, tEnd, nSteps)
+    sol = solver.solveSDC(coll.Q, coll.weights if weights else None, QDelta, QDelta, nSweeps)
+    ref = np.array([solveDahlquistSDC(2*lam, 1, tEnd, nSteps,
+                                      nSweeps, coll.Q, QDelta, coll.weights if weights else None)
+                    for lam in lamVals.ravel()]).T.reshape((-1, *lamVals.shape))
+    assert np.allclose(sol, ref), \
+        "DahlquistIMEX SDC solver does not match reference solver with IMEX sum"
