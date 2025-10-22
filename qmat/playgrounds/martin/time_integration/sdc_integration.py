@@ -4,7 +4,12 @@ from qmat.playgrounds.martin.diff_eqs.de_solver import DESolver
 
 class SDCIntegration:
     def __init__(
-        self, num_nodes: int = 3, node_type: str = "LOBATTO", quad_type: str = "LOBATTO", num_sweeps: int = None
+        self,
+        num_nodes: int = 3,
+        node_type: str = "LOBATTO",  # Basic node types to generate SDC nodes
+        quad_type: str = "LOBATTO",  # 'LOBATTO': Always include {0, 1} in quadrature points. Add them if they don't exist.
+        num_sweeps: int = None,
+        micro_time_integration: str = None,  # 'erk1' = explicit Euler, 'irk1' = implicit Euler, 'imex' = implicit-explicit
     ):
         from qmat.qcoeff.collocation import Collocation
         import qmat.qdelta.timestepping as module
@@ -15,21 +20,35 @@ class SDCIntegration:
 
         self.nodes, self.weights, self.q = coll.genCoeffs(form="N2N")
 
-        self.q_delta: np.array = self.gen.getQDelta()
-        self.d_tau: np.array = self.gen.dTau
-        self.deltas: np.array = self.gen.deltas
+        self.q_delta: np.ndarray = self.gen.getQDelta()
+        # Deltas are the \tau
+        self.deltas: np.ndarray = self.gen.deltas
 
         # Number of nodes
         self.N = len(self.nodes)
+
+        print(f"self.nodes: {self.nodes}")
+        print(f"self.deltas: {self.deltas}")
 
         if num_sweeps is None:
             self.num_sweeps = len(self.nodes)
         else:
             self.num_sweeps = num_sweeps
 
+        # Time integration to be used within SDC sweeps
+        # 'erk1' = explicit Euler
+        # 'irk1' = implicit Euler
+        # 'imex' = implicit-explicit => 'imex12'
+        # 'imex12' = implicit-explicit: 1st term treated implicitly, 2nd term explicitly
+        # 'imex21' = implicit-explicit: 2nd term treated implicitly, 1st term explicitly
+        self.time_integration_method = micro_time_integration if micro_time_integration is not None else "erk1"
+
+        if self.time_integration_method == "imex":
+            self.time_integration_method = "imex12"
+
         assert self.num_sweeps >= 1
 
-    def integrate(self, u0: np.array, t: float, dt: float, de_solver: DESolver) -> np.array:
+    def integrate_erk1(self, u0: np.array, t: float, dt: float, de_solver: DESolver) -> np.array:
         if not np.isclose(self.nodes[0], 0.0):
             raise Exception("SDC nodes must include the left interval boundary.")
 
@@ -42,27 +61,31 @@ class SDCIntegration:
         u = np.zeros_like(u0, shape=shape)
 
         u[0, :] = u0
-        du_dt_k0 = np.empty_like(u)
-        du_dt_k1 = np.empty_like(u)
+        evalF_k0 = np.empty_like(u)
+        evalF_k1 = np.empty_like(u)
 
+        #
         # Propagate initial condition to all nodes
+        #
         for m in range(0, self.N):
             if m > 0:
-                u[m] = u[m-1] + dt * self.deltas[m] * du_dt_k0[m-1]
-            du_dt_k0[m] = de_solver.du_dt(u[m], t + dt*self.nodes[m])
+                u[m] = u[m - 1] + dt * self.deltas[m] * evalF_k0[m - 1]
+            evalF_k0[m] = de_solver.evalF(u[m], t + dt * self.nodes[m])
 
+        #
         # Iteratively sweep over SDC nodes
+        #
         for _ in range(1, self.num_sweeps):
             for m in range(0, self.N):
 
                 if m > 0:
-                    qeval = self.q[m] @ du_dt_k0
-                    u[m] = u[m-1] + dt * (self.deltas[m] * (du_dt_k1[m-1] - du_dt_k0[m-1]) + qeval)
+                    qeval = self.q[m] @ evalF_k0
+                    u[m] = u[m - 1] + dt * (self.deltas[m] * (evalF_k1[m - 1] - evalF_k0[m - 1]) + qeval)
 
-                du_dt_k1[m] = de_solver.du_dt(u[m], t + dt*self.nodes[m])
+                evalF_k1[m] = de_solver.evalF(u[m], t + dt * self.nodes[m])
 
             # Copy tendency arrays
-            du_dt_k0[:] = du_dt_k1[:]
+            evalF_k0[:] = evalF_k1[:]
 
         if 0:
             # If we're using Radau-right, we can just use the last value
@@ -70,10 +93,99 @@ class SDCIntegration:
 
         else:
             # Compute new starting value with quadrature on tendencies
-            u[0] = u[0] + dt * self.weights @ du_dt_k0
+            u[0] = u[0] + dt * self.weights @ evalF_k0
 
         assert u0.shape == u[0].shape
         return u[0]
+
+    def integrate_irk1(self, u0: np.array, t: float, dt: float, de_solver: DESolver) -> np.array:
+        if not np.isclose(self.nodes[0], 0.0):
+            raise Exception("SDC nodes must include the left interval boundary.")
+
+        if not np.isclose(self.nodes[-1], 1.0):
+            raise Exception("SDC nodes must include the right interval boundary.")
+
+        assert self.N == self.deltas.shape[0]
+
+        shape = (self.N,) + u0.shape
+        u = np.zeros_like(u0, shape=shape)
+
+        u[0, :] = u0
+        evalF_k0 = np.empty_like(u)
+        evalF_k1 = np.empty_like(u)
+
+        # Backup integrator contribution I[...] of previous iteration
+        ISolves = np.empty_like(u)
+
+        #
+        # Propagate initial condition to all nodes
+        #
+        for m in range(0, self.N):
+            if m > 0:
+                #
+                # Solve implicit step:
+                #
+                # u^n+1 = u^n + dt * delta * F(u^n+1)
+                # <=> u^n+1 - dt * delta * F(u^n+1) = u^n
+                # <=> (I - dt * delta * F) * u^n+1 = u^n
+                #
+                rhs = u[m - 1]
+                u[m] = de_solver.fSolve(rhs, dt * self.deltas[m], t + dt * self.nodes[m])
+                # Compute I[...] term
+                # u^n+1 = u^n + dt * delta * F(u^n+1)
+                # dt * delta * F(u^n+1) = u^n+1 - u^n
+                ISolves[m] = u[m] - u[m - 1]
+
+            evalF_k0[m] = de_solver.evalF(u[m], t + dt * self.nodes[m])
+
+        #
+        # Iteratively sweep over SDC nodes
+        #
+        for _ in range(1, self.num_sweeps):
+            for m in range(0, self.N):
+                if m > 0:
+                    #
+                    # Solve implicit step:
+                    #
+                    # u^n+1 = u^n + dt * delta * (F(u^n+1)) - I(u^n) + dt * Q * F(u^n)
+                    # <=> u^n+1 - dt * delta * F(u^n+1) = u^n - I(u^n) + dt * Q * F(u^n)
+                    # <=> (I - dt * delta * F) * u^n+1 = u^n - I(u^n) + dt * Q * F(u^n)
+                    #
+                    # rhs = u^n - I(u^n) + dt * Q * F(u^n)
+                    #
+                    qeval = self.q[m] @ evalF_k0
+                    rhs = u[m - 1] - ISolves[m] + dt * qeval
+
+                    u[m] = de_solver.fSolve(rhs, dt * self.deltas[m], t + dt * self.nodes[m])
+
+                    # Update I[...] term for next correction
+                    # <=> - dt * delta * F(u^n+1) = u^n - I(u^n) + dt * Q * F(u^n) - u^n+1
+                    # <=> dt * delta * F(u^n+1) = u^n+1 - rhs
+                    ISolves[m] = u[m] - rhs
+
+                evalF_k1[m] = de_solver.evalF(u[m], t + dt * self.nodes[m])
+
+            # Copy tendency arrays
+            evalF_k0[:] = evalF_k1[:]
+
+        if 0:
+            # If we're using Radau-right, we can just use the last value
+            u[0] = u[-1]
+
+        else:
+            # Compute new starting value with quadrature on tendencies
+            u[0] = u[0] + dt * self.weights @ evalF_k0
+
+        assert u0.shape == u[0].shape
+        return u[0]
+
+    def integrate(self, u0: np.array, t: float, dt: float, de_solver: DESolver) -> np.array:
+        if self.time_integration_method == "erk1":
+            return self.integrate_erk1(u0, t, dt, de_solver)
+        elif self.time_integration_method == "irk1":
+            return self.integrate_irk1(u0, t, dt, de_solver)
+        else:
+            raise Exception(f"Unsupported time integration within SDC: '{self.time_integration_method}'")
 
     def integrate_n(self, u0: np.array, t: float, dt: float, num_timesteps, de_solver: DESolver) -> np.array:
         if not np.isclose(self.nodes[0], 0.0):

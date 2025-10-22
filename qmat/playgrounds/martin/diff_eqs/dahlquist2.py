@@ -27,7 +27,7 @@ class Dahlquist2(DESolver):
     def initial_u0(self, mode: str = None) -> np.ndarray:
         return np.array([1.0 + 0.0j], dtype=np.complex128)
 
-    def du_dt(self, u: np.ndarray, t: float) -> np.ndarray:
+    def evalF(self, u: np.ndarray, t: float) -> np.ndarray:
         retval = (
             (self.lam1 * self.s * np.exp(t * self.lam1) + self.lam2 * (1.0 - self.s) * np.exp(t * self.lam2))
             / (self.s * np.exp(t * self.lam1) + (1.0 - self.s) * np.exp(t * self.lam2))

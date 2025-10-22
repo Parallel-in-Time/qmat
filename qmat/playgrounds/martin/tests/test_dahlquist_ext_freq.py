@@ -1,18 +1,18 @@
 import numpy as np
-from qmat.playgrounds.martin.diff_eqs.two_freq import TwoFreq
+from qmat.playgrounds.martin.diff_eqs.dahlquist import Dahlquist
 from time_integration.sdc_integration import SDCIntegration
 from qmat.playgrounds.martin.time_integration.rk_integration import RKIntegration
 
 
-def test_dahlquist2():
+def test_dahlquist():
+    u0 = np.array([1.0])  # Initial condition
     T: float = 4 * np.pi  # Time interval
     T: float = 0.5  # Time interval
     t: float = 0.0  # Starting time
 
-    two_freq: TwoFreq = TwoFreq(lam1=1.0j, lam2=0.1j)
-    u0 = two_freq.initial_u0()
+    dahlquist: Dahlquist = Dahlquist(lam1=1.0j, lam2=0.1j, ext_scalar=1.0)
 
-    for time_integration in ["rk1", "rk2", "rk4", "sdc"]:
+    for time_integration in ["rk1", "rk2", "rk4", "irk1", "irk2", "sdc"]:
         if time_integration == "sdc":
             micro_time_integration_ = ["erk1", "irk1"]
         else:
@@ -24,7 +24,7 @@ def test_dahlquist2():
             print("=" * 80)
             results = []
 
-            u_analytical = two_freq.u_solution(u0, t=T)
+            u_analytical = dahlquist.u_solution(u0, t=T)
 
             for nt in range(4):
 
@@ -33,14 +33,14 @@ def test_dahlquist2():
 
                 dt = T / num_timesteps
 
-                u0 = two_freq.initial_u0()
+                u0 = dahlquist.initial_u0()
 
                 u = u0.copy()
 
                 if time_integration in RKIntegration.supported_methods:
                     rki = RKIntegration(method=time_integration)
 
-                    u = rki.integrate_n(u, t, dt, num_timesteps, two_freq)
+                    u = rki.integrate_n(u, t, dt, num_timesteps, dahlquist)
 
                 elif time_integration == "sdc":
                     sdci = SDCIntegration(
@@ -50,13 +50,13 @@ def test_dahlquist2():
                         num_sweeps=3,
                         micro_time_integration=micro_time_integration,
                     )
-                    u = sdci.integrate_n(u, t, dt, num_timesteps, two_freq)
+                    u = sdci.integrate_n(u, t, dt, num_timesteps, dahlquist)
 
                 else:
                     raise Exception("TODO")
 
                 error = np.max(np.abs(u - u_analytical))
-                results.append({"N": num_timesteps, "dt": dt, "error": error})
+                results.append({"N": num_timesteps, "dt": dt, "error": error, "mti": micro_time_integration})
 
             prev_error = None
             for r in results:
@@ -74,13 +74,21 @@ def test_dahlquist2():
                 assert np.abs(results[-1]["conv"] - 1.0) < 1e-2
 
             elif time_integration == "rk2":
-                assert results[-1]["error"] < 1e-5
-                assert np.abs(results[-1]["conv"] - 2.0) < 1e-3
+                assert results[-1]["error"] < 1e-4
+                assert np.abs(results[-1]["conv"] - 2.0) < 1e-2
 
             elif time_integration == "rk4":
-                assert results[-1]["error"] < 1e-11
+                assert results[-1]["error"] < 1e-9
                 assert np.abs(results[-1]["conv"] - 4.0) < 1e-2
+
+            elif time_integration == "irk1":
+                assert results[-1]["error"] < 1e-2
+                assert np.abs(results[-1]["conv"] - 1.0) < 1e-2
+
+            elif time_integration == "irk2":
+                assert results[-1]["error"] < 1e-2
+                assert np.abs(results[-1]["conv"] - 2.0) < 1e-2
 
             elif time_integration == "sdc":
                 assert results[-1]["error"] < 1e-8
-                assert np.abs(results[-1]["conv"] - 4.0) < 1e-3
+                assert np.abs(results[-1]["conv"] - 4.0) < 1e-1

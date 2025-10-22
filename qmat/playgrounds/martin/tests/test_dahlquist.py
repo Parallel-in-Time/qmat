@@ -13,62 +13,74 @@ def test_dahlquist():
     dahlquist: Dahlquist = Dahlquist(lam1=1.0j, lam2=0.1j)
 
     for time_integration in ["rk1", "rk2", "rk4", "sdc"]:
-        print("="*80)
-        print(f"Time integration method: {time_integration}")
-        print("="*80)
-        results = []
+        if time_integration == "sdc":
+            micro_time_integration_ = ["erk1", "irk1"]
+        else:
+            micro_time_integration_ = ["-"]
 
-        u_analytical = dahlquist.u_solution(u0, t=T)
+        for micro_time_integration in micro_time_integration_:
+            print("=" * 80)
+            print(f"Time integration method: {time_integration} ({micro_time_integration})")
+            print("=" * 80)
+            results = []
 
-        for nt in range(4):
+            u_analytical = dahlquist.u_solution(u0, t=T)
 
-            num_timesteps = 2**nt * 10
-            print(f"Running simulation with num_timesteps={num_timesteps}")
+            for nt in range(4):
 
-            dt = T / num_timesteps
+                num_timesteps = 2**nt * 10
+                print(f"Running simulation with num_timesteps={num_timesteps}")
 
-            u0 = dahlquist.initial_u0()
+                dt = T / num_timesteps
 
-            u = u0.copy()
+                u0 = dahlquist.initial_u0()
 
-            if time_integration in RKIntegration.supported_methods:
-                rki = RKIntegration(method=time_integration)
+                u = u0.copy()
 
-                u = rki.integrate_n(u, t, dt, num_timesteps, dahlquist)
+                if time_integration in RKIntegration.supported_methods:
+                    rki = RKIntegration(method=time_integration)
+
+                    u = rki.integrate_n(u, t, dt, num_timesteps, dahlquist)
+
+                elif time_integration == "sdc":
+                    sdci = SDCIntegration(
+                        num_nodes=3,
+                        node_type="LEGENDRE",
+                        quad_type="LOBATTO",
+                        num_sweeps=3,
+                        micro_time_integration=micro_time_integration,
+                    )
+                    u = sdci.integrate_n(u, t, dt, num_timesteps, dahlquist)
+
+                else:
+                    raise Exception("TODO")
+
+                error = np.max(np.abs(u - u_analytical))
+                results.append({"N": num_timesteps, "dt": dt, "error": error, "mti": micro_time_integration})
+
+            prev_error = None
+            for r in results:
+                if prev_error is None:
+                    conv = None
+                else:
+                    conv = np.log2(prev_error / r["error"])
+
+                print(f" - N={r["N"]}, dt={r["dt"]:.6e}, error={r["error"]:.6e}, conv={conv}, mti={micro_time_integration}")
+                prev_error = r["error"]
+                r["conv"] = conv
+
+            if time_integration == "rk1":
+                assert results[-1]["error"] < 1e-2
+                assert np.abs(results[-1]["conv"] - 1.0) < 1e-2
+
+            elif time_integration == "rk2":
+                assert results[-1]["error"] < 1e-4
+                assert np.abs(results[-1]["conv"] - 2.0) < 1e-3
+
+            elif time_integration == "rk4":
+                assert results[-1]["error"] < 1e-9
+                assert np.abs(results[-1]["conv"] - 4.0) < 1e-4
 
             elif time_integration == "sdc":
-                sdci = SDCIntegration(num_nodes=3, node_type="LEGENDRE", quad_type="LOBATTO", num_sweeps=1)
-                u = sdci.integrate_n(u, t, dt, num_timesteps, dahlquist)
-
-            else:
-                raise Exception("TODO")
-
-            error = np.max(np.abs(u - u_analytical))
-            results.append({"N": num_timesteps, "dt": dt, "error": error})
-
-        prev_error = None
-        for r in results:
-            if prev_error is None:
-                conv = None
-            else:
-                conv = np.log2(prev_error / r["error"])
-
-            print(f" - N={r["N"]}, dt={r["dt"]:.6e}, error={r["error"]:.6e}, conv={conv}")
-            prev_error = r["error"]
-            r["conv"] = conv
-
-        if time_integration == "rk1":
-            assert results[-1]["error"] < 1e-2
-            assert np.abs(results[-1]["conv"]-1.0) < 1e-2
-
-        elif time_integration == "rk2":
-            assert results[-1]["error"] < 1e-4
-            assert np.abs(results[-1]["conv"]-2.0) < 1e-3
-
-        elif time_integration == "rk4":
-            assert results[-1]["error"] < 1e-9
-            assert np.abs(results[-1]["conv"]-4.0) < 1e-4
-
-        elif time_integration == "sdc":
-            assert results[-1]["error"] < 1e-4
-            assert np.abs(results[-1]["conv"]-2.0) < 1e-3
+                assert results[-1]["error"] < 1e-8
+                assert np.abs(results[-1]["conv"] - 4.0) < 1e-3

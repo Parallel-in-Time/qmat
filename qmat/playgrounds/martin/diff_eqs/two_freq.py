@@ -22,8 +22,12 @@ class TwoFreq(DESolver):
         self.lam4: complex = lam4 if lam4 is not None else lam2
 
         self.L = np.array([[self.lam1, self.lam2], [self.lam3, self.lam4]], dtype=np.complex128)
+        self.L1 = np.copy(self.L)
+        self.L1[:, 1] = 0
+        self.L2 = np.copy(self.L)
+        self.L2[:, 0] = 0
 
-        # compute eigenvalues and eigenvectors of L
+        # Compute eigenvalues and eigenvectors of L
         self.eigvals, self.eigvecs = np.linalg.eig(self.L)
 
         if not np.all(np.isclose(np.real(self.eigvals), 0)):
@@ -32,10 +36,24 @@ class TwoFreq(DESolver):
     def initial_u0(self, mode: str = None) -> np.ndarray:
         return np.array([1, 0.1], dtype=np.complex128)
 
-    def du_dt(self, u: np.ndarray, t: float) -> np.ndarray:
+    def evalF(self, u: np.ndarray, t: float) -> np.ndarray:
         assert isinstance(t, float)
         retval = self.L @ u
         assert retval.shape == u.shape
+        return retval
+
+    def fSolve(self, rhs: np.ndarray, dt: float, t: float) -> np.ndarray:
+        """
+        Solve
+            `u_t = L u`
+        implicitly, i.e., return u_new such that
+            u_new = u + dt * L u_new
+        <=> u_new - dt * L u_new = u
+        <=> (I - dt * L) u_new = u
+        """
+        assert isinstance(t, float)
+        retval = np.linalg.solve(np.eye(rhs.shape[0]) - dt*self.L, rhs)
+        assert retval.shape == rhs.shape
         return retval
 
     def u_solution(self, u0: np.ndarray, t: float) -> np.ndarray:
@@ -44,4 +62,22 @@ class TwoFreq(DESolver):
         assert isinstance(t, float)
         retval = expm(self.L * t) @ u0
         assert retval.shape == u0.shape
+        return retval
+
+    def evalF1(self, u: np.ndarray, t: float) -> np.ndarray:
+        """
+        Solely compute tendencies of first frequency
+        """
+        assert isinstance(t, float)
+        retval = self.L1 @ u
+        assert retval.shape == u.shape
+        return retval
+
+    def evalF2(self, u: np.ndarray, t: float) -> np.ndarray:
+        """
+        Solely compute tendencies of first frequency
+        """
+        assert isinstance(t, float)
+        retval = self.L2 @ u
+        assert retval.shape == u.shape
         return retval

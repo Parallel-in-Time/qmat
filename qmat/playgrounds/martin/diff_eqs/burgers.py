@@ -1,6 +1,5 @@
 import numpy as np
 from qmat.playgrounds.martin.diff_eqs.de_solver import DESolver
-from qmat.playgrounds.martin.time_integration.rk_integration import RKIntegration
 
 
 class Burgers(DESolver):
@@ -59,8 +58,9 @@ class Burgers(DESolver):
 
         return u0
 
-    def du_dt(self, u: np.ndarray, t: float) -> np.ndarray:
-        """Evaluate the right-hand side of the 1D viscous Burgers' equation.
+    def evalF(self, u: np.ndarray, t: float) -> np.ndarray:
+        """
+        Evaluate the right-hand side of the 1D viscous Burgers' equation.
 
         Parameters
         ----------
@@ -84,7 +84,8 @@ class Burgers(DESolver):
         return f
 
     def u_solution(self, u0: np.ndarray, t: float) -> np.ndarray:
-        """Compute the analytical solution of the 1D viscous Burgers' equation at time `t`.
+        """
+        Compute the analytical solution of the 1D viscous Burgers' equation at time `t`.
 
         See
         https://gitlab.inria.fr/sweet/sweet/-/blob/6f20b19f246bf6fcc7ace1b69567326d1da78635/src/programs/_pde_burgers/time/Burgers_Cart2D_TS_ln_cole_hopf.cpp

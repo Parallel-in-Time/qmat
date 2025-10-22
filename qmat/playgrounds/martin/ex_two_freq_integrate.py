@@ -8,7 +8,9 @@ from matplotlib import pyplot as plt
 T: float = 2 * 2 * np.pi  # Time interval
 t: float = 0.0  # Starting time
 
-time_integration = "sdc"
+time_integration: str = "sdc"
+sdc_micro_time_integration: str = "irk1"
+sdc_num_sweeps: int = 4
 
 two_freq: TwoFreq = TwoFreq(lam1=1.0j, lam2=20.0j, lam3=0.5j)
 u0 = two_freq.initial_u0()
@@ -42,7 +44,9 @@ for nt in range(1):
             t_ = np.append(t_, t + (n + 1) * dt)
 
     elif time_integration == "sdc":
-        sdci = SDCIntegration(num_nodes=5, node_type="LEGENDRE", quad_type="LOBATTO", num_sweeps=4)
+        sdci = SDCIntegration(
+            num_nodes=5, node_type="LEGENDRE", quad_type="LOBATTO", num_sweeps=sdc_num_sweeps, micro_time_integration=sdc_micro_time_integration
+        )
 
         for n in range(num_timesteps):
             u = sdci.integrate(u, t + n * dt, dt, two_freq)
