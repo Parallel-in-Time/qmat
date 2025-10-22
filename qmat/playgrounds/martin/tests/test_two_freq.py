@@ -12,7 +12,7 @@ def test_dahlquist2():
     two_freq: TwoFreq = TwoFreq(lam1=1.0j, lam2=0.1j)
     u0 = two_freq.initial_u0()
 
-    for time_integration in ["rk1", "rk2", "rk4", "sdc"]:
+    for time_integration in ["rk1", "rk2", "rk4", "irk1", "irk2", "sdc"]:
         if time_integration == "sdc":
             micro_time_integration_ = ["erk1", "irk1"]
         else:
@@ -80,6 +80,14 @@ def test_dahlquist2():
             elif time_integration == "rk4":
                 assert results[-1]["error"] < 1e-11
                 assert np.abs(results[-1]["conv"] - 4.0) < 1e-2
+
+            elif time_integration == "irk1":
+                assert results[-1]["error"] < 1e-2
+                assert np.abs(results[-1]["conv"] - 1.0) < 1e-2
+
+            elif time_integration == "irk2":
+                assert results[-1]["error"] < 1e-2
+                assert np.abs(results[-1]["conv"] - 2.0) < 1e-2
 
             elif time_integration == "sdc":
                 assert results[-1]["error"] < 1e-8

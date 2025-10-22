@@ -32,14 +32,11 @@ def test_dahlquist():
                 print(f"Running simulation with num_timesteps={num_timesteps}")
 
                 dt = T / num_timesteps
-
                 u0 = dahlquist.initial_u0()
-
                 u = u0.copy()
 
                 if time_integration in RKIntegration.supported_methods:
                     rki = RKIntegration(method=time_integration)
-
                     u = rki.integrate_n(u, t, dt, num_timesteps, dahlquist)
 
                 elif time_integration == "sdc":
