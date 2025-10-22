@@ -113,4 +113,4 @@ Developer
 =========
 
 * `Thibaut Lunet <https://github.com/tlunet>`_
-* `Thomas Saupe (Baumann) <https://github.com/brownbaerchen>`_
+* `Thomas Saupe (né Baumann) <https://github.com/brownbaerchen>`_
