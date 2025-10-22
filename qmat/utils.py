@@ -70,7 +70,7 @@ def getClasses(dico, module=None):
 
 def useQGen(__init__):
     r"""
-    Wrapper to extract :math:`Q_\Delta`-generator parameters from `kwargs` argument,
+    Wrapper to extract :math:`Q_\Delta`-generator parameters from `kwargs` arguments,
     using either a :math:`Q`-generator `qGen` or separately given parameters.
     """
     pNames = [p.name for p in inspect.signature(__init__).parameters.values()

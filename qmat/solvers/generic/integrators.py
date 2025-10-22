@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Specialized implementations of GenericMultiNode solvers
+Specialized PhiSolver classes implementations
 """
 import numpy as np
 
-from qmat.solvers.generic import GenericMultiNode
+from qmat.solvers.generic import PhiSolver
 
-class ForwardEuler(GenericMultiNode):
+class ForwardEuler(PhiSolver):
 
     def evalPhi(self, uVals, fEvals, out, t0=0):
         m = len(uVals) - 1
@@ -27,7 +27,7 @@ class ForwardEuler(GenericMultiNode):
         out += rhs
 
 
-class BackwardEuler(GenericMultiNode):
+class BackwardEuler(PhiSolver):
 
     def evalPhi(self, uVals, fEvals, out, t0=0):
         m = len(uVals) - 1

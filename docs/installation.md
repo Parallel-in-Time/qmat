@@ -42,17 +42,15 @@ cd qmat     # go into the local git repo
 pip install .
 ```
 
-For **developers who want to contribute**, recommended approach is to add 
-the code folder to your `PYTHONPATH` (if not done already by your IDE), _e.g_ :
+For **developers who want to contribute**, recommended approach is to install
+the package in _editable mode_ :
 
 ```bash
 cd qmat     # go into the local git repo (if not already there)
-export PYTHONPATH=$PYTHONPATH:$(pwd)
+pip install -e .[test]
 ```
 
-> 🔔 Using `pip install -e .` is also possible for developments, but then you have a persistent installation that you should be aware of ...
+This will link your python installation to your local `qmat` folder,
+hence all your modifications will be taken into account at each new import of `qmat`.
 
-
-
-
-
+> 🔔 Some IDEs also modify the `PYTHONPATH` to include the `qmat` root folder, which you can also do manually if you prefer.

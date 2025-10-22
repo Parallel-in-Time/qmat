@@ -31,7 +31,7 @@ class Dahlquist():
 
         if weights is not None:
             weights = np.asarray(weights)
-            assert weights.ndim == 1, "weights must be a 1D vector"
+            assert weights.ndim == 1, f"weights must be a 1D vector, not {weights}"
             assert weights.size == nNodes, "weights size is not the same as the node size"
         else:
             assert np.allclose(Q.sum(axis=1)[-1], 1), "last node must be 1 if weights are not given"

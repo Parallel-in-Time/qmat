@@ -6,6 +6,7 @@ Submodule containing various generic solvers that can be used with `qmat`-genera
 import numpy as np
 import scipy.optimize as sco
 from scipy.linalg import blas
+import warnings
 
 from qmat.solvers.dahlquist import Dahlquist
 from qmat.lagrange import LagrangeApproximation
@@ -87,11 +88,13 @@ class DiffOp():
             atol=1e-15)
 
         # check for nan acceptation
-        uSolve[:] = np.nan
-        instance.fSolve(a=dt, rhs=uEval, t=t0, out=uSolve)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            uSolve[:] = np.nan
+            instance.fSolve(a=dt, rhs=uEval, t=t0, out=uSolve)
 
 
-class LinearMultiNode():
+class CoeffSolver():
 
     def __init__(self, diffOp:DiffOp, tEnd=1, nSteps=1, t0=0):
         assert isinstance(diffOp, DiffOp)
@@ -253,7 +256,7 @@ class LinearMultiNode():
         return uNum
 
 
-class GenericMultiNode(LinearMultiNode):
+class PhiSolver(CoeffSolver):
 
     def __init__(self, diffOp:DiffOp, nodes, tEnd=1, nSteps=1, t0=0):
         super().__init__(diffOp, tEnd, nSteps, t0)
@@ -280,7 +283,7 @@ class GenericMultiNode(LinearMultiNode):
             res -= rhs
             return res.ravel()
 
-        sol = self.innerSolver(func, out.ravel()).reshape(self.uShape)
+        sol = self.diffOp.innerSolver(func, out.ravel()).reshape(self.uShape)
         np.copyto(out, sol)
 
 
@@ -324,19 +327,17 @@ class GenericMultiNode(LinearMultiNode):
 
     def solveSDC(self, nSweeps, Q=None, weights=None, uNum=None):
 
-        if Q is None:
+        if Q is None or weights is True:
             approx = LagrangeApproximation(self.nodes)
+        if Q is None:
             Q = approx.getIntegrationMatrix([(0, tau) for tau in self.nodes])
-            if weights is True:
-                weights = approx.getIntegrationMatrix([(0, 1)]).ravel()
-            else:
-                weights = None
-        else:
-            nNodes, Q, weights = Dahlquist.checkCoeff(Q, weights)
-
-            assert nNodes == self.nNodes, "solver and Q do not have the same number of nodes"
-            assert np.allclose(Q.sum(axis=1), self.nodes), "solver and Q do not have the same nodes"
-
+        if weights is True:
+            weights = approx.getIntegrationMatrix([(0, 1)]).ravel()
+        if weights is False:
+            weights = None
+        nNodes, Q, weights = Dahlquist.checkCoeff(Q, weights)
+        assert nNodes == self.nNodes, "solver and Q do not have the same number of nodes"
+        assert np.allclose(Q.sum(axis=1), self.nodes), "solver and Q do not have the same nodes"
         Q = self.dt*Q
         if weights is not None:
             weights = self.dt*weights
@@ -361,7 +362,7 @@ class GenericMultiNode(LinearMultiNode):
 
             # copy initialization
             np.copyto(uNodes[0], uNum[i])
-            self.evalF(uNum[i], self.t0, out=fEvals[0][0])
+            self.evalF(uNum[i], times[i], out=fEvals[0][0])
             np.copyto(fEvals[1][0], fEvals[0][0])   # u_0^{1} = u_0^{0}
             for m in range(self.nNodes):
                 np.copyto(fEvals[0][m+1], fEvals[0][0])  # u_m^{k} = u_0^{0}

@@ -6,7 +6,7 @@ from qmat.nodes import QUAD_TYPES
 from qmat.mathutils import numericalOrder
 from qmat.solvers.sdc import solveDahlquistSDC
 
-from qmat.solvers.generic import LinearMultiNode
+from qmat.solvers.generic import CoeffSolver
 from qmat.solvers.generic.diffops import Dahlquist, Lorenz, ProtheroRobinson
 
 
@@ -15,9 +15,9 @@ from qmat.solvers.generic.diffops import Dahlquist, Lorenz, ProtheroRobinson
 @pytest.mark.parametrize("tEnd", [1, 5])
 @pytest.mark.parametrize("scheme", ["BE", "FE", "TRAP",  "RK4", "DIRK43",
                                     "ARK443ESDIRK", "ARK443ERK"])
-def testLinearMultiNodeDahlquist(scheme, tEnd, nSteps, lam):
+def testLinearCoeffSolverDahlquist(scheme, tEnd, nSteps, lam):
     diffOp = Dahlquist(lam=lam)
-    solver = LinearMultiNode(diffOp=diffOp, tEnd=tEnd, nSteps=nSteps)
+    solver = CoeffSolver(diffOp=diffOp, tEnd=tEnd, nSteps=nSteps)
 
     qGen = Q_GENERATORS[scheme].getInstance()
 
@@ -27,14 +27,14 @@ def testLinearMultiNodeDahlquist(scheme, tEnd, nSteps, lam):
     uNum = uNum[:, 0] + 1j*uNum[:, 1]
 
     assert np.allclose(uNum, uRef), \
-        "LinearMultiNode does not match reference solver for Dahlquist"
+        "generic CoeffSolver does not match reference solver for Dahlquist"
 
     if scheme.startswith("ARK443"):
         uNum = solver.solve(Q=qGen.Q, weights=None)
         uNum = uNum[:, 0] + 1j*uNum[:, 1]
 
         assert np.allclose(uNum, uRef), \
-            "LinearMultiNode without weights does not match reference solver for Dahlquist"
+            "generic CoeffSolver without weights does not match reference solver for Dahlquist"
 
 
 @pytest.mark.parametrize("quadType", QUAD_TYPES)
@@ -44,13 +44,13 @@ def testLinearMultiNodeDahlquist(scheme, tEnd, nSteps, lam):
 @pytest.mark.parametrize("nSteps", [1, 2])
 @pytest.mark.parametrize("tEnd", [1, 5])
 @pytest.mark.parametrize("scheme", ["BE", "FE", "TRAP", "MIN-SR-FLEX"])
-def testLinearMultiNodeDahlquistSDC(
+def testLinearCoeffSolverDahlquistSDC(
         scheme, tEnd, nSteps, lam, nNodes, nSweeps, quadType):
     if nNodes == 1 and quadType != "GAUSS":
         return
 
     diffOp = Dahlquist(lam=lam)
-    solver = LinearMultiNode(diffOp=diffOp, tEnd=tEnd, nSteps=nSteps)
+    solver = CoeffSolver(diffOp=diffOp, tEnd=tEnd, nSteps=nSteps)
 
     coll = Q_GENERATORS["Collocation"](
         nNodes=nNodes, quadType=quadType, nodeType="LEGENDRE")
@@ -75,7 +75,7 @@ def testLinearMultiNodeDahlquistSDC(
 
         details = " with weigths " if weights is not None else ""
         assert np.allclose(uNum, uRef), \
-            f"LinearMultiNode SDC {details} does not match reference solver for Dahlquist"
+            f"generic CoeffSolver SDC {details} does not match reference solver for Dahlquist"
 
 
 @pytest.fixture(scope="session")
@@ -83,13 +83,13 @@ def uRefLorentz():
     diffOp = Lorenz()
     tEnd = 0.1
     qGenRef = Q_GENERATORS["RK4"].getInstance()
-    uRef = LinearMultiNode(diffOp, tEnd=tEnd, nSteps=10000).solve(
+    uRef = CoeffSolver(diffOp, tEnd=tEnd, nSteps=10000).solve(
         qGenRef.Q, qGenRef.weights)
     return {"tEnd": tEnd, "sol": uRef, "diffOp": diffOp}
 
 
 @pytest.mark.parametrize("scheme", ["BE", "FE", "TRAP",  "RK4", "DIRK43"])
-def testLinearMultiNodeLorenz(scheme, uRefLorentz):
+def testLinearCoeffSolverLorenz(scheme, uRefLorentz):
     diffOp = uRefLorentz["diffOp"]
     uRef = uRefLorentz["sol"]
     tEnd = uRefLorentz["tEnd"]
@@ -98,7 +98,7 @@ def testLinearMultiNodeLorenz(scheme, uRefLorentz):
     err = []
     qGen = Q_GENERATORS[scheme].getInstance()
     for nSteps in nStepsVals:
-        solver = LinearMultiNode(diffOp, tEnd=tEnd, nSteps=nSteps)
+        solver = CoeffSolver(diffOp, tEnd=tEnd, nSteps=nSteps)
         uNum = solver.solve(qGen.Q, qGen.weights)
         err.append(np.linalg.norm(uNum[-1] - uRef[-1]))
 
@@ -114,7 +114,7 @@ def testLinearMultiNodeLorenz(scheme, uRefLorentz):
 @pytest.mark.parametrize("nSweeps", [1, 2])
 @pytest.mark.parametrize("nNodes", [3, 4])
 @pytest.mark.parametrize("scheme", ["BE", "FE", "LU"])
-def testLinearMultiNodeLorenzSDC(scheme, nNodes, nSweeps, quadType, uRefLorentz):
+def testLinearCoeffSolverLorenzSDC(scheme, nNodes, nSweeps, quadType, uRefLorentz):
     diffOp = Lorenz()
     uRef = uRefLorentz["sol"]
     tEnd = uRefLorentz["tEnd"]
@@ -129,7 +129,7 @@ def testLinearMultiNodeLorenzSDC(scheme, nNodes, nSweeps, quadType, uRefLorentz)
 
     err = []
     for nSteps in nStepsVals:
-        solver = LinearMultiNode(diffOp, tEnd=tEnd, nSteps=nSteps)
+        solver = CoeffSolver(diffOp, tEnd=tEnd, nSteps=nSteps)
         uNum = solver.solveSDC(nSweeps, coll.Q, coll.weights, QDelta)
         err.append(np.linalg.norm(uNum[-1] - uRef[-1]))
 
@@ -146,13 +146,13 @@ def uRefProtheroRobinson():
     diffOp = ProtheroRobinson(epsilon=0.5)
     tEnd = 0.5
     qGenRef = Q_GENERATORS["ARK4ERK"].getInstance()
-    uRef = LinearMultiNode(diffOp, tEnd=tEnd, nSteps=1000).solve(
+    uRef = CoeffSolver(diffOp, tEnd=tEnd, nSteps=1000).solve(
         qGenRef.Q, qGenRef.weights)
     return {"tEnd": tEnd, "sol": uRef, "diffOp": diffOp}
 
 
 @pytest.mark.parametrize("scheme", ["ARK4EDIRK", "ARK343ESDIRK"])
-def testLinearMultiNodeProtheroRobinson(scheme, uRefProtheroRobinson):
+def testLinearCoeffSolverProtheroRobinson(scheme, uRefProtheroRobinson):
     diffOp = uRefProtheroRobinson["diffOp"]
     uRef = uRefProtheroRobinson["sol"]
     tEnd = uRefProtheroRobinson["tEnd"]
@@ -161,7 +161,7 @@ def testLinearMultiNodeProtheroRobinson(scheme, uRefProtheroRobinson):
     err = []
     qGen = Q_GENERATORS[scheme].getInstance()
     for nSteps in nStepsVals:
-        solver = LinearMultiNode(diffOp, tEnd=tEnd, nSteps=nSteps)
+        solver = CoeffSolver(diffOp, tEnd=tEnd, nSteps=nSteps)
         uNum = solver.solve(qGen.Q, qGen.weights)
         err.append(np.linalg.norm(uNum[-1] - uRef[-1]))
 
@@ -182,7 +182,7 @@ def testLinearMultiNodeProtheroRobinson(scheme, uRefProtheroRobinson):
 @pytest.mark.parametrize("nSweeps", [1, 2])
 @pytest.mark.parametrize("nNodes", [3, 4])
 @pytest.mark.parametrize("scheme", ["BE", "FE", "MIN-SR-FLEX"])
-def testLinearMultiNodeProtheroRobinsonSDC(scheme, nNodes, nSweeps, quadType, uRefProtheroRobinson):
+def testLinearCoeffSolverProtheroRobinsonSDC(scheme, nNodes, nSweeps, quadType, uRefProtheroRobinson):
     diffOp = uRefProtheroRobinson["diffOp"]
     uRef = uRefProtheroRobinson["sol"]
     tEnd = uRefProtheroRobinson["tEnd"]
@@ -197,7 +197,7 @@ def testLinearMultiNodeProtheroRobinsonSDC(scheme, nNodes, nSweeps, quadType, uR
 
     err = []
     for nSteps in nStepsVals:
-        solver = LinearMultiNode(diffOp, tEnd=tEnd, nSteps=nSteps)
+        solver = CoeffSolver(diffOp, tEnd=tEnd, nSteps=nSteps)
         uNum = solver.solveSDC(nSweeps, coll.Q, coll.weights, QDelta)
         err.append(np.linalg.norm(uNum[-1] - uRef[-1]))
 

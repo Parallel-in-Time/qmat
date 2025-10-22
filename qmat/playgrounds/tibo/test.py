@@ -12,7 +12,7 @@ from time import time
 
 from qmat import genQCoeffs, QDELTA_GENERATORS
 from qmat.qcoeff.collocation import Collocation
-from qmat.solvers.generic import LinearMultiNode
+from qmat.solvers.generic import CoeffSolver
 
 from qmat.solvers.generic.diffops import Dahlquist, Lorenz, ProtheroRobinson
 from qmat.solvers.generic.integrators import ForwardEuler, BackwardEuler
@@ -23,11 +23,10 @@ nPeriod = 1
 nSteps = nPeriod*1000
 tEnd = nPeriod*np.pi
 
-corr = "FE"
-useSDC = False
-useWeights = False
-nSweeps = 4
-
+corr = "BE"
+useSDC = True
+useWeights = True
+nSweeps = 1
 
 if pType == "Dahlquist":
     diffOp = Dahlquist()
@@ -39,11 +38,11 @@ elif pType == "ProtheroRobinson":
 nDOF = diffOp.u0.size
 
 nodes, weights, Q = genQCoeffs(corr)
-coll = Collocation(nNodes=4, nodeType="LEGENDRE", quadType="RADAU-RIGHT")
+coll = Collocation(nNodes=2, nodeType="LEGENDRE", quadType="RADAU-RIGHT")
 gen = QDELTA_GENERATORS[corr](qGen=coll)
 QDelta = gen.genCoeffs(k=[i+1 for i in range(nSweeps)])
 
-prob = LinearMultiNode(diffOp, tEnd=tEnd, nSteps=nSteps)
+prob = CoeffSolver(diffOp, tEnd=tEnd, nSteps=nSteps)
 Solver = BackwardEuler if corr == "BE" else ForwardEuler
 if useSDC:
     solver = Solver(diffOp, nodes=coll.nodes, tEnd=tEnd, nSteps=nSteps)
