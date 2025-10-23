@@ -34,9 +34,41 @@ class Dahlquist(DESolver):
         assert retval.shape == u.shape
         return retval
 
+    def evalF1(self, u: np.ndarray, t: float) -> np.ndarray:
+        lam = self.lam1
+        retval = lam * u
+
+        assert retval.shape == u.shape
+        return retval
+
+    def evalF2(self, u: np.ndarray, t: float) -> np.ndarray:
+        lam = self.lam2
+        s = self.ext_scalar
+        retval = lam * (u - s * np.sin(t)) + s * np.cos(t)
+
+        assert retval.shape == u.shape
+        return retval
+
     def fSolve(self, u: np.ndarray, dt: float, t: float) -> np.ndarray:
         t1 = t + dt
         lam = self.lam1 + self.lam2
+        s = self.ext_scalar
+
+        rhs = u - s * dt * (lam * np.sin(t1) - np.cos(t1))
+        retval = rhs / (1.0 - dt * lam)
+
+        assert retval.shape == u.shape
+        return retval
+
+    def fSolve1(self, u: np.ndarray, dt: float, t: float) -> np.ndarray:
+        retval = u / (1.0 - dt * self.lam1)
+
+        assert retval.shape == u.shape
+        return retval
+
+    def fSolve2(self, u: np.ndarray, dt: float, t: float) -> np.ndarray:
+        t1 = t + dt
+        lam = self.lam2
         s = self.ext_scalar
 
         rhs = u - s * dt * (lam * np.sin(t1) - np.cos(t1))

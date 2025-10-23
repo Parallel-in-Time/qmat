@@ -12,9 +12,9 @@ def test_dahlquist2():
 
     dahlquist2: Dahlquist2 = Dahlquist2(lam1=1.0j, lam2=0.1j)
 
-    for time_integration in ["rk1", "rk2", "rk4", "sdc"]:
+    for time_integration_method in ["rk1", "rk2", "rk4", "sdc"]:
         print("="*80)
-        print(f"Time integration method: {time_integration}")
+        print(f"Time integration method: {time_integration_method}")
         print("="*80)
         results = []
 
@@ -31,12 +31,12 @@ def test_dahlquist2():
 
             u = u0.copy()
 
-            if time_integration in RKIntegration.supported_methods:
-                rki = RKIntegration(method=time_integration)
+            if time_integration_method in RKIntegration.supported_methods:
+                rki = RKIntegration(method=time_integration_method)
 
                 u = rki.integrate_n(u, t, dt, num_timesteps, dahlquist2)
 
-            elif time_integration == "sdc":
+            elif time_integration_method == "sdc":
                 sdci = SDCIntegration(num_nodes=3, node_type="LEGENDRE", quad_type="LOBATTO", num_sweeps=1)
                 u = sdci.integrate_n(u, t, dt, num_timesteps, dahlquist2)
 
@@ -57,18 +57,21 @@ def test_dahlquist2():
             prev_error = r["error"]
             r["conv"] = conv
 
-        if time_integration == "rk1":
+        if time_integration_method == "rk1":
             assert results[-1]["error"] < 1e-2
             assert np.abs(results[-1]["conv"]-1.0) < 1e-2
 
-        elif time_integration == "rk2":
+        elif time_integration_method == "rk2":
             assert results[-1]["error"] < 1e-5
             assert np.abs(results[-1]["conv"]-2.0) < 1e-3
 
-        elif time_integration == "rk4":
+        elif time_integration_method == "rk4":
             assert results[-1]["error"] < 1e-11
             assert np.abs(results[-1]["conv"]-4.0) < 1e-2
 
-        elif time_integration == "sdc":
+        elif time_integration_method == "sdc":
             assert results[-1]["error"] < 1e-5
             assert np.abs(results[-1]["conv"]-2.0) < 1e-3
+
+        else:
+            raise Exception(f"TODO for {time_integration_method}")

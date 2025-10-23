@@ -10,7 +10,8 @@ t: float = 0.0  # Starting time
 
 time_integration: str = "sdc"
 sdc_micro_time_integration: str = "irk1"
-sdc_num_sweeps: int = 2
+sdc_micro_time_integration: str = "imex12"
+sdc_num_sweeps: int = 4
 
 two_freq: TwoFreq = TwoFreq(lam1=1.0j, lam2=20.0j, lam3=0.5j)
 u0 = two_freq.initial_u0()
@@ -45,7 +46,11 @@ for nt in range(1):
 
     elif time_integration == "sdc":
         sdci = SDCIntegration(
-            num_nodes=5, node_type="LEGENDRE", quad_type="LOBATTO", num_sweeps=sdc_num_sweeps, micro_time_integration=sdc_micro_time_integration
+            num_nodes=5,
+            node_type="LEGENDRE",
+            quad_type="LOBATTO",
+            num_sweeps=sdc_num_sweeps,
+            micro_time_integration=sdc_micro_time_integration,
         )
 
         for n in range(num_timesteps):

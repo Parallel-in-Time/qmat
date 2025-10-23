@@ -42,6 +42,18 @@ class TwoFreq(DESolver):
         assert retval.shape == u.shape
         return retval
 
+    def evalF1(self, u: np.ndarray, t: float) -> np.ndarray:
+        assert isinstance(t, float)
+        retval = self.L1 @ u
+        assert retval.shape == u.shape
+        return retval
+
+    def evalF2(self, u: np.ndarray, t: float) -> np.ndarray:
+        assert isinstance(t, float)
+        retval = self.L2 @ u
+        assert retval.shape == u.shape
+        return retval
+
     def fSolve(self, rhs: np.ndarray, dt: float, t: float) -> np.ndarray:
         """
         Solve
@@ -56,28 +68,32 @@ class TwoFreq(DESolver):
         assert retval.shape == rhs.shape
         return retval
 
+    def fSolve1(self, rhs: np.ndarray, dt: float, t: float) -> np.ndarray:
+        """
+        Solve
+            `u_t = L1 u`
+        implicitly
+        """
+        assert isinstance(t, float)
+        retval = np.linalg.solve(np.eye(rhs.shape[0]) - dt*self.L1, rhs)
+        assert retval.shape == rhs.shape
+        return retval
+
+    def fSolve2(self, rhs: np.ndarray, dt: float, t: float) -> np.ndarray:
+        """
+        Solve
+            `u_t = L2 u`
+        implicitly
+        """
+        assert isinstance(t, float)
+        retval = np.linalg.solve(np.eye(rhs.shape[0]) - dt*self.L2, rhs)
+        assert retval.shape == rhs.shape
+        return retval
+
     def u_solution(self, u0: np.ndarray, t: float) -> np.ndarray:
         from scipy.linalg import expm
 
         assert isinstance(t, float)
         retval = expm(self.L * t) @ u0
         assert retval.shape == u0.shape
-        return retval
-
-    def evalF1(self, u: np.ndarray, t: float) -> np.ndarray:
-        """
-        Solely compute tendencies of first frequency
-        """
-        assert isinstance(t, float)
-        retval = self.L1 @ u
-        assert retval.shape == u.shape
-        return retval
-
-    def evalF2(self, u: np.ndarray, t: float) -> np.ndarray:
-        """
-        Solely compute tendencies of first frequency
-        """
-        assert isinstance(t, float)
-        retval = self.L2 @ u
-        assert retval.shape == u.shape
         return retval

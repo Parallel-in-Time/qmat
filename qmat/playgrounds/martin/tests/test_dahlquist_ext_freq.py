@@ -12,15 +12,15 @@ def test_dahlquist():
 
     dahlquist: Dahlquist = Dahlquist(lam1=1.0j, lam2=0.1j, ext_scalar=1.0)
 
-    for time_integration in ["rk1", "rk2", "rk4", "irk1", "irk2", "sdc"]:
-        if time_integration == "sdc":
+    for time_integration_method in ["rk1", "rk2", "rk4", "irk1", "irk2", "sdc"]:
+        if time_integration_method == "sdc":
             micro_time_integration_ = ["erk1", "irk1"]
         else:
             micro_time_integration_ = ["-"]
 
         for micro_time_integration in micro_time_integration_:
             print("=" * 80)
-            print(f"Time integration method: {time_integration} ({micro_time_integration})")
+            print(f"Time integration method: {time_integration_method} ({micro_time_integration})")
             print("=" * 80)
             results = []
 
@@ -37,12 +37,12 @@ def test_dahlquist():
 
                 u = u0.copy()
 
-                if time_integration in RKIntegration.supported_methods:
-                    rki = RKIntegration(method=time_integration)
+                if time_integration_method in RKIntegration.supported_methods:
+                    rki = RKIntegration(method=time_integration_method)
 
                     u = rki.integrate_n(u, t, dt, num_timesteps, dahlquist)
 
-                elif time_integration == "sdc":
+                elif time_integration_method == "sdc":
                     sdci = SDCIntegration(
                         num_nodes=3,
                         node_type="LEGENDRE",
@@ -69,26 +69,29 @@ def test_dahlquist():
                 prev_error = r["error"]
                 r["conv"] = conv
 
-            if time_integration == "rk1":
+            if time_integration_method == "rk1":
                 assert results[-1]["error"] < 1e-2
                 assert np.abs(results[-1]["conv"] - 1.0) < 1e-2
 
-            elif time_integration == "rk2":
+            elif time_integration_method == "rk2":
                 assert results[-1]["error"] < 1e-4
                 assert np.abs(results[-1]["conv"] - 2.0) < 1e-2
 
-            elif time_integration == "rk4":
+            elif time_integration_method == "rk4":
                 assert results[-1]["error"] < 1e-9
                 assert np.abs(results[-1]["conv"] - 4.0) < 1e-2
 
-            elif time_integration == "irk1":
+            elif time_integration_method == "irk1":
                 assert results[-1]["error"] < 1e-2
                 assert np.abs(results[-1]["conv"] - 1.0) < 1e-2
 
-            elif time_integration == "irk2":
+            elif time_integration_method == "irk2":
                 assert results[-1]["error"] < 1e-2
                 assert np.abs(results[-1]["conv"] - 2.0) < 1e-2
 
-            elif time_integration == "sdc":
+            elif time_integration_method == "sdc":
                 assert results[-1]["error"] < 1e-8
                 assert np.abs(results[-1]["conv"] - 4.0) < 1e-1
+
+            else:
+                raise Exception(f"TODO for {time_integration_method}")
