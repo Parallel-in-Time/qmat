@@ -27,7 +27,7 @@ for nt in range(1):
 
     dt = T / num_timesteps
 
-    u_analytical_fin = two_freq.u_solution(u0, t=T)
+    u_analytical_fin = two_freq.int_f(u0, t=T)
     u0 = two_freq.initial_u0()
 
     u = u0.copy()
@@ -39,7 +39,7 @@ for nt in range(1):
         rki = RKIntegration(method=time_integration)
 
         for n in range(num_timesteps):
-            u = rki.integrate(u, t + n * dt, dt, two_freq)
+            u = rki.int_f(u, t + n * dt, dt, two_freq)
 
             u_ = np.concatenate((u_, np.expand_dims(u, axis=0)))
             t_ = np.append(t_, t + (n + 1) * dt)
@@ -54,7 +54,7 @@ for nt in range(1):
         )
 
         for n in range(num_timesteps):
-            u = sdci.integrate(u, t + n * dt, dt, two_freq)
+            u = sdci.int_f(u, t + n * dt, dt, two_freq)
 
             u_ = np.concatenate((u_, np.expand_dims(u, axis=0)))
             t_ = np.append(t_, t + (n + 1) * dt)
@@ -73,7 +73,7 @@ for nt in range(1):
 if 1:
     # Plot analytical solution
     t_ = np.linspace(0, T, 1000)
-    u_analytical_fin = np.array([two_freq.u_solution(u0, t) for t in t_])
+    u_analytical_fin = np.array([two_freq.int_f(u0, t) for t in t_])
     for i in range(u_analytical_fin.shape[1]):
         plt.plot(t_, np.real(u_analytical_fin[:, i]), linestyle="dotted", color="black")
         plt.plot(t_, np.imag(u_analytical_fin[:, i]), linestyle="dotted", color="black")

@@ -25,7 +25,7 @@ for nt in range(1):
 
     dt = T / num_timesteps
 
-    u_analytical_fin = dahlquist2.u_solution(u0, t=T)
+    u_analytical_fin = dahlquist2.int_f(u0, t=T)
     u0 = dahlquist2.initial_u0()
 
     u = u0.copy()
@@ -37,7 +37,7 @@ for nt in range(1):
         rki = RKIntegration(method=time_integration)
 
         for n in range(num_timesteps):
-            u = rki.integrate(u, t + n * dt, dt, dahlquist2)
+            u = rki.int_f(u, t + n * dt, dt, dahlquist2)
 
             u_ = np.concatenate((u_, np.expand_dims(u, axis=0)))
             t_ = np.append(t_, t + (n + 1) * dt)
@@ -46,7 +46,7 @@ for nt in range(1):
         sdci = SDCIntegration(num_nodes=3, node_type="LEGENDRE", quad_type="LOBATTO")
 
         for n in range(num_timesteps):
-            u = sdci.integrate(u, t + n * dt, dt, dahlquist2)
+            u = sdci.int_f(u, t + n * dt, dt, dahlquist2)
 
             u_ = np.concatenate((u_, np.expand_dims(u, axis=0)))
             t_ = np.append(t_, t + (n + 1) * dt)
@@ -72,7 +72,7 @@ for r in results:
 
 if 1:
     t_ = np.linspace(0, T, 1000)
-    u_analytical_fin = np.array([dahlquist2.u_solution(u0, t) for t in t_])
+    u_analytical_fin = np.array([dahlquist2.int_f(u0, t) for t in t_])
     plt.plot(t_, np.real(u_analytical_fin), linestyle="dotted", color="gray")
     plt.plot(t_, np.imag(u_analytical_fin), linestyle="dotted", color="gray")
 

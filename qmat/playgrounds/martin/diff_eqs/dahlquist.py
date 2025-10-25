@@ -26,6 +26,19 @@ class Dahlquist(DESolver):
     def initial_u0(self, mode: str = None) -> np.ndarray:
         return np.array([1.0 + 0.0j], dtype=np.complex128)
 
+    def picardF(self, u: np.ndarray, dt: float, t: float) -> np.ndarray:
+        """
+        Exactly integrate over one time step using the analytical solution
+        (=Picard).
+        """
+        lam = self.lam1 + self.lam2
+        s = self.ext_scalar
+        assert isinstance(t, float)
+        retval = np.exp(t * lam) * u + s * np.sin(t)
+
+        assert retval.shape == u.shape
+        return retval
+
     def evalF(self, u: np.ndarray, t: float) -> np.ndarray:
         lam = self.lam1 + self.lam2
         s = self.ext_scalar
@@ -77,11 +90,32 @@ class Dahlquist(DESolver):
         assert retval.shape == u.shape
         return retval
 
-    def u_solution(self, u0: np.ndarray, t: float) -> np.ndarray:
+    def int_f_t0(self, u0: np.ndarray, dt: float) -> np.ndarray:
         lam = self.lam1 + self.lam2
         s = self.ext_scalar
-        assert isinstance(t, float)
-        retval = np.exp(t * lam) * u0 + s * np.sin(t)
+        assert isinstance(dt, float)
+        retval = np.exp(dt * lam) * u0 + s * np.sin(dt)
+
+        assert retval.shape == u0.shape
+        return retval
+
+    def int_f(self, u0: np.ndarray, dt: float, t0: float = 0.0) -> np.ndarray:
+        """
+        Integrate the solution from t0 to t1.
+        """
+
+        assert isinstance(t0, (float, int))
+        assert isinstance(dt, (float, int))
+
+        if t0 == 0:
+            return self.int_f_t0(u0, dt=dt)
+
+        # Lambda
+        lam = self.lam1 + self.lam2
+
+        s = self.ext_scalar
+
+        retval = np.exp(dt * lam) * (u0 - s*np.sin(t0)) + s * np.sin(t0+dt)
 
         assert retval.shape == u0.shape
         return retval

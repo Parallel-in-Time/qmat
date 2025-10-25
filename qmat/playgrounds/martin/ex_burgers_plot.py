@@ -32,7 +32,7 @@ if 1:
 
             plt.plot(t, ut)
     else:
-        ut = burgers.u_solution(u0, t=T)
+        ut = burgers.int_f(u0, t=T)
         plt.plot(t, u0, label="u0")
         plt.plot(t, ut, label="ut")
 

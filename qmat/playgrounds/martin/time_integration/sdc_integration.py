@@ -363,7 +363,7 @@ class SDCIntegration:
         assert u0.shape == u[0].shape
         return u[0]
 
-    def integrate(self, u0: np.array, t: float, dt: float, de_solver: DESolver) -> np.array:
+    def int_f(self, u0: np.array, t: float, dt: float, de_solver: DESolver) -> np.array:
         if self.time_integration_method == "erk1":
             return self.integrate_erk1(u0, t, dt, de_solver)
         elif self.time_integration_method == "irk1":
@@ -385,6 +385,6 @@ class SDCIntegration:
         u_value = u0
 
         for n in range(num_timesteps):
-            u_value = self.integrate(u_value, t + n * dt, dt, de_solver)
+            u_value = self.int_f(u_value, t + n * dt, dt, de_solver)
 
         return u_value

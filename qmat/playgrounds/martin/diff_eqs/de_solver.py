@@ -117,7 +117,7 @@ class DESolver(ABC):
         pass
 
     @abstractmethod
-    def u_solution(self, u0: np.ndarray, t: float) -> np.ndarray:
+    def int_f(self, u0: np.ndarray, t: float) -> np.ndarray:
         """
         Compute the (analytical) solution at time `t`.
 

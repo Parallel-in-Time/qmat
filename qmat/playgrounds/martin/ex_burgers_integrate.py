@@ -30,7 +30,7 @@ time_integration = "rk2"
 if 1:
     results = []
 
-    u_analytical = burgers.u_solution(u0, t=T)
+    u_analytical = burgers.int_f(u0, t=T)
 
     for nt in range(4):
 

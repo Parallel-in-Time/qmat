@@ -83,7 +83,7 @@ class Burgers(DESolver):
         f = -u * du_dx + self._nu * d2u_dx2
         return f
 
-    def u_solution(self, u0: np.ndarray, t: float) -> np.ndarray:
+    def int_f(self, u0: np.ndarray, t: float) -> np.ndarray:
         """
         Compute the analytical solution of the 1D viscous Burgers' equation at time `t`.
 

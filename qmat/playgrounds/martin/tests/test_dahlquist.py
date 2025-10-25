@@ -4,7 +4,7 @@ from time_integration.sdc_integration import SDCIntegration
 from qmat.playgrounds.martin.time_integration.rk_integration import RKIntegration
 
 
-def test_dahlquist():
+def test_dahlquist_integration():
     u0 = np.array([1.0])  # Initial condition
     T: float = 4 * np.pi  # Time interval
     T: float = 0.5  # Time interval
@@ -24,7 +24,7 @@ def test_dahlquist():
             print("=" * 80)
             results = []
 
-            u_analytical = dahlquist.u_solution(u0, t=T)
+            u_analytical = dahlquist.int_f(u0, dt=T)
 
             for nt in range(4):
 
@@ -84,3 +84,19 @@ def test_dahlquist():
 
             else:
                 raise Exception(f"TODO for {time_integration_method}")
+
+
+def test_dahlquist_integration_of_solution():
+    u0 = np.array([1.0])  # Initial condition
+    T: float = 4 * np.pi  # Time interval
+
+    dahlquist: Dahlquist = Dahlquist(lam1=1.0j, lam2=0.1j)
+
+    u0 = dahlquist.initial_u0()
+
+    u_analytical = dahlquist.int_f_t0(u0, dt=T)
+
+    u1 = dahlquist.int_f(u0, dt=T*0.5, t0=0.0)
+    u2 = dahlquist.int_f(u1, dt=T*0.5, t0=T*0.5)
+
+    assert np.all(np.isclose(u_analytical, u2))

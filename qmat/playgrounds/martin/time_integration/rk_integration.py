@@ -12,7 +12,7 @@ class RKIntegration:
         assert method in self.supported_methods, "Unsupported RK method"
         self.method = method
 
-    def integrate(self, u0: np.array, t: float, dt: float, de_solver: DESolver) -> np.array:
+    def int_f(self, u0: np.array, t: float, dt: float, de_solver: DESolver) -> np.array:
         u = u0
 
         if self.method == "rk1":
@@ -56,6 +56,6 @@ class RKIntegration:
         u_value = u0
 
         for n in range(num_timesteps):
-            u_value = self.integrate(u_value, t + n * dt, dt, de_solver)
+            u_value = self.int_f(u_value, t + n * dt, dt, de_solver)
 
         return u_value
