@@ -66,7 +66,7 @@ def testLinearCoeffSolverDahlquistSDC(
             continue
 
         uRef = solveDahlquistSDC(
-            lam, 1, T=tEnd, nSteps=nSteps, nSweeps=nSweeps,
+            lam, 1, tEnd=tEnd, nSteps=nSteps, nSweeps=nSweeps,
             Q=coll.Q, QDelta=QDelta, weights=weights)
 
         uNum = solver.solveSDC(
@@ -145,9 +145,7 @@ def testLinearCoeffSolverLorenzSDC(scheme, nNodes, nSweeps, quadType, uRefLorent
 def uRefProtheroRobinson():
     diffOp = ProtheroRobinson(epsilon=0.5)
     tEnd = 0.5
-    qGenRef = Q_GENERATORS["ARK4ERK"].getInstance()
-    uRef = CoeffSolver(diffOp, tEnd=tEnd, nSteps=1000).solve(
-        qGenRef.Q, qGenRef.weights)
+    uRef = [diffOp.g(tEnd)]
     return {"tEnd": tEnd, "sol": uRef, "diffOp": diffOp}
 
 

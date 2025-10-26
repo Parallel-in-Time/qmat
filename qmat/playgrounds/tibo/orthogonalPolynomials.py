@@ -2,19 +2,27 @@
 # -*- coding: utf-8 -*-
 """
 Compute and display orthogonal polynomials of any degree using `qmat`
+
+.. literalinclude:: /../qmat/playgrounds/tibo/orthogonalPolynomials.py
+   :language: python
+   :linenos:
+   :lines: 11-
 """
 import numpy as np
 import matplotlib.pyplot as plt
 from qmat.nodes import NodesGenerator
 
 deg = 100
-polyType = "CHEBY-1"
+"""polynomial degree"""
 
-gen = NodesGenerator(polyType)
-n = deg + 1
-alpha, beta = gen.getOrthogPolyCoefficients(n)
+polyType = "CHEBY-1"
+"""type of polynomial"""
 
 t = np.linspace(-1, 1, num=1000000)
+"""plotting points"""
+
+gen = NodesGenerator(polyType)
+alpha, beta = gen.getOrthogPolyCoefficients(deg+1)
 
 # Generate monic polynomials (leading coefficient is 1)
 if deg == 0:

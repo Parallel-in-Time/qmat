@@ -65,10 +65,10 @@ def testDahlquistIMEX(scheme, tEnd, nSteps, dim, lam):
 
     lamVals = lam*np.linspace(0, 1, 4**dim).reshape((4,)*dim)
 
-    basis = Dahlquist(lam=lamVals, u0=1, T=tEnd, nSteps=nSteps)
+    basis = Dahlquist(lam=lamVals, u0=1, tEnd=tEnd, nSteps=nSteps)
     ref = basis.solve(Q=qGen.Q, weights=qGen.weights)
 
-    solver = DahlquistIMEX(lamI=lamVals, lamE=[0], u0=1, T=tEnd, nSteps=nSteps)
+    solver = DahlquistIMEX(lamI=lamVals, lamE=[0], u0=1, tEnd=tEnd, nSteps=nSteps)
     sol = solver.solve(QI=qGen.Q, wI=qGen.weights, QE=qGen.Q, wE=qGen.weights)
     assert np.allclose(sol, ref), \
         "DahlquistIMEX solver does not match Dahlquist solver with implicit part only"
@@ -78,7 +78,7 @@ def testDahlquistIMEX(scheme, tEnd, nSteps, dim, lam):
         assert np.allclose(sol, ref), \
             "DahlquistIMEX solver without weights does not match Dahlquist solver with implicit part only"
 
-    solver = DahlquistIMEX(lamI=[0], lamE=lamVals, u0=1, T=tEnd, nSteps=nSteps)
+    solver = DahlquistIMEX(lamI=[0], lamE=lamVals, u0=1, tEnd=tEnd, nSteps=nSteps)
     sol = solver.solve(QI=qGen.Q, wI=qGen.weights, QE=qGen.Q, wE=qGen.weights)
     assert np.allclose(sol, ref), \
         "DahlquistIMEX solver does not match Dahlquist solver with explicit part only"
@@ -89,10 +89,10 @@ def testDahlquistIMEX(scheme, tEnd, nSteps, dim, lam):
             "DahlquistIMEX solver without weights does not match Dahlquist solver with explicit part only"
 
     for weights in [qGen.weights, None]:
-        basis = Dahlquist(lam=2*lamVals, u0=1, T=tEnd, nSteps=nSteps)
+        basis = Dahlquist(lam=2*lamVals, u0=1, tEnd=tEnd, nSteps=nSteps)
         ref = basis.solve(Q=qGen.Q, weights=weights)
 
-        solver = DahlquistIMEX(lamI=lamVals, lamE=lamVals, u0=1, T=tEnd, nSteps=nSteps)
+        solver = DahlquistIMEX(lamI=lamVals, lamE=lamVals, u0=1, tEnd=tEnd, nSteps=nSteps)
         sol = solver.solve(QI=qGen.Q, wI=weights, QE=qGen.Q, wE=weights)
         detail = " with weights " if weights is not None else ""
         assert np.allclose(sol, ref), \

@@ -3,10 +3,11 @@
 """
 Folders containing different experiments performed with `qmat`.
 
-    📣 Codes in those folder are not tested by the CI pipeline.
+    📣 Codes in those folders are not tested by the CI pipeline,
+    but hopefully enough documented so you can play with it.
 
 Current playgrounds
 -------------------
 
-- `tibo <./tibo>`_ : personal playground of `@tlunet <https://github.com/tlunet>`_
+- :class:`tibo` : personal playground of `@tlunet <https://github.com/tlunet>`_
 """

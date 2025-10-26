@@ -127,8 +127,8 @@ class CoeffSolver():
 
 
     @staticmethod
-    def lowerTri(Q:np.ndarray):
-        return np.allclose(np.triu(Q, k=1), np.zeros(Q.shape))
+    def lowerTri(Q:np.ndarray, strict=False):
+        return np.allclose(np.triu(Q, k=0 if strict else 1), np.zeros(Q.shape))
 
 
     def solve(self, Q, weights, uNum=None):

@@ -6,7 +6,7 @@ Functions to run SDC and evaluate its numerical error on simple problems.
 import numpy as np
 
 
-def solveDahlquistSDC(lam, u0, T, nSteps:int, nSweeps:int, Q:np.ndarray, QDelta:np.ndarray,
+def solveDahlquistSDC(lam, u0, tEnd, nSteps:int, nSweeps:int, Q:np.ndarray, QDelta:np.ndarray,
                       weights=None, monitors=None):
     r"""
     Solve the Dahlquist problem with SDC.
@@ -17,7 +17,7 @@ def solveDahlquistSDC(lam, u0, T, nSteps:int, nSweeps:int, Q:np.ndarray, QDelta:
         The :math:`\lambda` coefficient.
     u0 : complex or float
         The initial solution :math:`u_0`.
-    T : float
+    tEnd : float
         Final time :math:`T`.
     nSteps : int
         Number of time-step for the whole :math:`[0,T]` interval.
@@ -26,7 +26,7 @@ def solveDahlquistSDC(lam, u0, T, nSteps:int, nSweeps:int, Q:np.ndarray, QDelta:
     Q : np.ndarray
         Quadrature matrix :math:`Q` used for SDC.
     QDelta : np.ndarray
-        Approximate quadrature matrix :math:`Q_\Delta` used for SDC. 
+        Approximate quadrature matrix :math:`Q_\Delta` used for SDC.
         If three dimensional, use the first dimension for the sweep index.
     weights : np.ndarray, optional
         Quadrature weights to use for the prologation.
@@ -39,9 +39,9 @@ def solveDahlquistSDC(lam, u0, T, nSteps:int, nSweeps:int, Q:np.ndarray, QDelta:
     """
     nodes = Q.sum(axis=1)
     nNodes = Q.shape[0]
-    dt = T/nSteps
-    times = np.linspace(0, T, nSteps+1)
-    
+    dt = tEnd/nSteps
+    times = np.linspace(0, tEnd, nSteps+1)
+
     QDelta = np.asarray(QDelta)
     if QDelta.ndim == 3:
         assert QDelta.shape == (nSweeps, nNodes, nNodes), "inconsistent shape for QDelta"
@@ -92,11 +92,11 @@ def solveDahlquistSDC(lam, u0, T, nSteps:int, nSweeps:int, Q:np.ndarray, QDelta:
 
     if monitors:
         return uNum, monitors
-    else:   
+    else:
         return uNum
 
 
-def errorDahlquistSDC(lam, u0, T, nSteps, nSweeps, Q, QDelta,
+def errorDahlquistSDC(lam, u0, tEnd, nSteps, nSweeps, Q, QDelta,
                       weights=None, uNum=None):
     r"""
     Compute the time :math:`L_\infty` error of SDC.
@@ -107,7 +107,7 @@ def errorDahlquistSDC(lam, u0, T, nSteps, nSweeps, Q, QDelta,
         The :math:`\lambda` coefficient.
     u0 : complex or float
         The initial solution :math:`u_0`.
-    T : float
+    tEnd : float
         Final time :math:`T`.
     nSteps : int
         Number of time-step for the whole :math:`[0,T]` interval.
@@ -131,10 +131,10 @@ def errorDahlquistSDC(lam, u0, T, nSteps, nSweeps, Q, QDelta,
     """
     if uNum is None:
         uNum = solveDahlquistSDC(
-            lam, u0, T, nSteps, nSweeps, Q, QDelta,
+            lam, u0, tEnd, nSteps, nSweeps, Q, QDelta,
             weights=weights)
 
-    times = np.linspace(0, T, nSteps+1)
+    times = np.linspace(0, tEnd, nSteps+1)
     uExact = u0 * np.exp(lam*times)
     return np.linalg.norm(uNum-uExact, ord=np.inf)
 
@@ -159,8 +159,7 @@ def getOrderSDC(coll, nSweeps, qDelta, prolongation):
     order : int
         Expected order of the SDC time-integration.
     """
-    # TODO : extend with additional results from
-    # https://gitlab.inria.fr/sweet/sweet/-/blob/main/mule_local/python/sdc/qmatrix.py#L596
+    # TODO : extend with additional using time-dependent terms
 
     nNodes, nodeType, quadType = coll.nodes.size, coll.nodeType, coll.quadType
 

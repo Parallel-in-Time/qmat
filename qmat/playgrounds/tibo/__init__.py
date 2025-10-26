@@ -1,4 +1,5 @@
 """
-- `orthogonalPolynomials.py <./orthogonalPolynomials.py>`_ : how to generate orthogonal polynomial values from any distribution with arbitrary order in a numerically stable fashion.
-- `test.py <./test.py>`_ : script to test the new generic solvers.
+- :class:`orthogonalPolynomials` : generate orthogonal polynomial values from any distribution.
+- :class:`lorenz` : application example of the generic solvers to solve the Lorenz equations.
+- :class:`imex` : starting development for the IMEX generic solvers.
 """
