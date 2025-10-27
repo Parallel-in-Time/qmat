@@ -4,8 +4,9 @@
 Implementations of time-integration solvers that make use of `qmat`-generated coefficients.
 
     🔔 Those are not fully optimized implementations of their corresponding
-    time-integration scheme : these are conveniences classes allowing
+    time-integration scheme, but conveniences classes allowing
     some first **experiments** with your problem(s) of interest.
+    They are mostly given
 
 **Modules** ⚙️
 

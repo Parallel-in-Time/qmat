@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Oct 21 17:00:11 2025
-
-@author: cpf5546
+Contains various specialized implementation of :class:`DiffOp` classes.
 """
 import numpy as np
 from scipy.linalg import blas
@@ -12,8 +10,8 @@ from typing import TypeVar
 from qmat.solvers.generic import DiffOp
 from qmat.utils import checkOverriding, storeClass
 
-
 T = TypeVar("T")
+
 
 DIFFOPS: dict[str, type[DiffOp]] = {}
 """Dictionary containing all specialized :class:`DiffOp` classes"""
@@ -27,7 +25,24 @@ def registerDiffOp(cls: type[T]) -> type[T]:
 
 @registerDiffOp
 class Dahlquist(DiffOp):
+    r"""
+    Implements a Dahlquist differential operator
 
+    .. math::
+
+        f(u,t) = \lambda u
+
+    Note
+    ----
+    This class is implemented for illustration and testing purposes.
+    For real applications, consider using the
+    :class:`qmat.solvers.dahlquist.Dahlquist` class instead.
+
+    Parameters
+    ----------
+    lam : complex, optional
+        The :math:`\lambda` value. The default is 1j.
+    """
     def __init__(self, lam=1j):
         self.lam = lam
         u0 = np.array([1, 0], dtype=float)
@@ -67,20 +82,19 @@ class Lorenz(DiffOp):
     nativeFSolve: bool, optional
         Wether or not using the native fSolve method (default is False).
     """
-
     def __init__(self, sigma=10, rho=28, beta=8/3, nativeFSolve=False):
         self.params = [sigma, rho, beta]
-        r"""list containing :math:`\sigma`, :math:`\rho` and :math:`\beta`"""
+        r"""List containing :math:`\sigma`, :math:`\rho` and :math:`\beta`"""
 
         self.newton = {
             "maxIter": 99,
             "tolerance": 1e-9,
             }
-        """parameters for the Newton iteration used in native fSolve"""
+        """Parameters for the Newton iteration used in native fSolve"""
 
         u0 = np.array([5, -5, 20], dtype=float)
         self.gemv = blas.get_blas_funcs("gemv", dtype=u0.dtype)
-        """level-2 blas gemv function used in the native solver (just for flex, doesn't bring anything)"""
+        """Level-2 blas gemv function used in the native solver (just for flex, very light speedup)"""
 
         super().__init__(u0)
         if nativeFSolve:
@@ -101,6 +115,22 @@ class Lorenz(DiffOp):
         out[2] = x*y - beta*z
 
     def fSolve_NATIVE(self, a, rhs, t, out):
+        r"""
+        Solve :math:`u-\alpha f(u,t)=rhs` for given :math:`u,t,rhs`,
+        using a Newton iteration with exact Jacobian of :math:`f(u,t)`.
+
+        Parameters
+        ----------
+        a : float
+            The :math:`\alpha` coefficient.
+        rhs : np.ndarray
+            The right hand side.
+        t : float
+            Time for the evaluation.
+        out : np.ndarray
+            Input-output array used as initial guess,
+            in which is stored the solution.
+        """
         sigma, rho, beta = self.params
         newton = self.newton
 
@@ -157,7 +187,7 @@ class ProtheroRobinson(DiffOp):
     Implement the Prothero-Robinson problem:
 
     .. math::
-        \frac{du}{dt} = -\frac{u-g(t)}{\epsilon} + \frac{dg}{dt}, \quad u(0) = g(0).,
+        \frac{du}{dt} = -\frac{u-g(t)}{\epsilon} + \frac{dg}{dt}, \quad u(0) = g(0),
 
     with :math:`\epsilon` a stiffness parameter, that makes the problem more stiff
     the smaller it is (usual taken value is :math:`\epsilon=1e^{-3}`).
@@ -181,6 +211,12 @@ class ProtheroRobinson(DiffOp):
     >>>     def dg(self, t):
     >>>         return (-0.2) * np.exp(-0.2 * t)
 
+    Reference
+    ---------
+    A. Prothero and A. Robinson,
+    *On the stability and accuracy of one-step methods for solving stiff systems of ordinary differential equations*,
+    Mathematics of Computation, **28** (1974), pp. 145–162.
+
     Parameters
     ----------
     epsilon : float, optional
@@ -189,20 +225,15 @@ class ProtheroRobinson(DiffOp):
         Wether or not to use the non-linear form of the problem. The default is False.
     nativeFSolve : bool, optional
         Wether or not use the native fSolver using exact Jacobian. The default is True.
-
-    Reference
-    ---------
-    A. Prothero and A. Robinson, On the stability and accuracy of one-step methods for solving
-    stiff systems of ordinary differential equations, Mathematics of Computation, 28 (1974),
-    pp. 145–162.
     """
-
     def __init__(self, epsilon=1e-3, nonLinear=False, nativeFSolve=True):
         self.epsilon = epsilon
+        r"""Value used for :math:`\epsilon`."""
         self.newton = {
             "maxIter": 200,
             "tolerance": 5e-15,
             }
+        """Parameters used for the Newton iteration in `fSolve`."""
         self.evalF = self.evalF_NONLIN if nonLinear else self.evalF_LIN
         self.jac = self.jac_NONLIN if nonLinear else self.jac_LIN
         if nativeFSolve:
@@ -211,6 +242,7 @@ class ProtheroRobinson(DiffOp):
 
     @classmethod
     def test(cls):
+        """Test both linear and non-linear version of this differential operator."""
         default = cls()
         assert not default.nonLinear, "default ProtheroRobinson DiffOp is not linear"
         super().test(instance=default)
@@ -220,6 +252,7 @@ class ProtheroRobinson(DiffOp):
 
     @property
     def nonLinear(self):
+        """Wether the current operator is non-linear"""
         return self.evalF == self.evalF_NONLIN
 
     # -------------------------------------------------------------------------
@@ -253,6 +286,23 @@ class ProtheroRobinson(DiffOp):
         return -self.epsilon**(-1) * 3*u**2
 
     def fSolve_NATIVE(self, a, rhs, t, out):
+        r"""
+        Solve :math:`u-\alpha f(u,t)=rhs` for given :math:`u,t,rhs`,
+        using a Newton iteration with exact Jacobian (derivative) of
+        :math:`f(u,t)`.
+
+        Parameters
+        ----------
+        a : float
+            The :math:`\alpha` coefficient.
+        rhs : np.ndarray
+            The right hand side.
+        t : float
+            Time for the evaluation.
+        out : np.ndarray
+            Input-output array used as initial guess,
+            in which is stored the solution.
+        """
         newton = self.newton
         u = out
 

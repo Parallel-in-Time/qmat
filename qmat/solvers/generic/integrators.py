@@ -1,13 +1,41 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Specialized PhiSolver classes implementations
+Specialized :class:`PhiSolver` classes implementing various time-integrators.
 """
 import numpy as np
 
 from qmat.solvers.generic import PhiSolver
 
 class ForwardEuler(PhiSolver):
+    r"""
+    :math:`\phi`-based solver doing Forward Euler update between time nodes.
+
+    It uses the following definition :
+
+    .. math::
+
+        \phi(u_0, u_1, ..., u_{m}, u_{m+1}) =
+            \Delta\tau_{m+1} f(u_m, t_m) + ... + \Delta\tau_1 f(u_0, t_0),
+
+    where :math:`\Delta\tau_{m} = t_{m+1} - t_{m}`.
+    In particular, since it does not depends on the node solution
+    :math:`u_{m+1}` (explicit scheme),
+    its `phiSolve` method is replaced by an explicit evaluation of `evalPhi`.
+
+    Parameters
+    ----------
+    diffOp : DiffOp
+        Differential operator for the ODE.
+    nodes : 1D array-like
+        The time nodes :math:`\tau_1, ..., \tau_M`.
+    tEnd : float, optional
+        Final simulation time. The default is 1.
+    nSteps : int, optional
+        Number of simulation time-steps. The default is 1.
+    t0 : float, optional
+        Initial simulation time. The default is 0.
+    """
 
     def evalPhi(self, uVals, fEvals, out, t0=0):
         m = len(uVals) - 1
@@ -28,6 +56,35 @@ class ForwardEuler(PhiSolver):
 
 
 class BackwardEuler(PhiSolver):
+    r"""
+    :math:`\phi`-based solver doing Backward Euler update between time nodes.
+
+    It uses the following definition :
+
+    .. math::
+
+        \phi(u_0, u_1, ..., u_{m}, u_{m+1}) =
+            \Delta\tau_{m+1} f(u_{m+1}, t_{m+1}) + ...
+            + \Delta\tau_1 f(u_1, t_1),
+
+    where :math:`\Delta\tau_{m} = t_{m+1} - t_{m}`.
+    In particular, its `phiSolve` method is rewritten
+    to depend directly on the `fSolve` method of the differential operator
+    to avoid unecessary (re-)evaluations of :math:`f(u,t)`.
+
+    Parameters
+    ----------
+    diffOp : DiffOp
+        Differential operator for the ODE.
+    nodes : 1D array-like
+        The time nodes :math:`\tau_1, ..., \tau_M`.
+    tEnd : float, optional
+        Final simulation time. The default is 1.
+    nSteps : int, optional
+        Number of simulation time-steps. The default is 1.
+    t0 : float, optional
+        Initial simulation time. The default is 0.
+    """
 
     def evalPhi(self, uVals, fEvals, out, t0=0):
         m = len(uVals) - 1

@@ -98,7 +98,7 @@ class Dahlquist():
     def solve(self, Q, weights):
         r"""
         Solve for all :math:`\lambda` using a direct solve of the :math:`Q`
-        matrix, *i.e* for each step it solves :
+        matrix, *i.e* for each time-step it solves :
 
         .. math::
 
@@ -206,8 +206,8 @@ class Dahlquist():
 
     def solveSDC(self, Q, weights, QDelta, nSweeps):
         r"""
-        Solve for all :math:`\lambda` using SDC sweeps, *i.e* solve for
-        each sweep :math:`k` :
+        Solve for all :math:`\lambda` using SDC sweeps, *i.e* solves for
+        each time-step and sweep :math:`k` :
 
         .. math::
 
@@ -388,17 +388,34 @@ class DahlquistIMEX():
     def solve(self, QI, wI, QE, wE):
         r"""
         Solve for all :math:`\lambda_I` and :math:`\lambda_E`
-        using a direct solve of the :math:`Q_I` and :math:`Q_E` matrices.
+        using a direct solve of the :math:`Q^I` and :math:`Q^E` matrices,
+        *i.e* for each time-step it solves :
+
+        .. math::
+
+            (I - \lambda_I Q^I - \lambda_E Q^E){\bf u} = {\bf u}_0
+
+        where :math:`{\bf u}_0` is the vector containing the initial solution
+        of the time-step in each entry.
+        The next step solution is computed using the IMEX **step update** :
+
+        .. math::
+
+            u_1 = u_0 + \Delta{t}\lambda_I{\bf w}_I^T{\bf u}
+            + \Delta{t}\lambda_E{\bf w}_E^T{\bf u},
+
+        or simply use the last **node solution** :math:`{\bf u}[-1]` if
+        no weights are given (`wI=wE=None`).
 
         Parameters
         ----------
         QI : 2D array-like
-            :math:`Q` coefficients used for :math:`\lambda_I`.
+            :math:`Q^I` coefficients used for :math:`\lambda_I`.
         wI : 1D array-like or None
             Weights used for the step update on :math:`\lambda_I`.
             If None, then step update is not done.
         QE : 2D array-like
-            :math:`Q` coefficients used for :math:`\lambda_E`.
+            :math:`Q^E` coefficients used for :math:`\lambda_E`.
         wE : 1D array-like or None
             Weights used for the step update on :math:`\lambda_E`.
             If None, then step update is not done.
@@ -505,8 +522,29 @@ class DahlquistIMEX():
 
 
     def solveSDC(self, Q, weights, QDeltaI, QDeltaE, nSweeps):
-        """
-        Solve for all :math:`\lambda_I` and :math:`\lambda_E` using SDC sweeps.
+        r"""
+        Solve for all :math:`\lambda_I` and :math:`\lambda_E` using SDC sweeps,
+        *i.e* for each time-step and sweep :math:`k` it solves :
+
+        .. math::
+
+            (I - \Delta{t}\lambda_I Q_\Delta^I - \Delta{t}\lambda_E Q_\Delta^I){\bf u}^{k+1}
+            = {\bf u}_0 + \Delta{t}\left[
+                \lambda Q - \lambda_I Q_\Delta^I - \lambda_E Q_\Delta^E\right]
+            {\bf u}^{k},
+
+        where :math:`{\bf u}_0` is the vector containing the initial solution
+        of the time-step in each entry and :math:`{\bf u}^0 = {\bf u}_0`
+        (copy initialization).
+        The next step solution is computed using the **step update** :
+
+        .. math::
+
+            u_1 = u_0 + \Delta{t}\lambda{\bf w}^T{\bf u}^{K},
+
+        where :math:`K` is the total number of sweeps.
+        If no weights are given (`weights=None`), it simply uses the last
+        **node solution** :math:`{\bf u}[-1]`.
 
         Parameters
         ----------
