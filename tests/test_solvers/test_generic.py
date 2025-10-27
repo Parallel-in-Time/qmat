@@ -21,7 +21,7 @@ def testLinearCoeffSolverDahlquist(scheme, tEnd, nSteps, lam):
 
     qGen = Q_GENERATORS[scheme].getInstance()
 
-    uRef = qGen.solveDahlquist(lam, 1, T=tEnd, nSteps=nSteps)
+    uRef = qGen.solveDahlquist(lam, 1, tEnd=tEnd, nSteps=nSteps)
 
     uNum = solver.solve(Q=qGen.Q, weights=qGen.weights)
     uNum = uNum[:, 0] + 1j*uNum[:, 1]

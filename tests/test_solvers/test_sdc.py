@@ -14,7 +14,7 @@ def testSweeps(qDelta, nNodes):
     gen = QDELTA_GENERATORS[qDelta](nodes=coll.nodes)
 
     runParams = dict(
-        lam=1j, u0=1, T=np.pi, nSteps=10, nSweeps=nNodes,
+        lam=1j, u0=1, tEnd=np.pi, nSteps=10, nSweeps=nNodes,
         Q=coll.Q,
     )
 
@@ -35,7 +35,7 @@ def testMonitors(nSweeps, nSteps, nNodes):
     gen = QDELTA_GENERATORS["BE"](nodes=coll.nodes)
 
     runParams = dict(
-        lam=1j, u0=1, T=np.pi, nSteps=nSteps, nSweeps=nSweeps,
+        lam=1j, u0=1, tEnd=np.pi, nSteps=nSteps, nSweeps=nSweeps,
         Q=coll.Q, QDelta=gen.getQDelta(),
     )
 

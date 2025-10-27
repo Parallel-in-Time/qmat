@@ -134,7 +134,7 @@ class QGenerator(object):
         """Global convergence order of the associated embedded method"""
         return self.order - 1
 
-    def solveDahlquist(self, lam, u0, T, nSteps, useEmbeddedWeights=False):
+    def solveDahlquist(self, lam, u0, tEnd, nSteps, useEmbeddedWeights=False):
         r"""
         Solve the Dahlquist test problem
 
@@ -148,7 +148,7 @@ class QGenerator(object):
             The :math:`\lambda` coefficient.
         u0 : complex or float
             The initial solution :math:`u_0`.
-        T : float
+        tEnd : float
             Final time :math:`T`.
         nSteps : int
             Number of time-step for the whole :math:`[0,T]` interval.
@@ -168,7 +168,7 @@ class QGenerator(object):
         uNum = np.zeros(nSteps+1, dtype=complex)
         uNum[0] = u0
 
-        dt = T/nSteps
+        dt = tEnd/nSteps
         A = np.eye(nodes.size) - lam*dt*Q
         for i in range(nSteps):
             b = np.ones(nodes.size)*uNum[i]
@@ -177,7 +177,7 @@ class QGenerator(object):
 
         return uNum
 
-    def errorDahlquist(self, lam, u0, T, nSteps, uNum=None, useEmbeddedWeights=False):
+    def errorDahlquist(self, lam, u0, tEnd, nSteps, uNum=None, useEmbeddedWeights=False):
         r"""
         Compute :math:`L_\infty` error in time for the Dahlquist problem
 
@@ -187,7 +187,7 @@ class QGenerator(object):
             The :math:`\lambda` coefficient.
         u0 : complex or float
             The initial solution :math:`u_0`.
-        T : float
+        tEnd : float
             Final time :math:`T`.
         nSteps : int
             Number of time-step for the whole :math:`[0,T]` interval.
@@ -203,8 +203,8 @@ class QGenerator(object):
             The :math:`L_\infty` norm.
         """
         if uNum is None:
-            uNum = self.solveDahlquist(lam, u0, T, nSteps, useEmbeddedWeights=useEmbeddedWeights)
-        times = np.linspace(0, T, nSteps+1)
+            uNum = self.solveDahlquist(lam, u0, tEnd, nSteps, useEmbeddedWeights=useEmbeddedWeights)
+        times = np.linspace(0, tEnd, nSteps+1)
         uExact = u0 * np.exp(lam*times)
         return np.linalg.norm(uNum-uExact, ord=np.inf)
 
