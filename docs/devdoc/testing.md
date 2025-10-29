@@ -85,6 +85,8 @@ coverage html
 
 This generates a html coverage report in `htmlcov/index.html` that you can read using your favorite web browser.
 
+> 📣 Remember : code coverage must **stay at 100%** for a pull request to be accepted ... and the test will be reviewed to assert that they are not simple executions of your implementation 😇
+
 ## Testing notebook tutorials
 
 All notebooks are located in the [notebook docs folder](../notebooks). You can first check if they can be executed properly by running :

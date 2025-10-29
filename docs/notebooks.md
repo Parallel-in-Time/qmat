@@ -17,10 +17,10 @@ Notebooks are categorized into those main sections :
 
 
 ```{eval-rst}
-Base usage
-==========
+Base usage tutorial
+===================
 
-📜 *From Butcher Tables to Spectral Deferred Corrections*
+📜 *From Butcher Tables to Spectral Deferred Corrections ...*
 
 .. toctree::
     :maxdepth: 1
@@ -28,10 +28,10 @@ Base usage
 
     notebooks/0*
 
-Extended usage
-==============
+Advanced tutorials
+==================
 
-📜 *Going deeper into advanced time-integration topics*
+📜 *Going deeper into advanced time-integration topics ...*
 
 .. toctree::
     :maxdepth: 1
@@ -42,7 +42,7 @@ Extended usage
 Components usage
 ================
 
-📜 *How to use the utility modules*
+📜 *How to use the utility modules ...*
 
 .. toctree::
     :maxdepth: 1

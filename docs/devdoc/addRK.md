@@ -1,13 +1,13 @@
 # Add a Runge-Kutta scheme
 
-Current $Q$-generators based on Runge-Kutta schemes are implemented in the 
+Current $Q$-generators based on Runge-Kutta schemes are implemented in the
 [`qmat.qcoeff.butcher`](https://github.com/Parallel-in-Time/qmat/blob/main/qmat/qcoeff/butcher.py) submodule.
-Those are based on Butcher tables from classical schemes available in the literature, 
+Those are based on Butcher tables from classical schemes available in the literature,
 and the selected approach is to define **one class for one scheme**.
 
 ## Standard scheme
 
-In order to add a new RK, search first for its section in the `butcher.py` file, depending on its type 
+In order to add a new RK, search first for its section in the `butcher.py` file, depending on its type
 (explicit or implicit) and its order. Then add a new class at the bottom of this section following this template :
 
 ```python
@@ -43,7 +43,7 @@ A[5, :5] = [1631.0 / 55296.0, 175.0 / 512.0, 575.0 / 13824.0, 44275.0 / 110592.0
 
 ## Convergence testing
 
-To test your scheme ... you don't have to do anything 🥳 : all RK schemes are automatically tested 
+To test your scheme ... you don't have to do anything 🥳 : all RK schemes are automatically tested
 thanks to the [registration mechanism](./structure.md), that checks (in particular) the convergence
 order of each scheme (global truncation error).
 
@@ -57,14 +57,14 @@ lam = 1j      # purely imaginary lambda
 T = 2*np.pi   # one time period
 ```
 
-They use three numbers of time-steps for the convergence analysis, depending on the order of the method 
+They use three numbers of time-steps for the convergence analysis, depending on the order of the method
 (see [here ...](https://github.com/Parallel-in-Time/qmat/blob/main/tests/test_qcoeff/test_convergence.py#L10)).
 
 But this automatic time-step size selection may not be adapted for methods with high error constant that require finer time-steps
 to actually see the theoretical order.
 In that case, simply add a `CONV_TEST_NSTEPS` _class attribute_ storing a list with **higher numbers of time-steps** in increasing order, high enough so the convergence test passes.
 
-> 📜 See [SDIRK2_2 implementation](https://github.com/Parallel-in-Time/qmat/blob/e17e2dd2aebff1b09188f4314a82338355a55582/qmat/qcoeff/butcher.py#L269) for an example ...
+> 📜 See [SDIRK2_2 implementation](https://github.com/Parallel-in-Time/qmat/blob/e17e2dd2aebff1b09188f4314a82338355a55582/qmat/qcoeff/butcher.py#L269) for an usage example of `CONV_TEST_NSTEPS` ...
 
 
 ## Embedded scheme
@@ -76,7 +76,7 @@ For that, simply define a `b2` class attribute :
 @registerRK
 class NewRK(RK):
     """Some new RK method from ..."""
-    ## previous coefficients ... 
+    ## previous coefficients ...
     b2 = ... # embedded coefficients
 ```
 
@@ -92,4 +92,3 @@ class NewRK(RK):
     def weightsEmbedded(self):
         return ...  # effective embedded order
 ```
-

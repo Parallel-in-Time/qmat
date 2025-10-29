@@ -723,7 +723,7 @@ class PhiSolver(CoeffSolver):
 
 
     def solve(self, uNum=None, tInit=0):
-        """
+        r"""
         Solve using sequential computation of node solutions for each step,
         using the relation :
 
