@@ -12,8 +12,8 @@ All tutorials are written in jupyter notebooks, that can be :
 Notebooks are categorized into those main sections :
 
 1. **Basic usage** : how to generate and use basic $Q$-coefficients and $Q_\Delta$ approximations, through a step-by-step tutorial going from generic Runge-Kutta methods to SDC for simple problems.
-2. **Extended usage** : additional features or `qmat` ($S$-matrix, `hCoeffs`, `dTau` coefficients, ...) to go deeper into SDC
-3. **Components usage** : how to use the main utility modules, like `qmat.lagrange`, etc ...
+2. **Extended usage** : additional features or `qmat` to go deeper into time-integration (Node-to-Node formulation, use for non-linear problems, $\phi$-SDC, ...)
+3. **Components usage** : how to use the main utility modules, like {py:mod}`qmat.lagrange`, etc ...
 
 
 ```{eval-rst}

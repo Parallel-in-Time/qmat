@@ -94,7 +94,7 @@ class Lorenz(DiffOp):
 
         u0 = np.array([5, -5, 20], dtype=float)
         self.gemv = blas.get_blas_funcs("gemv", dtype=u0.dtype)
-        """Level-2 blas gemv function used in the native solver (just for flex, very light speedup)"""
+        """Level-2 blas gemv function used in the native solver (just for flex, very small speedup)"""
 
         super().__init__(u0)
         if nativeFSolve:

@@ -1,7 +1,7 @@
 # Add a Runge-Kutta scheme
 
-Current $Q$-generators based on Runge-Kutta schemes are implemented in the
-[`qmat.qcoeff.butcher`](https://github.com/Parallel-in-Time/qmat/blob/main/qmat/qcoeff/butcher.py) submodule.
+Current $Q$-generators based on Runge-Kutta schemes are implemented in
+{py:mod}`qmat.qcoeff.butcher`.
 Those are based on Butcher tables from classical schemes available in the literature,
 and the selected approach is to define **one class for one scheme**.
 
@@ -22,15 +22,15 @@ class NewRK(RK):
     def order(self): return ... # TODO
 ```
 
-Here the `registerRK` decorators interfaces the classical `register` decorator for `QGenerator` classes,
+Here the `registerRK` decorator interfaces the classical `register` decorator for `QGenerator` classes,
 but also :
 
-1. check if the dimensions of the `A`, `b` and `c` are consistent
-2. register the generator in a specific category with all RK-type generators
+1. checks if the dimensions of `A`, `b` and `c` are consistent
+2. registers the generator in a specific category with all RK-type generators
 
 > 💡 You can use either the built-in `list` or Numpy `nd.array` to add the class attributes `A`, `b` and `c`.
 
-**Tip** : for large Butcher table, you can also use this approach (from the `CashKarp` class) :
+**Tip** : for large Butcher table, you can also use this approach (from the {py:class}`CashKarp <qmat.qcoeff.butcher.CashKarp>` class) :
 
 ```python
 A = np.zeros((6, 6))
@@ -52,9 +52,9 @@ order of each scheme (global truncation error).
 All convergence tests are done on the following Dahlquist problem :
 
 ```python
-u0 = 1        # unitary initial solution
-lam = 1j      # purely imaginary lambda
-T = 2*np.pi   # one time period
+u0 = 1          # unitary initial solution
+lam = 1j        # purely imaginary lambda
+tEnd = 2*np.pi  # one time period
 ```
 
 They use three numbers of time-steps for the convergence analysis, depending on the order of the method

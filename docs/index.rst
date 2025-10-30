@@ -44,6 +44,8 @@ It allows to generate :math:`Q`-coefficients for multi-stages methods (equivalen
 
 and many different **lower-triangular** approximations of the :math:`Q` matrix, named :math:`Q_\Delta`,
 which are key elements for Spectral Deferred Correction (SDC), or more general Iterated Runge-Kutta Methods.
+It also contains **generic time-integration solvers** based on :math:`Q` and :math:`Q_\Delta` coefficients,
+that can be used for quick testing and experiments.
 
 .. raw:: html
 
@@ -109,8 +111,8 @@ Links
 * Q&A : https://github.com/Parallel-in-Time/qmat/discussions/categories/q-a
 * Project Proposals : https://github.com/Parallel-in-Time/qmat/discussions/categories/project-proposals
 
-Developer
-=========
+Developers
+==========
 
 * `Thibaut Lunet <https://github.com/tlunet>`_
 * `Thomas Saupe (né Baumann) <https://github.com/brownbaerchen>`_

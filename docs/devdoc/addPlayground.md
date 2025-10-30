@@ -39,4 +39,4 @@
 > """
 > ```
 > where `name` is your playground name, `userName` your GitHub username and `branch` the branch name on your fork you are working on
-> (**do not use `main`** ⚠️)
+> (**do not use the `main` branch of your fork** ⚠️)

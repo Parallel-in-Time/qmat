@@ -271,6 +271,11 @@ class CoeffSolver():
         """Datatype of the solution at a given time."""
         return self.diffOp.dtype
 
+    @property
+    def times(self):
+        """Time values for each time-step"""
+        return np.linspace(self.t0, self.tEnd, self.nSteps+1)
+
     def evalF(self, u:np.ndarray, t:float, out:np.ndarray):
         """
         Wrapper for the `DiffOp` function evaluating :math:`f(u,t)`.
@@ -396,7 +401,7 @@ class CoeffSolver():
         rhs = np.zeros(self.uShape, dtype=self.dtype)
         fEvals = np.zeros((nNodes, *self.uShape), dtype=self.dtype)
 
-        times = np.linspace(self.t0+tInit, self.tEnd+tInit, self.nSteps+1)
+        times = self.times + tInit
         tau = Q.sum(axis=1)
 
         # time-stepping loop
@@ -507,7 +512,7 @@ class CoeffSolver():
         fEvals = [np.zeros((nNodes, *self.uShape), dtype=self.dtype)
                   for _ in range(2)]
 
-        times = np.linspace(self.t0+tInit, self.tEnd+tInit, self.nSteps+1)
+        times = self.times + tInit
         tau = Q.sum(axis=1)
 
         # time-stepping loop
@@ -761,7 +766,7 @@ class PhiSolver(CoeffSolver):
                   for _ in range(self.nNodes+1)]
         self.evalF(uNum[0], self.t0, out=fEvals[0])
 
-        times = np.linspace(self.t0+tInit, self.tEnd+tInit, self.nSteps+1)
+        times = self.times + tInit
         tau = self.dt*self.nodes
 
         # time-stepping loop
@@ -874,7 +879,7 @@ class PhiSolver(CoeffSolver):
                    for _ in range(self.nNodes+1)]
                   for _ in range(2)]
 
-        times = np.linspace(self.t0+tInit, self.tEnd+tInit, self.nSteps+1)
+        times = self.times + tInit
         tau = self.dt*self.nodes
 
         # time-stepping loop

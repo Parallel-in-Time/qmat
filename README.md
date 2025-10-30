@@ -31,6 +31,8 @@ $$
 
 and many different **lower-triangular** approximations of the $Q$ matrix, named $Q_\Delta$,
 which are key elements for Spectral Deferred Correction (SDC), or more general Iterated Runge-Kutta Methods.
+It also contains **generic time-integration solvers** based on $Q$ and $Q_\Delta$ coefficients,
+that can be used for quick testing and experiments.
 
 [![DOI](https://zenodo.org/badge/804826743.svg)](https://zenodo.org/doi/10.5281/zenodo.11956478)
 
@@ -78,3 +80,8 @@ and the current [Development Roadmap](https://qmat.readthedocs.io/en/latest/devd
 - Issues Tracker : https://github.com/Parallel-in-Time/qmat/issues
 - Q&A : https://github.com/Parallel-in-Time/qmat/discussions/categories/q-a
 - Project Proposals : https://github.com/Parallel-in-Time/qmat/discussions/categories/project-proposals
+
+## Developers
+
+- [Thibaut Lunet](https://github.com/tlunet)
+- [Thomas Saupe (né Baumann)](https://github.com/brownbaerchen)

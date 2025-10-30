@@ -5,12 +5,12 @@
 ## Registration mechanism
 
 The two main features, namely the generation of $Q$-coefficients and $Q_\Delta$ approximations,
-are respectively implemented in the `qmat.qcoeff` and `qmat.qdelta` sub-packages.
+are respectively implemented in the {py:mod}`qmat.qcoeff` and {py:mod}`qmat.qdelta` sub-packages.
 Different categories of generators are implemented in dedicated submodules of their respective sub-packages,
 _e.g_ :
 
-- `qmat.qcoeff.collocation` for Collocation-based $Q$-generators
-- `qmat.qdelta.algebraic` for algebraic based $Q_\Delta$ approximations
+- {py:mod}`qmat.qcoeff.collocation` for Collocation-based $Q$-generators
+- {py:mod}`qmat.qdelta.algebraic` for algebraic based $Q_\Delta$ approximations
 - ...
 
 Each sub-package contains a `__init__.py` file implementing the generic parent class for all generators.
@@ -194,12 +194,12 @@ But then it is necessary to :
 
 ## Additional sub-packages
 
-- [`qmat.solvers`](https://github.com/Parallel-in-Time/qmat/blob/main/qmat/solvers) : implements various generic ODE making use of `qmat`-generated coefficients. Can be modified to [add new differential operators](./addDiffOp.md) or [add new $\phi$-based integrators](./addPhiIntegrator.md)
-- [`qmat.playgrounds](https://github.com/Parallel-in-Time/qmat/blob/main/qmat/playgrounds) : can be modified to [add a personal playground](./addPlayground.md) (non-tested experiments / examples)
+- {py:mod}`qmat.solvers` : implements various generic ODE making use of `qmat`-generated coefficients. Can be modified to [add new differential operators](./addDiffOp.md) or [add new $\phi$-based integrators](./addPhiIntegrator.md)
+- {py:mod}`qmat.playgrounds` : can be modified to [add a personal playground](./addPlayground.md) (non-tested experiments / examples)
 
 ## Additional submodules
 
-- [`qmat.nodes`](https://github.com/Parallel-in-Time/qmat/blob/main/qmat/nodes.py) : can be modified to add new functionalities to the `NodesGenerator` class, or improve some existing implementations
-- [`qmat.lagrange`](https://github.com/Parallel-in-Time/qmat/blob/main/qmat/lagrange.py) : can be modified to add new functionalities to the `LagrangeApproximation` class, or improve some existing implementations
-- [`qmat.mathutils`](https://github.com/Parallel-in-Time/qmat/blob/main/qmat/mathutils.py) : can be modified to add additional mathematical utility functions used by some parts in `qmat` (like array operations, regression tools, etc ...)
-- [`qmat.utils`](https://github.com/Parallel-in-Time/qmat/blob/main/qmat/utils.py) : can be modified to add additional (non mathematical) utility functions used by some parts in `qmat` (like timers, implementation check function, etc ...)
+- {py:mod}`qmat.nodes` : can be modified to add new functionalities to the `NodesGenerator` class, or improve some existing implementations
+- {py:mod}`qmat.lagrange` : can be modified to add new functionalities to the `LagrangeApproximation` class, or improve some existing implementations
+- {py:mod}`qmat.mathutils` : can be modified to add additional mathematical utility functions used by some parts in `qmat` (like array operations, regression tools, etc ...)
+- {py:mod}`qmat.utils` : can be modified to add additional (non mathematical) utility functions used by some parts in `qmat` (like timers, implementation check function, etc ...)

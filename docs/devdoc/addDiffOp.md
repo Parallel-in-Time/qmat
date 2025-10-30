@@ -39,7 +39,7 @@ And that's all ! The `registerDiffOp` operator will automatically
 > in order to run the tests (see the {py:func}`DiffOp.test <qmat.solvers.generic.DiffOp.test>`
 > class method). But you can change that by overriding the `test` class method and put your own
 > preset parameters for the test (checkout the
-> {py:func}`ProtheroRobinson <qmat.solvers.generic.diffops.ProtheroRobinson>` classes for an example).
+> {py:func}`ProtheroRobinson <qmat.solvers.generic.diffops.ProtheroRobinson>` class for an example).
 
 Finally, the `DiffOp` class implements a default `fSolve` method,
 but you can also implement a more efficient approach tailored to your problem like this :
