@@ -29,8 +29,8 @@ def solveDahlquistSDC(lam, u0, tEnd, nSteps:int, nSweeps:int, Q:np.ndarray, QDel
         Approximate quadrature matrix :math:`Q_\Delta` used for SDC.
         If three dimensional, use the first dimension for the sweep index.
     weights : np.ndarray, optional
-        Quadrature weights to use for the prologation.
-        If None, prolongation is not performed. The default is None.
+        Quadrature weights to use for the step update.
+        If None, step update is not performed. The default is None.
 
     Returns
     -------
@@ -118,8 +118,8 @@ def errorDahlquistSDC(lam, u0, tEnd, nSteps, nSweeps, Q, QDelta,
     QDelta : np.ndarray
         Approximate quadrature matrix :math:`Q_\Delta` used for SDC.
     weights : np.ndarray, optional
-        Quadrature weights to use for the prologation.
-        If None, prolongation is not performed. The default is None.
+        Quadrature weights to use for the step update.
+        If None, step update is not performed. The default is None.
     uNum : np.ndarray, optional
         Numerical solution, if not provided use the `solveDahlquist` method
         to compute the solution. The default is None.
@@ -139,7 +139,7 @@ def errorDahlquistSDC(lam, u0, tEnd, nSteps, nSweeps, Q, QDelta,
     return np.linalg.norm(uNum-uExact, ord=np.inf)
 
 
-def getOrderSDC(coll, nSweeps, qDelta, prolongation):
+def getOrderSDC(coll, nSweeps, qDelta, stepUpdate):
     r"""
     Give the expected order of SDC after a fixed number of iterations.
 
@@ -151,8 +151,8 @@ def getOrderSDC(coll, nSweeps, qDelta, prolongation):
         Number of sweeps for SDC.
     qDelta : str
         Type of the :math:`Q_\Delta` approximation used.
-    prolongation : bool
-        Wether or not the prolongation is done at the end.
+    stepUpdate : bool
+        Wether or not the stepUpdate is done at the end.
 
     Returns
     -------
@@ -176,15 +176,15 @@ def getOrderSDC(coll, nSweeps, qDelta, prolongation):
             order += 1
         # rest of sweeps
         order += nSweeps-1
-    # take into account prolongation
-    if prolongation == "QUADRATURE":
+    # take into account step update
+    if stepUpdate == "QUADRATURE":
         order += 1
 
     order = min(maxOrder, order)
 
     # Edge cases with bonus order
     # TODO: couple with the Butcher theory from Joscha to retrieve this theoretically ...
-    if prolongation == "QUADRATURE":  # COPY initialization
+    if stepUpdate == "QUADRATURE":  # COPY initialization
         if qDelta == "TRAP":
             if nSweeps == 1 and nNodes == 3 and nodeType == "EQUID" and quadType == "RADAU-LEFT":
                 order += 1
@@ -226,7 +226,7 @@ def getOrderSDC(coll, nSweeps, qDelta, prolongation):
             if nSweeps == 3 and nNodes == 4 and nodeType in ["CHEBY-1", "CHEBY-2", "CHEBY-3", "CHEBY-4"]:
                 order += 1
 
-    if prolongation == "LASTNODE":
+    if stepUpdate == "LASTNODE":
         if qDelta == "BE":
             if nSweeps == 4 and nNodes == 3 and nodeType == "CHEBY-4" and quadType == "RADAU-RIGHT":
                 order += 1

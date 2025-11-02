@@ -27,14 +27,14 @@ class Phidlidoo(PhiSolver):
         # TODO : integrators implementation
 ```
 
-The first lines are not mandatory, but ensure that the `evalPhi` is properly evaluated.
+The first assertions are not mandatory, but ensure that the `evalPhi` is properly evaluated.
 
 > 📣 New `PhiSolver` classes are not automatically tested, so you'll have to write
 > some dedicated test for your new class in `tests.test_solvers.test_integrators.py`.
 > Checkout those already implemented for `ForwardEuler` and `BackwardEuler`.
 
 As for the {py:class}`DiffOp <qmat.solvers.generic.DiffOp>` class,
-the {py:class}`PhiSolver <qmat.solvers.generic.PhiSolver>` implement a generic default
+the {py:class}`PhiSolver <qmat.solvers.generic.PhiSolver>` implements a generic default
 `phiSolve` method, that you can override by a more efficient specialized approach.
 
 > 💡 Note that the model above inherits the `__init__` constructor of the `PhiSolver` class,

@@ -32,7 +32,7 @@ class Yoodlidoo(DiffOp):
 
 And that's all ! The `registerDiffOp` operator will automatically
 - add your class in the `DIFFOPS` dictionary to make it generically available
-- check if your class override properly the `evalF` function (import error if not)
+- check if your class properly overrides the `evalF` function (import error if not)
 - add your class to the [CI tests](./testing.md)
 
 > 📣 Per default, all `DiffOp` classes must be instantiable with default parameters

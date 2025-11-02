@@ -23,16 +23,14 @@ source ./env/bin/activate
 
 If not already done, install all the test dependencies listed in the [pyproject.toml](../../pyproject.toml) file
 under the `project.optional-dependencies` section.
-Those can be installed one by one (if not already on your system),
-or use this (dirty) shortcut by running from the `qmat` root folder :
+Those can be installed (if not already on your system)
+by running from the `qmat` root folder :
 
 ```bash
-pip install .[test]     # install qmat locally and all test dependencies
-pip uninstall qmat      # remove the frozen qmat package installed locally
+pip install -e .[test]     # install qmat locally and all test dependencies
 ```
 
-> 📣 Remember that the [recommended installation approach for developer](../installation)
-> is to install in **editable mode** using `pip install -e .[test]`.
+> 📣 Remember that this is the [recommended installation approach for developers](../installation).
 
 ## Test local changes
 

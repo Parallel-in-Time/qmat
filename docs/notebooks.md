@@ -7,12 +7,10 @@ All tutorials are written in jupyter notebooks, that can be :
 - read using the [online documentation](https://qmat.readthedocs.io/en/latest/notebooks.html)
 - downloaded from the [notebook folder](https://github.com/Parallel-in-Time/qmat/tree/main/docs/notebooks) and played with
 
-> 🛠️ Basic usage tutorials are finalized and polished, the rest is still in construction ...
-
-Notebooks are categorized into those main sections :
+> 📋 _Table of content_ :
 
 1. **Basic usage** : how to generate and use basic $Q$-coefficients and $Q_\Delta$ approximations, through a step-by-step tutorial going from generic Runge-Kutta methods to SDC for simple problems.
-2. **Extended usage** : additional features or `qmat` to go deeper into time-integration (Node-to-Node formulation, use for non-linear problems, $\phi$-SDC, ...)
+2. **Advanced tutorials** : additional features or `qmat` to go deeper into time-integration (Node-to-Node formulation, use for non-linear problems, $\phi$-SDC, ...)
 3. **Components usage** : how to use the main utility modules, like {py:mod}`qmat.lagrange`, etc ...
 
 

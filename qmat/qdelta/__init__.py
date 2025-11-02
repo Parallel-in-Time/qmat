@@ -34,22 +34,6 @@ Examples
 
 Note
 ----
-All :math:`Q_\Delta` approximations may need different parameters to be computed (e.g `nodes` for BE or `Q` for LU).
-But **you don't need a different call for each approximation** : additional keyword arguments may be given,
-and ignored when the approximation don't need them ...
-
->>> qGen:QGenerator = ... # any QGenerator object implemented in qmat.qcoeff.[...]
->>>
->>> # Generic call with generic function
->>> from qmat.qdelta import genQDeltaCoeffs
->>> for qdType in ["BE", "LU"]:
->>>     qDelta = genQDeltaCoeffs(qdType, nodes=qGen.nodes, Q=qGen.Q)
->>>
->>> # Generic call with generic QDeltaGenerator objects import
->>> from qmat.qdelta import QDELTA_GENERATORS
->>> for qdType in ["BE", "LU"]:
->>>     qDelta = QDELTA_GENERATORS[qdType](nodes=qGen.nodes, Q=qGen.Q).getQDelta()
-
 📣 If you want to **cover all available approximations** implemented in `qmat`,
 we highly suggest to use the `qGen` keyword argument, allowing to extract any
 required parameter from a `QGenerator` object, e.g :

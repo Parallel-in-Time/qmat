@@ -96,7 +96,7 @@ class MyGenerator(QGenerator):
     # Implementation of nodes, weights and Q properties
 ```
 
-You can provide required parameters (like `param1`) or optional ones with default value (like `param2`).
+You can provide required parameters (_e.g_ `param1`) or optional ones with default value (_e.g_ `param2`).
 
 > ⚠️ For required parameters, you must provide a default value in the class attribute `DEFAULT_PARAMS`, such that the `QGenerator.getInstance()` class method works.
 > The later is used during testing to create a default instance of the $Q$-generator, by setting required parameters values using `DEFAULT_PARAMS`.
@@ -190,16 +190,16 @@ class MyGenerator(QDeltaGenerator):
 But then it is necessary to :
 
 1. add the `**kwargs` arguments to your constructor, but don't use it for your generator's parameters : `**kwargs` is only used when $Q_\Delta$ matrices are generated from different types of generators using one single call
-2. properly redefine the `size` property if you don't store any $Q$ matrix attribute in your constructor
+2. properly redefine the `size` property **if you don't store any** $Q$ **matrix attribute** in your constructor
 
 ## Additional sub-packages
 
 - {py:mod}`qmat.solvers` : implements various generic ODE making use of `qmat`-generated coefficients. Can be modified to [add new differential operators](./addDiffOp.md) or [add new $\phi$-based integrators](./addPhiIntegrator.md)
-- {py:mod}`qmat.playgrounds` : can be modified to [add a personal playground](./addPlayground.md) (non-tested experiments / examples)
+- {py:mod}`qmat.playgrounds` : can be modified to [add a playground](./addPlayground.md), _i.e_ non-tested experiments or examples script
 
 ## Additional submodules
 
-- {py:mod}`qmat.nodes` : can be modified to add new functionalities to the `NodesGenerator` class, or improve some existing implementations
-- {py:mod}`qmat.lagrange` : can be modified to add new functionalities to the `LagrangeApproximation` class, or improve some existing implementations
+- {py:mod}`qmat.nodes` : can be modified to add new functionalities to the `NodesGenerator` class, or improve the current implementations
+- {py:mod}`qmat.lagrange` : can be modified to add new functionalities to the `LagrangeApproximation` class, or improve the current implementations
 - {py:mod}`qmat.mathutils` : can be modified to add additional mathematical utility functions used by some parts in `qmat` (like array operations, regression tools, etc ...)
-- {py:mod}`qmat.utils` : can be modified to add additional (non mathematical) utility functions used by some parts in `qmat` (like timers, implementation check function, etc ...)
+- {py:mod}`qmat.utils` : can be modified to add additional (non mathematical) utility functions used by some parts in `qmat` (like timers, implementation check functions, etc ...)

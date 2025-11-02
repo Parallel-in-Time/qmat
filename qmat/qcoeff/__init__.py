@@ -153,7 +153,7 @@ class QGenerator(object):
         nSteps : int
             Number of time-step for the whole :math:`[0,T]` interval.
         useEmbeddedWeights : bool, optional
-            Wether or not use the embedded weights for the prolongation. The default is False.
+            Wether or not use the embedded weights for the step update. The default is False.
 
         Returns
         -------
@@ -195,7 +195,7 @@ class QGenerator(object):
             Numerical solution, if not provided use the `solveDahlquist` method
             to compute the solution. The default is None.
         useEmbeddedWeights : bool, optional
-            Wether or not use the embedded weights for the prolongation. The default is False.
+            Wether or not use the embedded weights for the step update. The default is False.
 
         Returns
         -------

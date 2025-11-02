@@ -32,7 +32,7 @@ In case you are interested in contributing but don't have any idea on what, chec
 
 ## Base recipes
 
-_A few base memo on how to develop this package ..._
+_Some memos on how to develop this package ..._
 
 - [Code structure](./devdoc/structure.md)
 - [Add a Runge-Kutta scheme](./devdoc/addRK.md)

@@ -7,7 +7,7 @@ and the selected approach is to define **one class for one scheme**.
 
 ## Standard scheme
 
-In order to add a new RK, search first for its section in the `butcher.py` file, depending on its type
+To add a new RK method, search first for its section in the `butcher.py` file, depending on its type
 (explicit or implicit) and its order. Then add a new class at the bottom of this section following this template :
 
 ```python
@@ -47,7 +47,7 @@ To test your scheme ... you don't have to do anything 🥳 : all RK schemes are 
 thanks to the [registration mechanism](./structure.md), that checks (in particular) the convergence
 order of each scheme (global truncation error).
 
-> ⚠️ Depending on the implemented RK scheme, convergence test may fail ... in that case no worries 😉 you'll just have to adapt your scheme to the test, as explained below :
+> ⚠️ Depending on the implemented RK scheme, convergence test may fail ... in that case no worries 😉 you'll just have to adapt your scheme to the test, as explained below ...
 
 All convergence tests are done on the following Dahlquist problem :
 

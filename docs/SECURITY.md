@@ -12,6 +12,6 @@ While we recommend the use of the latest version, below is the list of the curre
 
 ## Reporting a Vulnerability
 
-If you see any vulnerability with this package, please open an 
+If you see any vulnerability with this package, please open an
 [issue on the Github interface ...](https://github.com/Parallel-in-Time/qmat/issues),
-so that is can be solved as quickly as possible by the developing community.
+so that is can be solved as quickly as possible by our developing community.
