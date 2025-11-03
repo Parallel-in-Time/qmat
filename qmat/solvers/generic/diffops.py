@@ -35,7 +35,7 @@ class Dahlquist(DiffOp):
     Note
     ----
     This class is implemented for illustration and testing purposes.
-    For real applications, consider using the
+    To solve with many :math:`\lambda` values, consider using the
     :class:`qmat.solvers.dahlquist.Dahlquist` class instead.
 
     Parameters
@@ -58,7 +58,7 @@ class Dahlquist(DiffOp):
 @registerDiffOp
 class Lorenz(DiffOp):
     r"""
-    RHS of the Lorentz system, which can be written :
+    RHS of the Lorenz system, which can be written :
 
     .. math::
         \frac{dx}{dt} = \sigma (y-x), \; \frac{dy}{dt} = x (\rho - z) - y,

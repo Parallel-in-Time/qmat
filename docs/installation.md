@@ -47,7 +47,7 @@ the package in _editable mode_ :
 
 ```bash
 cd qmat     # go into the local git repo (if not already there)
-pip install -e .[test]
+pip install -e .[test]    # on MAC-OS : pip install -e ".[test]" 
 ```
 
 This will link your python installation to your local `qmat` folder,

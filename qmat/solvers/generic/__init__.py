@@ -200,7 +200,6 @@ class DiffOp():
             raise ValueError("evalF cannot be properly evaluated into an array like u0")
 
         try:
-            dt = dt
             uEval *= -dt
             uEval += u0
             uSolve = np.copy(u0)

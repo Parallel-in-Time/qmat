@@ -1,14 +1,13 @@
 # Add a differential operator
 
 📜 _Solvers implemented in {py:mod}`qmat.solvers.generic` can be used_
-_with others {py:class}`DiffOp <qmat.solvers.generic.DiffOp>` classes_
+_with other {py:class}`DiffOp <qmat.solvers.generic.DiffOp>` classes_
 _than those implemented in {py:mod}`qmat.solvers.generic.diffops`._
 
 To add a new one, implement it at the end of the `diffops.py` module,
 using the following template :
 
 ```python
-
 @registerDiffOp
 class Yoodlidoo(DiffOp):
     r"""

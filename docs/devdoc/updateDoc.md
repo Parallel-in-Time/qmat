@@ -12,7 +12,7 @@ the [source code](https://github.com/Parallel-in-Time/qmat) and install the pack
 ```bash
 git clone https://github.com/Parallel-in-Time/qmat.git
 cd qmat
-pip install -e .[docs]
+pip install -e .[docs]  # on MAC-OS : pip install -e ".[docs]"
 ```
 
 > 📜 The `-e` option ensures that your installed python package is directly linked to the sources (no copy of code),

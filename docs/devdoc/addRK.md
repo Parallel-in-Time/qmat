@@ -82,13 +82,13 @@ class NewRK(RK):
 
 Per default, $Q$-generators define the order of the embedded method (using those additional coefficient)
 as **one order less than the method's order** (that is, returned by the `order` property).
-If this is not the case, then you should override the `weightEmbedded` property from the base class :
+If this is not the case, then you should override the `orderEmbedded` property from the base class :
 
 ```python
 @registerRK
 class NewRK(RK):
     # ...
     @property
-    def weightsEmbedded(self):
+    def orderEmbedded(self):
         return ...  # effective embedded order
 ```

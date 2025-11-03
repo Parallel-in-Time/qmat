@@ -25,10 +25,10 @@ def testDahlquist(scheme, tEnd, nSteps, dim, lam):
 
     if scheme == "Collocation":
         assert np.allclose(qGen.nodes[-1], 1), \
-            "default instance for Collocation does have 1 as last node, but test depends on it"
+            "default instance for Collocation does not have 1 as last node, but test depends on it"
         sol2 = solver.solve(qGen.Q, None)
         assert np.allclose(sol2, ref), \
-            "Dahlquist without solver do not give the same solution as reference solver"
+            "Dahlquist without weights do not give the same solution as reference solver"
 
 
 @pytest.mark.parametrize("lam", [1j, -1])
@@ -73,7 +73,7 @@ def testDahlquistIMEX(scheme, tEnd, nSteps, dim, lam):
     assert np.allclose(sol, ref), \
         "DahlquistIMEX solver does not match Dahlquist solver with implicit part only"
 
-    if scheme == "Collocation":
+    if scheme in ["Collocation", "DIRK43"]:
         sol = solver.solve(QI=qGen.Q, wI=None, QE=qGen.Q, wE=None)
         assert np.allclose(sol, ref), \
             "DahlquistIMEX solver without weights does not match Dahlquist solver with implicit part only"

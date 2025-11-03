@@ -28,6 +28,7 @@ by running from the `qmat` root folder :
 
 ```bash
 pip install -e .[test]     # install qmat locally and all test dependencies
+# on MAC-OS : pip install -e ".[test]"
 ```
 
 > 📣 Remember that this is the [recommended installation approach for developers](../installation).

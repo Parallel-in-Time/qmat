@@ -79,7 +79,7 @@ def testLinearCoeffSolverDahlquistSDC(
 
 
 @pytest.fixture(scope="session")
-def uRefLorentz():
+def uRefLorenz():
     diffOp = Lorenz()
     tEnd = 0.1
     qGenRef = Q_GENERATORS["RK4"].getInstance()
@@ -89,10 +89,10 @@ def uRefLorentz():
 
 
 @pytest.mark.parametrize("scheme", ["BE", "FE", "TRAP",  "RK4", "DIRK43"])
-def testLinearCoeffSolverLorenz(scheme, uRefLorentz):
-    diffOp = uRefLorentz["diffOp"]
-    uRef = uRefLorentz["sol"]
-    tEnd = uRefLorentz["tEnd"]
+def testLinearCoeffSolverLorenz(scheme, uRefLorenz):
+    diffOp = uRefLorenz["diffOp"]
+    uRef = uRefLorenz["sol"]
+    tEnd = uRefLorenz["tEnd"]
 
     nStepsVals = [10, 50, 100]
     err = []
@@ -114,10 +114,10 @@ def testLinearCoeffSolverLorenz(scheme, uRefLorentz):
 @pytest.mark.parametrize("nSweeps", [1, 2])
 @pytest.mark.parametrize("nNodes", [3, 4])
 @pytest.mark.parametrize("scheme", ["BE", "FE", "LU"])
-def testLinearCoeffSolverLorenzSDC(scheme, nNodes, nSweeps, quadType, uRefLorentz):
+def testLinearCoeffSolverLorenzSDC(scheme, nNodes, nSweeps, quadType, uRefLorenz):
     diffOp = Lorenz()
-    uRef = uRefLorentz["sol"]
-    tEnd = uRefLorentz["tEnd"]
+    uRef = uRefLorenz["sol"]
+    tEnd = uRefLorenz["tEnd"]
 
     nStepsVals = [10, 50, 100]
 

@@ -16,7 +16,13 @@ class Dahlquist():
         \frac{du}{dt} = \lambda u, \quad u(0)=u_0, \quad t \in [0,T].
 
     It can be used to solve the equation with multiple :math:`\lambda`
-    values (multiple trajectories).
+    values (multiple trajectories) using efficient vectorized
+    computation.
+    Furthermore, it has no restriction on the used 
+    :math:`Q` and :math:`Q_\Delta` matrices (can be dense),
+    which is not the case for the generic
+    :class:`CoeffSolver` used with 
+    :class:`qmat.solvers.generic.diffops.Dahlquist`.
 
     Parameters
     ----------
