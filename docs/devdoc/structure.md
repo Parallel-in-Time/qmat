@@ -1,20 +1,20 @@
-# Generic code structure
+# Code structure
 
-📜 _Quick introduction on the code design and how to extend it ..._
+📜 _Quick introduction on how the package is designed and how to extend it ..._
 
 ## Registration mechanism
 
 The two main features, namely the generation of $Q$-coefficients and $Q_\Delta$ approximations,
-are respectively implemented in the `qmat.qcoeff` and `qmat.qdelta` sub-packages.
+are respectively implemented in the {py:mod}`qmat.qcoeff` and {py:mod}`qmat.qdelta` sub-packages.
 Different categories of generators are implemented in dedicated submodules of their respective sub-packages,
-_e.g_ : 
+_e.g_ :
 
-- `qmat.qcoeff.collocation` for Collocation-based $Q$-generators 
-- `qmat.qdelta.algebraic` for algebraic based $Q_\Delta$ approximations
+- {py:mod}`qmat.qcoeff.collocation` for Collocation-based $Q$-generators
+- {py:mod}`qmat.qdelta.algebraic` for algebraic based $Q_\Delta$ approximations
 - ...
 
 Each sub-package contains a `__init__.py` file implementing the generic parent class for all generators.
-In their submodules, generators are implemented using a **registration mechanism**, 
+In their submodules, generators are implemented using a **registration mechanism**,
 _e.g_ for the Collocation-based $Q$-generators :
 
 ```python
@@ -30,7 +30,7 @@ A similar mechanism is used for $Q_\Delta$ generators. The `register` function i
 
 - checks that the implemented class properly overrides the method of its parent class (more specific details below)
 - stores it in a centralized dictionary allowing a quick access using the class name or one of its aliases :
-    - `qmat.Q_GENERATORS` for $Q$-coefficients 
+    - `qmat.Q_GENERATORS` for $Q$-coefficients
     - `qmat.QDELTA_GENERATORS` for the $Q_\Delta$ approximations
 
 > 💡 Different aliases for the generator can be provided with the `aliases` class attribute, but are not mandatory (defining the class attribute is optional).
@@ -62,8 +62,8 @@ class MyGenerator(QGenerator):
         # TODO : returns an int
 ```
 
-The `nodes`, `weights`, and `Q` properties have to be overridden 
-(`register` actually raises an error if not) and return 
+The `nodes`, `weights`, and `Q` properties have to be overridden
+(`register` actually raises an error if not) and return
 the expected arrays in `numpy.ndarray` format :
 
 1. `nodes` : 1D vector of size `nNodes`
@@ -96,7 +96,7 @@ class MyGenerator(QGenerator):
     # Implementation of nodes, weights and Q properties
 ```
 
-You can provide required parameters (like `param1`) or optional ones with default value (like `param2`).
+You can provide required parameters (_e.g_ `param1`) or optional ones with default value (_e.g_ `param2`).
 
 > ⚠️ For required parameters, you must provide a default value in the class attribute `DEFAULT_PARAMS`, such that the `QGenerator.getInstance()` class method works.
 > The later is used during testing to create a default instance of the $Q$-generator, by setting required parameters values using `DEFAULT_PARAMS`.
@@ -109,7 +109,7 @@ pytest -v ./tests/test_qcoeff
 
 This will run all consistency and convergence check tests on all generators (including yours), more details on how to run the tests are provided [here ...](./testing.md)
 
-> 🔔 Convergence tests for new $Q$-generators are automatically done depending on its order. In some particular case, you may 
+> 🔔 Convergence tests for new $Q$-generators are automatically done depending on its order. In some particular case, you may
 > have to add a `CONV_TEST_NSTEPS` class variable to your generator class for those tests to pass
 > (_e.g_, if your generator has a high error constant).
 > See [documentation on adding RK schemes](./addRK.md#convergence-testing) for more details ...
@@ -139,7 +139,7 @@ The default constructor stores the $Q$ matrix that is approximated,
 and the `size` property is used to determine the shape of generated $Q_\Delta$ approximation,
 and the `zeros` property can be used to generate the initial basis for $Q_\Delta$.
 
-> 🔔 The default constructor is used by all the specialized generators implemented in `qmat.qdelta.algebraic`, 
+> 🔔 The default constructor is used by all the specialized generators implemented in `qmat.qdelta.algebraic`,
 > as their $Q_\Delta$ approximation is build directly from the $Q$ matrix given as parameter.
 
 
@@ -158,8 +158,8 @@ class MyGenerator(QDeltaGenerator):
 The `computeQDelta` must simply returns the $Q_\Delta$ approximation for this generator,
 potentially using the `zeros` property as starting basis.
 
-**📣 Important :** even if this may not be used by your generator, the `computeQDelta` method **must always** 
-take a `k` optional parameter corresponding to a **sweep or iteration number** in SDC or iterated RK methods, 
+**📣 Important :** even if this may not be used by your generator, the `computeQDelta` method **must always**
+take a `k` optional parameter corresponding to a **sweep or iteration number** in SDC or iterated RK methods,
 starting at $k=1$ for the first sweep.
 The default value for this parameter must be :
 
@@ -190,14 +190,16 @@ class MyGenerator(QDeltaGenerator):
 But then it is necessary to :
 
 1. add the `**kwargs` arguments to your constructor, but don't use it for your generator's parameters : `**kwargs` is only used when $Q_\Delta$ matrices are generated from different types of generators using one single call
-2. properly redefine the `size` property if you don't store any $Q$ matrix attribute in your constructor
+2. properly redefine the `size` property **if you don't store any** $Q$ **matrix attribute** in your constructor
 
+## Additional sub-packages
+
+- {py:mod}`qmat.solvers` : implements various generic ODE making use of `qmat`-generated coefficients. Can be modified to [add new differential operators](./addDiffOp.md) or [add new $\phi$-based integrators](./addPhiIntegrator.md)
+- {py:mod}`qmat.playgrounds` : can be modified to [add a playground](./addPlayground.md), _i.e_ non-tested experiments or examples script
 
 ## Additional submodules
 
-Several "utility" modules are available in `qmat` :
-
-- [`qmat.nodes`](https://github.com/Parallel-in-Time/qmat/blob/main/qmat/nodes.py) : implement a `NodesGenerator` class for node generation with various distributions
-- [`qmat.lagrange`](https://github.com/Parallel-in-Time/qmat/blob/main/qmat/lagrange.py) : implement a `LagrangeApproximation` class used to compute weights and $Q$ matrix for collocation, interpolation coefficients, ...
-- [`qmat.sdc`](https://github.com/Parallel-in-Time/qmat/blob/main/qmat/sdc.py) : basic generic SDC solvers that can be used for first experiments and tests
-- [`qmat.utils`](https://github.com/Parallel-in-Time/qmat/blob/main/qmat/utils.py) : as the name of the submodule suggest ...
+- {py:mod}`qmat.nodes` : can be modified to add new functionalities to the `NodesGenerator` class, or improve the current implementations
+- {py:mod}`qmat.lagrange` : can be modified to add new functionalities to the `LagrangeApproximation` class, or improve the current implementations
+- {py:mod}`qmat.mathutils` : can be modified to add additional mathematical utility functions used by some parts in `qmat` (like array operations, regression tools, etc ...)
+- {py:mod}`qmat.utils` : can be modified to add additional (non mathematical) utility functions used by some parts in `qmat` (like timers, implementation check functions, etc ...)

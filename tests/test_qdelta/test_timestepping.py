@@ -7,7 +7,7 @@ from qmat.utils import getClasses
 from qmat.mathutils import numericalOrder
 from qmat.qcoeff.collocation import Collocation
 from qmat.nodes import NODE_TYPES, QUAD_TYPES
-from qmat.sdc import errorDahlquistSDC, getOrderSDC
+from qmat.solvers.sdc import errorDahlquistSDC, getOrderSDC
 
 SCHEMES = getClasses(QDELTA_GENERATORS, module="timestepping")
 

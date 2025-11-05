@@ -20,7 +20,20 @@ from qmat.utils import storeClass
 
 
 class RK(QGenerator):
-    """Base class for Runge-Kutta generators"""
+    """
+    Base class for Runge-Kutta generators
+
+    Parameters
+    ----------
+    padding : str, optional
+        Eventually add padding to the Butcher table. Can be
+
+        - LEFT : add padding corresponding to an additional node at t=0
+        - RIGHT : add padding corresponding to an additional node at t=1
+        - BOTH : add both LEFT and RIGHT padding
+
+        The default is None.
+    """
 
     A = None
     """:math:`A` matrix of the Butcher table"""
@@ -30,6 +43,29 @@ class RK(QGenerator):
     """:math:`c` coefficients of the Butcher table"""
     b2 = None
     """:math:`b_2` coefficients for the embedded methods"""
+
+    def __init__(self, padding=None):
+        if padding:
+            assert padding in ["LEFT", "RIGHT", "BOTH"], "padding choices can only be LEFT, RIGHT or BOTH"
+
+            if padding in ["LEFT", "BOTH"]:
+                self.c = np.array([0] + self.c.tolist())
+                self.b = np.array([0] + self.b.tolist())
+
+                newA = np.zeros((self.nNodes, self.nNodes))
+                newA[1:, 1:] = self.A
+                self.A = newA
+
+            if padding in ["RIGHT", "BOTH"]:
+                self.c = np.array(self.c.tolist() + [1])
+                self.b = np.array(self.b.tolist() + [0])
+
+                newA = np.zeros((self.nNodes, self.nNodes))
+                newA[:-1, :-1] = self.A
+                newA[-1] = self.b
+                self.A = newA
+
+            self.padding = padding
 
     @property
     def nodes(self)->np.ndarray: return self.c
@@ -837,7 +873,7 @@ class ARK324L2SAESDIRK(ARK324L2SAERK):
 @registerRK
 class ARK222EDIRK(RK):
     """
-    2nd-order 2-stage EDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.6] <https://doi.org/10.1016/S0168-9274(97)00056-1>`_.
+    2nd-order 2-stages EDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.6] <https://doi.org/10.1016/S0168-9274(97)00056-1>`_.
     Use as implicit part for ARK scheme in combination with ARK222ERK.
     """
 
@@ -850,7 +886,7 @@ class ARK222EDIRK(RK):
                   [0,  gamma , 0],
                   [0, 1-gamma, gamma]])
 
-    b = A[-1, :]
+    b = A[-1]
 
     @property
     def order(self)->int: return 2
@@ -859,19 +895,19 @@ class ARK222EDIRK(RK):
 @registerRK
 class ARK222ERK(ARK222EDIRK):
     """
-    2nd-order 2-stage ERK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.6]`_.
+    2nd-order 2-stages ERK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.6]`_.
     Use as explicit part for ARK scheme in combination with ARK222EDIRK.
     """
     A = np.array([[0,  0 , 0],
                   [ARK222EDIRK.gamma,  0 , 0],
                   [ARK222EDIRK.delta, 1-ARK222EDIRK.delta, 0]])
-    b = A[-1, :]
+    b = A[-1]
 
 
 @registerRK
 class ARK443ESDIRK(RK):
     """
-    3rd-order 4-stage ESDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.8] <https://doi.org/10.1016/S0168-9274(97)00056-1>`_.
+    3rd-order 4-stages ESDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.8] <https://doi.org/10.1016/S0168-9274(97)00056-1>`_.
     Use as implicit part for ARK scheme in combination with ARK443ERK.
     """
 
@@ -884,7 +920,7 @@ class ARK443ESDIRK(RK):
                   [0,  3/2, -3/2, 1/2, 1/2]])
 
 
-    b = A[-1, :]
+    b = A[-1]
 
     @property
     def order(self)->int: return 3
@@ -893,7 +929,7 @@ class ARK443ESDIRK(RK):
 @registerRK
 class ARK443ERK(ARK443ESDIRK):
     """
-    3rd-order 4-stage ERK scheme `[Ascher, Ruuth & Spiteri, 1997 - sec 2.8]`_.
+    3rd-order 4-stages ERK scheme `[Ascher, Ruuth & Spiteri, 1997 - sec 2.8]`_.
     Use as explicit part for ARK scheme in combination with ARK443ESDIRK.
     """
     A = np.array([[  0  ,   0  ,  0 ,   0 , 0],
@@ -901,13 +937,47 @@ class ARK443ERK(ARK443ESDIRK):
                   [11/18,  1/18,  0 ,   0 , 0],
                   [ 5/6 , -5/6 , 1/2,   0 , 0],
                   [ 1/4 ,  7/4 , 3/4, -7/4, 0]])
-    b = A[-1, :]
+    b = A[-1]
+
+@registerRK
+class ARK343ESDIRK(RK):
+    """
+    3rd-order 3-stages ESDIRK scheme from `[Ascher, Ruuth & Spiteri, 1997 - sec 2.7] <https://doi.org/10.1016/S0168-9274(97)00056-1>`_.
+    Use as implicit part for ARK scheme in combination with ARK443ERK.
+    """
+
+    c = np.array([0, 0.4358665215, 0.7179332608, 1])
+
+    A = np.array([[0, 0,            0,            0            ],
+                  [0, 0.4358665215, 0,            0            ],
+                  [0, 0.2820667392, 0.4358665216, 0            ],
+                  [0, 1.2084966495, -0.644363171, 0.4358665215 ]])
+
+    b = A[-1]
+
+    @property
+    def order(self)->int: return 3
+
+
+@registerRK
+class ARK343ERK(ARK343ESDIRK):
+    """
+    4rd-order 4-stages ERK scheme `[Ascher, Ruuth & Spiteri, 1997 - sec 2.7]`_.
+    Use as explicit part for ARK scheme in combination with ARK343ESDIRK.
+    """
+    A = np.array([[ 0,            0,            0,            0 ],
+                  [ 0.4358665215, 0,            0,            0 ],
+                  [ 0.3212788860, 0.3966543747, 0,            0 ],
+                  [ -0.105858296, 0.5529291479, 0.5529291479, 0 ]])
+
+    @property
+    def order(self)->int: return 4
 
 
 @registerRK
 class ARK4EDIRK(RK):
     """
-    A stable 7 stage fourth order diagonally implicit stiffly accurate Runge-Kutta method with explicit first stage.
+    A stable 7-stages fourth order diagonally implicit stiffly accurate Runge-Kutta method with explicit first stage.
     Implicit part of Additive RK.4.A.2 from `[Liu & Zou, 2006] <https://doi.org/10.1016/j.cam.2005.02.020>`_.
     Use with ARK4ERK to get fourth order stiffly accurate IMEX method.
     """
@@ -932,7 +1002,7 @@ class ARK4EDIRK(RK):
 @registerRK
 class ARK4ERK(ARK4EDIRK):
     """
-    7 stage fourth order explicit stiffly accurate Runge-Kutta method.
+    7-stages fourth order explicit stiffly accurate Runge-Kutta method.
     Explicit part of Additive RK.4.A.2 from `[Liu & Zou, 2006] <https://doi.org/10.1016/j.cam.2005.02.020>`_.
     Use with ARK4EDIRK to get fourth order stiffly accurate IMEX method.
     """

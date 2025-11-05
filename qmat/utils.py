@@ -6,6 +6,7 @@ Utility function for `qmat`
 import inspect
 import pkgutil
 import functools
+from time import time
 
 def checkOverriding(cls, name, isProperty=True):
     """Check if a class overrides a method with a given name"""
@@ -70,7 +71,7 @@ def getClasses(dico, module=None):
 
 def useQGen(__init__):
     r"""
-    Wrapper to extract :math:`Q_\Delta`-generator parameters from `kwargs` argument,
+    Wrapper to extract :math:`Q_\Delta`-generator parameters from `kwargs` arguments,
     using either a :math:`Q`-generator `qGen` or separately given parameters.
     """
     pNames = [p.name for p in inspect.signature(__init__).parameters.values()
@@ -98,3 +99,41 @@ def useQGen(__init__):
         __init__(self, **params)
 
     return wrapper
+
+class Timer():
+    """
+    Utility Timer class, that can be used as follow :
+
+    >>> with Timer("stuff"):    # prints "Starting stuff ...
+    >>>     # ... do stuff
+    >>> # prints " -- tWall : {tWall}s
+
+    The description at the end can be replaced using the `descr`
+    constructor parameter, and the final wall time can be scaled
+    using the `scale` parameter. Can also be used like this :
+
+    >>> clock = Timer("stuff")
+    >>> clock.start()
+    >>> # ... do stuff
+    >>> clock.stop()
+    >>> tWall = clock.tWall
+    """
+    def __init__(self, name, scale=1, descr="tWall"):
+        self.name = name
+        self.scale = scale
+        self.descr = descr
+
+    def start(self):
+        print(f"Starting {self.name} ...")
+        self.tStart = time()
+
+    def stop(self):
+        self.tWall = time() - self.tStart
+        self.tWall /= self.scale
+        print(f" -- {self.descr} : {self.tWall:1.2e}s")
+
+    def __enter__(self):
+        self.start()
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.stop()

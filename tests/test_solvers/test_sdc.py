@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 
-from qmat.sdc import solveDahlquistSDC
+from qmat.solvers.sdc import solveDahlquistSDC
 from qmat.qcoeff.collocation import Collocation
 from qmat import QDELTA_GENERATORS
 
@@ -9,13 +9,13 @@ from qmat import QDELTA_GENERATORS
 @pytest.mark.parametrize("nNodes", [2, 3, 4])
 @pytest.mark.parametrize("qDelta", ["BE", "FE"])
 def testSweeps(qDelta, nNodes):
-    
+
     coll = Collocation(nNodes=nNodes, nodeType="LEGENDRE", quadType="RADAU-RIGHT")
     gen = QDELTA_GENERATORS[qDelta](nodes=coll.nodes)
 
     runParams = dict(
-        lam=1j, u0=1, T=np.pi, nSteps=10, nSweeps=nNodes,
-        Q=coll.Q, 
+        lam=1j, u0=1, tEnd=np.pi, nSteps=10, nSweeps=nNodes,
+        Q=coll.Q,
     )
 
     QD1 = gen.getQDelta()
@@ -35,18 +35,18 @@ def testMonitors(nSweeps, nSteps, nNodes):
     gen = QDELTA_GENERATORS["BE"](nodes=coll.nodes)
 
     runParams = dict(
-        lam=1j, u0=1, T=np.pi, nSteps=nSteps, nSweeps=nSweeps,
+        lam=1j, u0=1, tEnd=np.pi, nSteps=nSteps, nSweeps=nSweeps,
         Q=coll.Q, QDelta=gen.getQDelta(),
     )
-    
+
     uNum = solveDahlquistSDC(**runParams)
     uNum2, monitors = solveDahlquistSDC(**runParams, monitors=["errors", "residuals"])
-    
+
     assert np.allclose(uNum, uNum2), "solution with and without monitors are not the same"
 
     for key in ["errors", "residuals"]:
         assert key in monitors, f"'{key}' not in monitors"
         values = monitors[key]
-        
+
         assert values.shape == (nSweeps+1, nSteps, nNodes), f"inconsistent shape for '{key}' values"
         assert np.all(np.abs(values[-1]) < np.abs(values[-2])), f"no decreasing {key}"

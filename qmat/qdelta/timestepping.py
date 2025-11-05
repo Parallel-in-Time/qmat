@@ -23,7 +23,7 @@ from qmat.qdelta import QDeltaGenerator, QGenerator, register
 
 
 class TimeStepping(QDeltaGenerator):
-    """
+    r"""
     Base class for time-stepping based :math:`Q_\Delta` approximations
 
     Parameters
@@ -52,7 +52,7 @@ class TimeStepping(QDeltaGenerator):
 
     @staticmethod
     def extractParams(qGen:QGenerator) -> dict:
-        """
+        r"""
         Extract from a :math:`Q`-generator object all parameters
         required to instantiate the :math:`Q_\Delta`-generator
         """
