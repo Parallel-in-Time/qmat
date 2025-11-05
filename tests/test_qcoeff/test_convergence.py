@@ -32,7 +32,7 @@ def nStepsForTest(scheme, useEmbeddedWeights=False):
 
 u0 = 1
 lam = 1j
-T = 2*np.pi
+tEnd = 2*np.pi
 
 
 
@@ -49,7 +49,7 @@ def testDahlquist(scheme, useEmbeddedWeights):
 
     expectedOrder = gen.orderEmbedded if useEmbeddedWeights else gen.order
     nSteps = nStepsForTest(gen, useEmbeddedWeights)
-    err = [gen.errorDahlquist(lam, u0, T, nS, useEmbeddedWeights=useEmbeddedWeights) for nS in nSteps]
+    err = [gen.errorDahlquist(lam, u0, tEnd, nS, useEmbeddedWeights=useEmbeddedWeights) for nS in nSteps]
     order, rmse = numericalOrder(nSteps, err)
     assert rmse < 0.02, f"rmse to high ({rmse}) for {scheme}"
     assert abs(order-expectedOrder) < 0.1, f"Expected order {expectedOrder:.2f}, but got {order:.2f} for {scheme}"
@@ -67,7 +67,6 @@ def testDahlquistCollocation(nNodes, nodesType, quadType, useEmbeddedWeights=Fal
             return None
     scheme = f"Collocation({nNodes}, {nodesType}, {quadType})"
     nSteps = nStepsForTest(gen, useEmbeddedWeights)
-    tEnd = T
     err = [gen.errorDahlquist(lam, u0, tEnd, nS, useEmbeddedWeights=useEmbeddedWeights) for nS in nSteps]
     order, rmse = numericalOrder(nSteps, err)
     expectedOrder = gen.orderEmbedded if useEmbeddedWeights else gen.order

@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'QMat Package'
-copyright = '2024 PinT Community'
+copyright = '2025 PinT Community'
 author = 'PinT Community'
 
 # The short X.Y version
@@ -72,7 +72,7 @@ autoapi_type = 'python'
 autoapi_dirs = ['../qmat']
 autoapi_file_patterns = ['*.py']
 autoapi_options = [
-    'members', 'undoc-members', 
+    'members', 'undoc-members',
     'show-inheritance-diagram',
     'show-module-summary',
     ]
@@ -162,5 +162,5 @@ htmlhelp_basename = 'qmatdoc'
 # -- Options for nbsphinx galleries
 # Using _images/ is a hack to get relocated images which have been included in the pages
 nbsphinx_thumbnails = {
-    
+
 }

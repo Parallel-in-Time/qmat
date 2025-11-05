@@ -26,16 +26,19 @@ Current coverage is at 100%, so no untested line will be accepted 😇.
 
 Chosen merge strategy is to squash commits $\Rightarrow$ you don't have to care about the number of commit included in your PR, so don't be scare of making mistakes before your PR is accepted 😉
 
-> 🔔 Once your PR is accepted, please delete this branch from your fork and synchronize your `main` branch. When creating a new development branch later, ensure that you start from an up-to-date `main` branch of your fork. 
+> 🔔 Once your PR is accepted, please delete this branch from your fork and synchronize your `main` branch. When creating a new development branch later, ensure that you start from an up-to-date `main` branch of your fork.
 
 In case you are interested in contributing but don't have any idea on what, checkout out current [development roadmap 🎯](./devdoc/roadmap.md) and [project proposals 🎓](https://github.com/Parallel-in-Time/qmat/discussions/categories/project-proposals)
 
 ## Base recipes
 
-_A few base memo on how to develop this package ..._
+_Some memos on how to develop this package ..._
 
-- [General code structure](./devdoc/structure.md)
+- [Code structure](./devdoc/structure.md)
 - [Add a Runge-Kutta scheme](./devdoc/addRK.md)
+- [Add a playground](./devdoc/addPlayground.md)
+- [Add a differential operator](./devdoc/addDiffOp.md)
+- [Add a $\phi$-based time-integrator](./devdoc/addPhiIntegrator.md)
 - [Testing your changes](./devdoc/testing.md)
 - [Update this documentation](./devdoc/updateDoc.md)
 - [Version update pipeline](./devdoc/versionUpdate.md)
@@ -47,6 +50,9 @@ _A few base memo on how to develop this package ..._
 
     devdoc/structure
     devdoc/addRK
+    devdoc/addPlayground
+    devdoc/addDiffOp
+    devdoc/addPhiIntegrator
     devdoc/testing
     devdoc/updateDoc
     devdoc/versionUpdate
