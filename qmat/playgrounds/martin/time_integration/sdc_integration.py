@@ -10,6 +10,7 @@ class SDCIntegration:
         quad_type: str = "LOBATTO",  # 'LOBATTO': Always include {0, 1} in quadrature points. Add them if they don't exist.
         num_sweeps: int = None,
         micro_time_integration: str = None,  # 'erk1' = explicit Euler, 'irk1' = implicit Euler, 'imex' = implicit-explicit
+        use_quadrature: bool = True,    # Use final quadrature to compute final solution
     ):
         from qmat.qcoeff.collocation import Collocation
         import qmat.qdelta.timestepping as module
@@ -45,6 +46,8 @@ class SDCIntegration:
 
         if self.time_integration_method == "imex":
             self.time_integration_method = "imex12"
+
+        self.use_quadrature: bool = use_quadrature
 
         assert self.num_sweeps >= 1
 
@@ -87,13 +90,12 @@ class SDCIntegration:
             # Copy tendency arrays
             evalF_k0[:] = evalF_k1[:]
 
-        if 0:
-            # If we're using Radau-right, we can just use the last value
-            u[0] = u[-1]
-
-        else:
+        if self.use_quadrature:
             # Compute new starting value with quadrature on tendencies
             u[0] = u[0] + dt * self.weights @ evalF_k0
+        else:
+            # If we're using Radau-right, we can just use the last value
+            u[0] = u[-1]
 
         assert u0.shape == u[0].shape
         return u[0]
@@ -168,13 +170,13 @@ class SDCIntegration:
             # Copy tendency arrays
             evalF_k0[:] = evalF_k1[:]
 
-        if 0:
-            # If we're using Radau-right, we can just use the last value
-            u[0] = u[-1]
-
-        else:
+        if self.use_quadrature:
             # Compute new starting value with quadrature on tendencies
             u[0] = u[0] + dt * self.weights @ evalF_k0
+
+        else:
+            # If we're using Radau-right, we can just use the last value
+            u[0] = u[-1]
 
         assert u0.shape == u[0].shape
         return u[0]
@@ -201,6 +203,8 @@ class SDCIntegration:
         # Backup integrator contribution I[...] of previous iteration
         ISolves = np.empty_like(u)
 
+        print("="*80)
+        print("INITIAL")
         #
         # Propagate initial condition to all nodes
         #
@@ -227,11 +231,15 @@ class SDCIntegration:
                 ISolves[m] = u[m] - u[m - 1]
 
             evalF_k0[m] = de_solver.evalF(u[m], t + dt * self.nodes[m])
+            print(m, "eval_f", evalF_k0[m])
+            print(" ", "u", u[m])
 
         #
         # Iteratively sweep over SDC nodes
         #
         for _ in range(1, self.num_sweeps):
+            print("="*80)
+            print(f"SWEET {_}")
             for m in range(0, self.N):
                 if m > 0:
                     #
@@ -256,17 +264,18 @@ class SDCIntegration:
                     ISolves[m] = u[m] - u[m - 1] + ISolves[m] - dt * qeval
 
                 evalF_k1[m] = de_solver.evalF(u[m], t + dt * self.nodes[m])
+                print(m, "eval_f", evalF_k1[m])
+                print(" ", "u", u[m])
 
             # Copy tendency arrays
             evalF_k0[:] = evalF_k1[:]
 
-        if 0:
-            # If we're using Radau-right, we can just use the last value
-            u[0] = u[-1]
-
-        else:
+        if self.use_quadrature:
             # Compute new starting value with quadrature on tendencies
             u[0] = u[0] + dt * self.weights @ evalF_k0
+        else:
+            # If we're using Radau-right, we can just use the last value
+            u[0] = u[-1]
 
         assert u0.shape == u[0].shape
         return u[0]
@@ -352,13 +361,12 @@ class SDCIntegration:
             # Copy tendency arrays
             evalF_k0[:] = evalF_k1[:]
 
-        if 0:
-            # If we're using Radau-right, we can just use the last value
-            u[0] = u[-1]
-
-        else:
+        if self.use_quadrature:
             # Compute new starting value with quadrature on tendencies
             u[0] = u[0] + dt * self.weights @ evalF_k0
+        else:
+            # If we're using Radau-right, we can just use the last value
+            u[0] = u[-1]
 
         assert u0.shape == u[0].shape
         return u[0]

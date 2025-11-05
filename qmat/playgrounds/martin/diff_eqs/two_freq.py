@@ -90,10 +90,10 @@ class TwoFreq(DESolver):
         assert retval.shape == rhs.shape
         return retval
 
-    def int_f(self, u0: np.ndarray, t: float) -> np.ndarray:
+    def int_f(self, u0: np.ndarray, dt: float, t: float = 0.0) -> np.ndarray:
         from scipy.linalg import expm
 
-        assert isinstance(t, float)
-        retval = expm(self.L * t) @ u0
+        assert isinstance(dt, float)
+        retval = expm(self.L * (t + dt)) @ u0
         assert retval.shape == u0.shape
         return retval

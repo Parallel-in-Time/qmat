@@ -96,7 +96,7 @@ def test_dahlquist_integration_of_solution():
 
     u_analytical = dahlquist.int_f_t0(u0, dt=T)
 
-    u1 = dahlquist.int_f(u0, dt=T*0.5, t0=0.0)
-    u2 = dahlquist.int_f(u1, dt=T*0.5, t0=T*0.5)
+    u1 = dahlquist.int_f(u0, dt=T*0.5, t=0.0)
+    u2 = dahlquist.int_f(u1, dt=T*0.5, t=T*0.5)
 
     assert np.all(np.isclose(u_analytical, u2))

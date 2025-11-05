@@ -117,15 +117,17 @@ class DESolver(ABC):
         pass
 
     @abstractmethod
-    def int_f(self, u0: np.ndarray, t: float) -> np.ndarray:
+    def int_f(self, u0: np.ndarray, dt: float, t: float = 0.0) -> np.ndarray:
         """
-        Compute the (analytical) solution at time `t`.
+        Compute the (analytical) solution at time `dt` + t.
 
         Parameters
         ----------
         u0 : np.ndarray
             Array of shape (N,) representing the initial condition.
         t : float
-            Time at which to evaluate the solution.
+            Time stamp of u0
+        dt : float
+            Time step size
         """
         pass

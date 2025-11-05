@@ -83,7 +83,7 @@ class Burgers(DESolver):
         f = -u * du_dx + self._nu * d2u_dx2
         return f
 
-    def int_f(self, u0: np.ndarray, t: float) -> np.ndarray:
+    def int_f(self, u0: np.ndarray, dt: float, t: float = 0.0) -> np.ndarray:
         """
         Compute the analytical solution of the 1D viscous Burgers' equation at time `t`.
 
@@ -121,7 +121,7 @@ class Burgers(DESolver):
         phi_hat = np.fft.fft(phi)
 
         # Solve directly the heat equation in spectral space with exponential integration
-        phi_hat = phi_hat * np.exp(self._nu * self._d_dx_**2 * t)
+        phi_hat = phi_hat * np.exp(self._nu * self._d_dx_**2 * (t+dt))
 
         phi = np.fft.ifft(phi_hat)
         phi = np.log(phi)

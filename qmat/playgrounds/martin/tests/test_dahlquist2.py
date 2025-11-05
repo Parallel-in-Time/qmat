@@ -18,7 +18,7 @@ def test_dahlquist2():
         print("="*80)
         results = []
 
-        u_analytical = dahlquist2.int_f(u0, t=T)
+        u_analytical = dahlquist2.int_f(u0, dt=T)
 
         for nt in range(4):
 

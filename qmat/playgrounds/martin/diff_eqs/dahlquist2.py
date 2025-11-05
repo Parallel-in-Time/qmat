@@ -36,8 +36,9 @@ class Dahlquist2(DESolver):
         assert retval.shape == u.shape
         return retval
 
-    def int_f(self, u0: np.ndarray, t: float) -> np.ndarray:
-        assert isinstance(t, float)
-        retval = (self.s * np.exp(t * self.lam1) + (1.0 - self.s) * np.exp(t * self.lam2)) * u0
+    def int_f(self, u0: np.ndarray, dt: float, t: float = 0.0) -> np.ndarray:
+        assert isinstance(dt, float)
+        tfinal = t + dt
+        retval = (self.s * np.exp(tfinal * self.lam1) + (1.0 - self.s) * np.exp(tfinal * self.lam2)) * u0
         assert retval.shape == u0.shape
         return retval

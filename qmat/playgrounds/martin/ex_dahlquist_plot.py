@@ -9,7 +9,7 @@ t: np.array = np.linspace(0, 4*np.pi, N, endpoint=False)
 
 dahlquist: Dahlquist = Dahlquist(lam1=20.0j, lam2=1.0j)
 
-u_eval = np.array([dahlquist.int_f(u0, _) for _ in t])
+u_eval = np.array([dahlquist.int_f(u0, dt=_) for _ in t])
 
 
 plt.plot(t, np.real(u_eval), label="Re(u)")

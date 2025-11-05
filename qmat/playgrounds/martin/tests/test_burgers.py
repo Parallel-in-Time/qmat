@@ -24,7 +24,7 @@ def test_burgers():
         print("="*80)
         results = []
 
-        u_analytical = burgers.int_f(u0, t=T)
+        u_analytical = burgers.int_f(u0, dt=T)
 
         for nt in range(2, 4):
 

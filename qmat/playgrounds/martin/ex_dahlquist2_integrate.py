@@ -25,7 +25,7 @@ for nt in range(1):
 
     dt = T / num_timesteps
 
-    u_analytical_fin = dahlquist2.int_f(u0, t=T)
+    u_analytical_fin = dahlquist2.int_f(u0, dt=T)
     u0 = dahlquist2.initial_u0()
 
     u = u0.copy()

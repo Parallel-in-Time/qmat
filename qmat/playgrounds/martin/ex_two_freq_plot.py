@@ -9,7 +9,7 @@ t: np.array = np.linspace(0, 4*np.pi, N, endpoint=False)
 two_freq: TwoFreq = TwoFreq(lam1=1.0j, lam2=20.0j, lam3=0.5j)
 
 u0 = two_freq.initial_u0()
-u_eval = np.array([two_freq.int_f(u0, _) for _ in t])
+u_eval = np.array([two_freq.int_f(u0, dt=_) for _ in t])
 
 for i in range(2):
     plt.plot(t, np.real(u_eval[:, i]), label=f"Re(u[{i}])")

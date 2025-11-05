@@ -99,15 +99,15 @@ class Dahlquist(DESolver):
         assert retval.shape == u0.shape
         return retval
 
-    def int_f(self, u0: np.ndarray, dt: float, t0: float = 0.0) -> np.ndarray:
+    def int_f(self, u0: np.ndarray, dt: float, t: float = 0.0) -> np.ndarray:
         """
         Integrate the solution from t0 to t1.
         """
 
-        assert isinstance(t0, (float, int))
+        assert isinstance(t, (float, int))
         assert isinstance(dt, (float, int))
 
-        if t0 == 0:
+        if t == 0:
             return self.int_f_t0(u0, dt=dt)
 
         # Lambda
@@ -115,7 +115,7 @@ class Dahlquist(DESolver):
 
         s = self.ext_scalar
 
-        retval = np.exp(dt * lam) * (u0 - s*np.sin(t0)) + s * np.sin(t0+dt)
+        retval = np.exp(dt * lam) * (u0 - s*np.sin(t)) + s * np.sin(t+dt)
 
         assert retval.shape == u0.shape
         return retval
