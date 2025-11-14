@@ -1,0 +1,99 @@
+import numpy as np
+from qmat.playgrounds.martin.diff_eqs.de_solver import DESolver
+
+
+class TwoFreq(DESolver):
+    """
+    Test equation using a matrix to generate a
+    superposition of two frequencies in the solution.
+    """
+
+    def __init__(self, lam1: complex, lam2: complex, lam3: complex = None, lam4: complex = None):
+        """
+        :param lam1: L[0,0]
+        :param lam2: L[0,1]
+        :param lam3: L[1,0]
+        :param lam4: L[1,1]
+        """
+
+        self.lam1: complex = lam1
+        self.lam2: complex = lam2
+        self.lam3: complex = lam3 if lam3 is not None else 0
+        self.lam4: complex = lam4 if lam4 is not None else lam2
+
+        self.L = np.array([[self.lam1, self.lam2], [self.lam3, self.lam4]], dtype=np.complex128)
+        self.L1 = np.copy(self.L)
+        self.L1[:, 1] = 0
+        self.L2 = np.copy(self.L)
+        self.L2[:, 0] = 0
+
+        # Compute eigenvalues and eigenvectors of L
+        self.eigvals, self.eigvecs = np.linalg.eig(self.L)
+
+        if not np.all(np.isclose(np.real(self.eigvals), 0)):
+            raise Exception("Dahlquist3 matrix L must have purely imaginary eigenvalues")
+
+    def initial_u0(self, mode: str = None) -> np.ndarray:
+        return np.array([1, 0.1], dtype=np.complex128)
+
+    def evalF(self, u: np.ndarray, t: float) -> np.ndarray:
+        assert isinstance(t, float)
+        retval = self.L @ u
+        assert retval.shape == u.shape
+        return retval
+
+    def evalF1(self, u: np.ndarray, t: float) -> np.ndarray:
+        assert isinstance(t, float)
+        retval = self.L1 @ u
+        assert retval.shape == u.shape
+        return retval
+
+    def evalF2(self, u: np.ndarray, t: float) -> np.ndarray:
+        assert isinstance(t, float)
+        retval = self.L2 @ u
+        assert retval.shape == u.shape
+        return retval
+
+    def fSolve(self, rhs: np.ndarray, dt: float, t: float) -> np.ndarray:
+        """
+        Solve
+            `u_t = L u`
+        implicitly, i.e., return u_new such that
+            u_new = u + dt * L u_new
+        <=> u_new - dt * L u_new = u
+        <=> (I - dt * L) u_new = u
+        """
+        assert isinstance(t, float)
+        retval = np.linalg.solve(np.eye(rhs.shape[0]) - dt*self.L, rhs)
+        assert retval.shape == rhs.shape
+        return retval
+
+    def fSolve1(self, rhs: np.ndarray, dt: float, t: float) -> np.ndarray:
+        """
+        Solve
+            `u_t = L1 u`
+        implicitly
+        """
+        assert isinstance(t, float)
+        retval = np.linalg.solve(np.eye(rhs.shape[0]) - dt*self.L1, rhs)
+        assert retval.shape == rhs.shape
+        return retval
+
+    def fSolve2(self, rhs: np.ndarray, dt: float, t: float) -> np.ndarray:
+        """
+        Solve
+            `u_t = L2 u`
+        implicitly
+        """
+        assert isinstance(t, float)
+        retval = np.linalg.solve(np.eye(rhs.shape[0]) - dt*self.L2, rhs)
+        assert retval.shape == rhs.shape
+        return retval
+
+    def int_f(self, u0: np.ndarray, dt: float, t: float = 0.0) -> np.ndarray:
+        from scipy.linalg import expm
+
+        assert isinstance(dt, float)
+        retval = expm(self.L * (t + dt)) @ u0
+        assert retval.shape == u0.shape
+        return retval

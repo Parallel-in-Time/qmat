@@ -18,7 +18,7 @@ SCHEMES = getClasses(QDELTA_GENERATORS, module="timestepping")
 def testBE(nNodes, nodeType, quadType):
     coll = Collocation(nNodes, nodeType, quadType)
     nodes = coll.nodes
-    gen =  module.BE(nodes)
+    gen = module.BE(nodes)
     QDelta = gen.getQDelta()
 
     assert np.allclose(np.tril(QDelta), QDelta), \
