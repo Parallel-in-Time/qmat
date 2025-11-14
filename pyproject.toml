@@ -47,7 +47,7 @@ docs = [
 ]
 test = [
     "flake8",
-    "pytest",
+    "pytest<9",
     "pytest-notebook",
     "pytest-timeout",
     "coverage[toml]",
