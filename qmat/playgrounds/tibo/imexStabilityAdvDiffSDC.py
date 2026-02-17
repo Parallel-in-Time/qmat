@@ -29,7 +29,7 @@ advOrder = 4
 diffOrder = 4
 
 # -- plot options
-cflAdvMax = 10
+cflAdvMax = 5
 nSamplesCFL = 301
 nWavenumbers = 16
 
