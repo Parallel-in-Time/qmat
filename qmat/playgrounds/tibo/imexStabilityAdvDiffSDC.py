@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Script investigating IMEX stability for SDC methods for 3D advection-diffusion
+Script investigating IMEX stability for advection-diffusion solved with SDC
 """
 import numpy as np
 import matplotlib.pyplot as plt
