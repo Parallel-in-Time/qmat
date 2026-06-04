@@ -85,3 +85,20 @@ and the current [Development Roadmap](https://qmat.readthedocs.io/en/latest/devd
 
 - [Thibaut Lunet](https://github.com/tlunet)
 - [Thomas Saupe (né Baumann)](https://github.com/brownbaerchen)
+
+## How to cite
+
+```bibtex
+@software{lunet_2025_16911004,
+  author       = {Lunet, Thibaut and
+                  Baumann, Thomas and
+                  Speck, Robert},
+  title        = {Parallel-in-Time/qmat},
+  month        = aug,
+  year         = 2025,
+  publisher    = {Zenodo},
+  version      = {v0.1.19},
+  doi          = {10.5281/zenodo.16911004},
+  url          = {https://doi.org/10.5281/zenodo.16911004},
+}
+```
