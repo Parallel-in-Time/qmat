@@ -90,9 +90,7 @@ and the current [Development Roadmap](https://qmat.readthedocs.io/en/latest/devd
 
 ```bibtex
 @software{lunet_2025_16911004,
-  author       = {Lunet, Thibaut and
-                  Baumann, Thomas and
-                  Speck, Robert},
+  author       = {Lunet, Thibaut and Baumann, Thomas and Speck, Robert},
   title        = {Parallel-in-Time/qmat},
   month        = aug,
   year         = 2025,
