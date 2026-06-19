@@ -53,7 +53,7 @@ def test_dahlquist2():
             else:
                 conv = np.log2(prev_error / r["error"])
 
-            print(f" - N={r["N"]}, dt={r["dt"]:.6e}, error={r["error"]:.6e}, conv={conv}")
+            print(f' - N={r["N"]}, dt={r["dt"]:.6e}, error={r["error"]:.6e}, conv={conv}')
             prev_error = r["error"]
             r["conv"] = conv
 

@@ -62,7 +62,7 @@ def test_dahlquist_integration():
                 else:
                     conv = np.log2(prev_error / r["error"])
 
-                print(f" - N={r["N"]}, dt={r["dt"]:.6e}, error={r["error"]:.6e}, conv={conv}, mti={micro_time_integration}")
+                print(f' - N={r["N"]}, dt={r["dt"]:.6e}, error={r["error"]:.6e}, conv={conv}, mti={micro_time_integration}')
                 prev_error = r["error"]
                 r["conv"] = conv
 

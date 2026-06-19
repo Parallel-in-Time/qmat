@@ -10,4 +10,5 @@ Current playgrounds
 -------------------
 
 - :class:`tibo` : personal playground of `@tlunet <https://github.com/tlunet>`_
+- :class:`martin` : personal playground of `@schreiberx <https://github.com/schreiberx>`_
 """
