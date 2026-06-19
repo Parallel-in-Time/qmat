@@ -87,5 +87,3 @@ plt.ylabel("over-amplification")
 plt.xlabel(r"$\lambda_E \Delta t$")
 plt.legend()
 plt.tight_layout()
-
-plt.show()
