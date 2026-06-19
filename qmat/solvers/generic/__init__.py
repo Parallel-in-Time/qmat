@@ -444,12 +444,12 @@ class CoeffSolver():
 
         .. math::
 
-            \begin{align}
+            \begin{aligned}
             u_{m}^{k+1} - \Delta{t}q^\Delta_{m,m}f(u_m^{k+1},t_m)
                 =&~ u_0 + \Delta{t}\sum_{j=1}^{M}q_{m,j}f(u_j^k, t_j) \\
             &+ \Delta{t}\sum_{j=1}^{m-1}q^\Delta_{m,j}f(u_j^{k+1},t_j)
             - \Delta{t}\sum_{j=1}^{m}q^\Delta_{m,j}f(u_j^{k},t_j),
-            \end{align}
+            \end{aligned}
 
         where :math:`q^\Delta_{i,j}` and :math:`q_{i,j}` are the coefficients
         of :math:`Q_\Delta` and :math:`Q`, respectively.
