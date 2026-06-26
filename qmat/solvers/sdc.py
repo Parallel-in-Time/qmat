@@ -182,9 +182,9 @@ def getOrderSDC(coll, nSweeps, qDelta, stepUpdate):
 
     order = min(maxOrder, order)
 
-    # Edge cases with bonus order
+    # Edge cases with bonus order, using COPY initialization
     # TODO: couple with the Butcher theory from Joscha to retrieve this theoretically ...
-    if stepUpdate == "QUADRATURE":  # COPY initialization
+    if stepUpdate == "QUADRATURE":      # 58 special combinations
         if qDelta == "TRAP":
             if nSweeps == 1 and nNodes == 3 and nodeType == "EQUID" and quadType == "RADAU-LEFT":
                 order += 1
@@ -225,8 +225,30 @@ def getOrderSDC(coll, nSweeps, qDelta, stepUpdate):
                 order += 1
             if nSweeps == 3 and nNodes == 4 and nodeType in ["CHEBY-1", "CHEBY-2", "CHEBY-3", "CHEBY-4"]:
                 order += 1
+        if qDelta == "SOE":
+            if nSweeps == 1:
+                if nNodes == 2 and nodeType == "LEGENDRE" and quadType == "RADAU-RIGHT":
+                    order += 1
+                if nNodes == 3 and nodeType == "EQUID" and quadType == "RADAU-LEFT":
+                    order += 1
+                if nNodes == 4 and nodeType == "CHEBY-2" and quadType == "LOBATTO":
+                    order += 1
+            elif nSweeps == 2:
+                if nNodes == 4 and nodeType == "CHEBY-4" and quadType == "RADAU-LEFT":
+                    order += 1
+            elif nSweeps == 3:
+                if nNodes == 3 and nodeType == "CHEBY-1" and quadType == "RADAU-RIGHT":
+                    order += 1
+                if nNodes == 3 and nodeType == "CHEBY-3" and quadType in ["RADAU-LEFT", "LOBATTO"]:
+                    order += 1
+                if nNodes == 3 and nodeType == "CHEBY-4" and quadType in ["GAUSS", "RADAU-RIGHT"]:
+                    order += 1
+                if nNodes == 4 and nodeType == "CHEBY-2" and quadType == "RADAU-LEFT":
+                    order += 1
+                if nNodes == 4 and nodeType == "CHEBY-4" and quadType == "GAUSS":
+                    order += 1
 
-    if stepUpdate == "LASTNODE":
+    if stepUpdate == "LASTNODE":        # 85 special combinations
         if qDelta == "BE":
             if nSweeps == 4 and nNodes == 3 and nodeType == "CHEBY-4" and quadType == "RADAU-RIGHT":
                 order += 1
@@ -264,6 +286,32 @@ def getOrderSDC(coll, nSweeps, qDelta, stepUpdate):
                 order += 1
             if nSweeps == 4 and nNodes == 4 and nodeType in ["EQUID", "CHEBY-1", "CHEBY-2", "CHEBY-3", "CHEBY-4"]:
                 order += 1
-
+        if qDelta == "SOE":
+            if nSweeps == 1:
+                if nNodes == 2 and nodeType in ["EQUID", "CHEBY-3"] and quadType == "RADAU-RIGHT":
+                    order += 1
+                if nNodes == 3 and nodeType in ["EQUID", "LEGENDRE", "CHEBY-1", "CHEBY-2"] and quadType == "LOBATTO":
+                    order += 1
+                if nNodes == 4 and nodeType in ["EQUID", "CHEBY-3"] and quadType == "RADAU-RIGHT":
+                    order += 1
+            if nSweeps == 2:
+                if nNodes == 3 and nodeType == "LEGENDRE" and quadType == "RADAU-RIGHT":
+                    order += 1
+                if nNodes == 4 and nodeType == "CHEBY-4" and quadType == "RADAU-RIGHT":
+                    order += 1
+            if nSweeps == 3:
+                if nNodes == 3 and nodeType == "LEGENDRE" and quadType == "RADAU-RIGHT":
+                    order += 1
+                if nNodes == 4 and nodeType == "CHEBY-2" and quadType == "RADAU-RIGHT":
+                    order += 1
+            if nSweeps == 4:
+                if nNodes == 3 and nodeType in ["LEGENDRE", "CHEBY-3"] and quadType == "RADAU-RIGHT":
+                    order += 1
+                if nNodes == 3 and nodeType == "CHEBY-4":
+                    order += 1
+                if nNodes == 4 and nodeType in ["EQUID", "CHEBY-2"] and quadType == "RADAU-RIGHT":
+                    order += 1
+                if nNodes == 4 and nodeType == "LEGENDRE" and quadType == "LOBATTO":
+                    order += 1
 
     return order

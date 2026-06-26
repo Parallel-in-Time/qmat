@@ -175,7 +175,7 @@ def testSDCConvergenceQUADRATURE(nSweeps, qDelta, nNodes, nodeType, quadType):
 
     order, rmse = numericalOrder(nSteps, err)
     assert rmse < 0.04, f"rmse to high ({rmse})"
-    assert abs(order-orderSDC) < 0.5, f"wrong numerical order ({order})"
+    assert abs(order-orderSDC) < 0.5, f"wrong numerical order ({order}) with {err}"
 
 
 @pytest.mark.parametrize("quadType", ["LOBATTO", "RADAU-RIGHT"])

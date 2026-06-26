@@ -20,6 +20,7 @@ Examples
 import numpy as np
 
 from qmat.qdelta import QDeltaGenerator, QGenerator, register
+from qmat.lagrange import LagrangeApproximation
 
 
 class TimeStepping(QDeltaGenerator):
@@ -130,3 +131,31 @@ class TRAPAR(TimeStepping):
     @property
     def dTau(self)->np.ndarray:
         return self.nodes/2.0 - self.tLeft
+
+
+@register
+class SOE(TimeStepping):
+    """Second Order approximation based on explicit multi-step (Leap-Frog)"""
+
+    aliases = ["LeapFrog", "LF"]
+
+    def computeQDelta(self, k=None):
+        QDelta, M = self.zeros, self.nodes.size
+        times = [0] + self.nodes.tolist()
+        alpha = [
+            LagrangeApproximation(times[i:i+3]).getDerivativeMatrix()[1]
+            for i in range(M-1)
+            ]
+        for m in range(1, M):
+            am1, a0, ap1 = alpha[m-1]
+            QDelta[m, m-1] = 1/ap1
+            for j in range(m-1):
+                QDelta[m, j] = -a0/ap1*QDelta[m-1, j]
+                if m > 1:
+                    QDelta[m, j] -= am1/ap1*QDelta[m-2, j]
+        return QDelta
+
+
+    @property
+    def dTau(self)->np.ndarray:
+        return self.nodes*0 + self.deltas[0]

@@ -18,10 +18,10 @@ class Dahlquist():
     It can be used to solve the equation with multiple :math:`\lambda`
     values (multiple trajectories) using efficient vectorized
     computation.
-    Furthermore, it has no restriction on the used 
+    Furthermore, it has no restriction on the used
     :math:`Q` and :math:`Q_\Delta` matrices (can be dense),
     which is not the case for the generic
-    :class:`CoeffSolver` used with 
+    :class:`CoeffSolver` used with
     :class:`qmat.solvers.generic.diffops.Dahlquist`.
 
     Parameters
@@ -527,7 +527,7 @@ class DahlquistIMEX():
         return nNodes, Q, weights, QDeltaI, QDeltaE, nSweeps
 
 
-    def solveSDC(self, Q, weights, QDeltaI, QDeltaE, nSweeps):
+    def solveSDC(self, Q, weights, QDeltaI, QDeltaE, nSweeps, theta=0, epsilon=0):
         r"""
         Solve for all :math:`\lambda_I` and :math:`\lambda_E` using SDC sweeps,
         *i.e* for each time-step and sweep :math:`k` it solves :
@@ -567,6 +567,12 @@ class DahlquistIMEX():
             term (3D if changes with sweeps).
         nSweeps : int
             Number of sweeps.
+        theta : float
+            Coefficient for the term :math:`\frac{\theta}{2}\lambda_E^2` that is
+            added to :math:`\lambda_I` (default is 0)
+        epsilon : float
+            Coefficient for the multiplicative factor :math:`(1+\epsilon)`
+            for :math:`\lambda_I` (default is 0)
 
         Returns
         -------
@@ -578,7 +584,9 @@ class DahlquistIMEX():
 
         # Preconditioner for each sweeps
         P = np.eye(nNodes)[None, ...] \
-            - self.lamI[..., None, None, None]*self.dt*QDeltaI \
+            - (self.lamI[..., None, None, None]*(1+epsilon)
+               + theta/2*self.lamE[..., None, None, None]**2
+               )*self.dt*QDeltaI \
             - self.lamE[..., None, None, None]*self.dt*QDeltaE
 
         uNum = np.zeros((self.nSteps+1, *self.uShape), dtype=self.dtype)
