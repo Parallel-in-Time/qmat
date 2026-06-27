@@ -2,6 +2,11 @@
 # -*- coding: utf-8 -*-
 """
 Script investigating IMEX stability for RK methods
+
+.. literalinclude:: /../qmat/playgrounds/tibo/imexStabilityRK.py
+   :language: python
+   :linenos:
+   :lines: 11-
 """
 import numpy as np
 import scipy.optimize as sco

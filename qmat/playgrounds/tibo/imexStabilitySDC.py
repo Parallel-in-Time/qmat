@@ -2,6 +2,11 @@
 # -*- coding: utf-8 -*-
 """
 Script investigating IMEX stability for SDC methods
+
+.. literalinclude:: /../qmat/playgrounds/tibo/imexStabilitySDC.py
+   :language: python
+   :linenos:
+   :lines: 11-
 """
 import numpy as np
 import scipy.optimize as sco

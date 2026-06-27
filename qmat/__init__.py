@@ -9,7 +9,7 @@ r"""
 **Secondary sub-packages** 🍭
 
 - :class:`solvers` : implementations of time-integration solvers that make use of `qmat`-generated coefficients
-- :class:`playgrounds`: **non-tested but documented** codes with experiments or small applications with `qmat`
+- :class:`playgrounds`: **non-tested** codes with experiments or small applications with `qmat`
 
 **Utility modules** ⚙️
 

@@ -1,3 +1,6 @@
+"""
+First tentative for a dedicated IMEX solver class
+"""
 import numpy as np
 
 from qmat.solvers.dahlquist import DahlquistIMEX
@@ -9,7 +12,9 @@ class DiffOpIMEX(DiffOp):
     Base class for an IMEX differential operator
     """
 
-    def evalF2(self, u:np.ndarray, t:float, out:np.ndarray):
+    evalF_IM = DiffOp.evalF
+
+    def evalF_EX(self, u:np.ndarray, t:float, out:np.ndarray):
         """
         Evaluate f_EX(u,t) and store the result into out
         """
@@ -26,9 +31,11 @@ class CoeffSolverIMEX(CoeffSolver):
             f"DiffOpIMEX object is required for diffOp argument, not {diffOp}"
         super().__init__(diffOp, tEnd, nSteps, t0)
 
+    def evalF_IM(self, u:np.ndarray, t:float, out:np.ndarray):
+        self.diffOp.evalF_IM(u, t, out)
 
-    def evalF2(self, u:np.ndarray, t:float, out:np.ndarray):
-        self.diffOp.evalF2(u, t, out)
+    def evalF_EX(self, u:np.ndarray, t:float, out:np.ndarray):
+        self.diffOp.evalF_EX(u, t, out)
 
     def solve(self, QI, wI, QE, wE, uNum=None):
         nNodes, QI, wI, QE, wE, useWeights = DahlquistIMEX.checkCoeff(QI, wI, QE, wE)
@@ -74,8 +81,8 @@ class CoeffSolverIMEX(CoeffSolver):
                     np.copyto(uNode, rhs)
 
                 # evalF on current stage
-                self.evalF(u=uNode, t=tNode, out=fEvals[m])
-                self.evalF2(u=uNode, t=tNode, out=fEvals2[m])
+                self.evalF_IM(u=uNode, t=tNode, out=fEvals[m])
+                self.evalF_EX(u=uNode, t=tNode, out=fEvals2[m])
 
             # step update (if not, uNum[i+1] is already the last stage)
             if useWeights:

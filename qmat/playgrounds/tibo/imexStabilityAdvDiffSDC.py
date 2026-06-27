@@ -2,6 +2,11 @@
 # -*- coding: utf-8 -*-
 """
 Script investigating IMEX stability for advection-diffusion solved with SDC
+
+.. literalinclude:: /../qmat/playgrounds/tibo/imexStabilityAdvDiffSDC.py
+   :language: python
+   :linenos:
+   :lines: 11-
 """
 import numpy as np
 import matplotlib.pyplot as plt

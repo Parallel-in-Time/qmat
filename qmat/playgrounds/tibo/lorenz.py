@@ -7,7 +7,7 @@ using a RK method or Spectral Deferred Correction.
 .. literalinclude:: /../qmat/playgrounds/tibo/lorenz.py
    :language: python
    :linenos:
-   :lines: 11-
+   :lines: 12-
 """
 import numpy as np
 import matplotlib.pyplot as plt
