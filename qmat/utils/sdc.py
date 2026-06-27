@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Functions to run SDC and evaluate its numerical error on simple problems.
+Utility functions to run SDC and evaluate its numerical error on simple problems.
 """
 import numpy as np
 

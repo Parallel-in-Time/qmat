@@ -20,7 +20,7 @@ import numpy as np
 import scipy.linalg as spl
 
 from qmat.qdelta import QDeltaGenerator, register
-from qmat.mathutils import lduFactorization
+from qmat.utils.num import lduFactorization
 
 
 @register

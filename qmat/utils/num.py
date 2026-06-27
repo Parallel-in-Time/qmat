@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Base module for math utility functions
+Utility functions for numerical mathematics
 """
 import numpy as np
 
 
 def numericalOrder(nSteps, err):
     """
-    Compute numerical order from two vectors containing the error and the number of time-steps.
+    Compute numerical order from arrays containing errors and numbers of time-steps.
 
     Parameters
     ----------
@@ -46,19 +46,19 @@ def numericalOrder(nSteps, err):
 def lduFactorization(A:np.ndarray):
     """
     Perform LDU factorization on a square matrix A.
-    
+
     Parameters
     ----------
-    A : np.2darray 
+    A : np.2darray
         The square matrix to factorize (n x n).
-    
+
     Returns
     -------
     L : np.2darray
         Lower triangular matrix with ones on the diagonal.
-    D : np.2darray 
+    D : np.2darray
         Diagonal matrix.
-    U : np.2darray 
+    U : np.2darray
         Upper triangular matrix with ones on the diagonal.
     """
     # Ensure A is a square matrix
@@ -78,7 +78,7 @@ def lduFactorization(A:np.ndarray):
         for j in range(i + 1, n):
             # Compute elements for L below the diagonal
             L[j, i] = (A[j, i] - np.sum(L[j, :i] * D[:i, :i].diagonal() * U[:i, i])) / D[i, i]
-            
+
             # Compute elements for U above the diagonal
             U[i, j] = (A[i, j] - np.sum(L[i, :i] * D[:i, :i].diagonal() * U[:i, j])) / D[i, i]
 

@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Utility function for `qmat`
+Utility sub-package for `qmat`, containing already some base functions and classes at the top level.
+
+**Submodules** ⚙️
+
+- :class:`num` : functions for numerical mathematics
+- :class:`sdc` : functions to run SDC and evaluate its numerical error on simple problems
 """
 import inspect
 import pkgutil
 import functools
 from time import time
+
 
 def checkOverriding(cls, name, isProperty=True):
     """Check if a class overrides a method with a given name"""

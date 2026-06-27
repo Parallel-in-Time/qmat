@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 
-from qmat.solvers.sdc import solveDahlquistSDC
+from qmat.utils.sdc import solveDahlquistSDC
 from qmat.qcoeff.collocation import Collocation
 from qmat import QDELTA_GENERATORS
 

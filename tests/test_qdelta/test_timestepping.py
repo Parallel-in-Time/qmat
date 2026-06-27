@@ -4,10 +4,10 @@ import numpy as np
 from qmat.qdelta import QDELTA_GENERATORS
 import qmat.qdelta.timestepping as module
 from qmat.utils import getClasses
-from qmat.mathutils import numericalOrder
+from qmat.utils.num import numericalOrder
 from qmat.qcoeff.collocation import Collocation
 from qmat.nodes import NODE_TYPES, QUAD_TYPES
-from qmat.solvers.sdc import errorDahlquistSDC, getOrderSDC
+from qmat.utils.sdc import errorDahlquistSDC, getOrderSDC
 
 SCHEMES = getClasses(QDELTA_GENERATORS, module="timestepping")
 

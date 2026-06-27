@@ -3,8 +3,8 @@ import numpy as np
 
 from qmat import Q_GENERATORS, QDELTA_GENERATORS
 from qmat.nodes import QUAD_TYPES
-from qmat.mathutils import numericalOrder
-from qmat.solvers.sdc import solveDahlquistSDC
+from qmat.utils.num import numericalOrder
+from qmat.utils.sdc import solveDahlquistSDC
 
 from qmat.solvers.generic import CoeffSolver
 from qmat.solvers.generic.diffops import Dahlquist, Lorenz, ProtheroRobinson

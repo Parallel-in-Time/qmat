@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 
-import qmat.mathutils as mu
+import qmat.utils.num as mu
 
 nNodeTests = [2, 3, 4, 5, 6, 7, 8]
 

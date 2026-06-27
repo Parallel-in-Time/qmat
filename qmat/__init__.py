@@ -3,20 +3,14 @@
 r"""
 **Main sub-packages** 📦
 
-- :class:`qcoeff` : to generate the :math:`Q`-coefficients (Butcher tables)
-- :class:`qdelta` : to generate :math:`Q_\Delta` approximations for :math:`Q` matrices
+- :class:`qcoeff` : generates the :math:`Q`-coefficients (Butcher tables)
+- :class:`qdelta` : generates :math:`Q_\Delta` approximations for :math:`Q` matrices
 
-**Secondary sub-packages** 🍭
+**Internal features** ⚙️
 
-- :class:`solvers` : implementations of time-integration solvers that make use of `qmat`-generated coefficients
-- :class:`playgrounds`: **non-tested** codes with experiments or small applications with `qmat`
-
-**Utility modules** ⚙️
-
-- :class:`lagrange` : Barycentric polynomial approximations (integral, interpolation, derivative)
-- :class:`nodes` : generation of multiple types of quadrature nodes
-- :class:`mathutils` : utility functions for math operations
-- :class:`utils` : utility functions for the whole package
+- :class:`lagrange` : barycentric polynomial approximations (integral, interpolation, derivative)
+- :class:`nodes` : generates multiple types of quadrature nodes
+- :class:`utils` : sub-package for utilities (functions & classes)
 
 Examples
 --------

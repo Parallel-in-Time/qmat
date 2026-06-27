@@ -3,7 +3,7 @@ import numpy as np
 
 from qmat import Q_GENERATORS, QDELTA_GENERATORS
 from qmat.solvers.dahlquist import Dahlquist, DahlquistIMEX
-from qmat.solvers.sdc import solveDahlquistSDC
+from qmat.utils.sdc import solveDahlquistSDC
 
 
 @pytest.mark.parametrize("lam", [1j, -1])
