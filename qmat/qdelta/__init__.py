@@ -217,7 +217,7 @@ QDELTA_GENERATORS: dict[str, type[QDeltaGenerator]] = {}
 def register(cls: type[T]) -> type[T]:
     """Class decorator to register a specialized :class:`QDeltaGenerator` class in `qmat`"""
     checkGenericConstr(cls)
-    checkOverriding(cls, "computeQDelta", isProperty=False)
+    checkOverriding(cls, "computeQDelta")
     try:
         sig = inspect.signature(cls.computeQDelta)
         par = sig.parameters["k"]

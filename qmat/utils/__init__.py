@@ -14,10 +14,10 @@ import functools
 from time import time
 
 
-def checkOverriding(cls, name, isProperty=True):
+def checkOverriding(cls, name, isProperty=False, mroIndex=-2):
     """Check if a class overrides a method with a given name"""
     method = getattr(cls, name)
-    parent = getattr(cls.mro()[-2], name)
+    parent = getattr(cls.mro()[mroIndex], name)
     assert method != parent, \
         f"{name} method must be overriden in {cls.__name__} class"
     if isProperty:

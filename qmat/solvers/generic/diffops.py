@@ -18,7 +18,7 @@ DIFFOPS: dict[str, type[DiffOp]] = {}
 
 def registerDiffOp(cls: type[T]) -> type[T]:
     """Class decorator to register a specialized :class:`DiffOp` class in `qmat`"""
-    checkOverriding(cls, "evalF", isProperty=False)
+    checkOverriding(cls, "evalF")
     storeClass(cls, DIFFOPS)
     return cls
 

@@ -216,7 +216,7 @@ def register(cls: type[T]) -> type[T]:
     """Class decorator to register a specialized :class:`QGenerator` class in qmat"""
     # Check for correct overriding
     for name in ["nodes", "Q", "weights", "order"]:
-        checkOverriding(cls, name)
+        checkOverriding(cls, name, isProperty=True)
     # Check that TEST_PARAMS are given and valid if no default constructor
     try:
         cls()
