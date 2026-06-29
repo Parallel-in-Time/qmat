@@ -129,6 +129,32 @@ def testTRAPAR(nNodes, nodeType, quadType):
         "dTau is not equal to nodes divided by 2"
 
 
+@pytest.mark.parametrize("quadType", QUAD_TYPES)
+@pytest.mark.parametrize("nodeType", NODE_TYPES)
+@pytest.mark.parametrize("nNodes", [2, 3, 4, 5, 6])
+def testSOE(nNodes, nodeType, quadType):
+    coll = Collocation(nNodes, nodeType, quadType)
+    nodes = coll.nodes
+    QDelta = module.SOE(nodes).getQDelta()
+
+    assert np.allclose(np.tril(QDelta), QDelta), \
+        "QDelta is not lower triangular"
+    assert not np.diag(QDelta).any(), \
+        "QDelta has not zero diagonal"
+
+    SDelta, dTau = module.SOE(nodes).genCoeffs(dTau=True)
+    assert type(dTau) == np.ndarray, \
+        f"dTau is not np.ndarray but {type(dTau)}"
+    assert dTau.ndim == 1, \
+        f"dTau is not 1D : {dTau}"
+    assert dTau.size == nNodes, \
+        f"dTau has not the correct size : {dTau}"
+    assert np.allclose(dTau, coll.nodes[0]), \
+        "dTau is not equal to nodes[0]"
+    assert not np.diag(SDelta).any(), \
+        "SDelta has not zero diagonal"
+
+
 def nStepsForTest(order):
     nSteps = [1, 2, 4]  # default value (very high order methods)
     if order == 1:
