@@ -25,11 +25,10 @@ classifiers = [
     "License :: OSI Approved :: BSD License",
 
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 
 [project.optional-dependencies]
@@ -47,7 +46,7 @@ docs = [
 ]
 test = [
     "flake8",
-    "pytest<9",
+    "pytest",
     "pytest-notebook",
     "pytest-timeout",
     "coverage[toml]",
@@ -67,8 +66,9 @@ qmat-stability = "qmat.scripts.stability:main"
 
 [tool.pytest.ini_options]
 nb_diff_ignore = [
-    "/metadata/",
-    "/cells/*/outputs/*/data/image/png"]
+    "/metadata",
+    "/cells/*/outputs/*/data/image/png",
+    "/cells/*/outputs/*/traceback"]
 pythonpath = [
     "."
 ]
