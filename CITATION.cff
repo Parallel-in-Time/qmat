@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 
 abstract: "Generation of Q-coefficients for Spectral Deferred Corrections (and other time-integration methods ...)"
-authors: 
+authors:
   - family-names: Lunet
     given-names: Thibaut
     orcid: https://orcid.org/0000-0003-1745-0780
@@ -16,10 +16,10 @@ authors:
     orcid: https://orcid.org/0000-0002-3879-1210
     affiliation: "Jülich Supercomputing Centre, Forschungszentrum Jülich GmbH, 52425 Jülich, Germany"
 
-version: 0.1.19
+version: 0.1.20
 doi: 10.5281/zenodo.11956479
 date-released: 2025-08-20
-keywords: 
+keywords:
   - "time integration"
   - "spectral deferred corrections"
   - collocation

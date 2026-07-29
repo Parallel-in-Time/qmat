@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "qmat"
-version = "0.1.19"
+version = "0.1.20"
 description = "Generation of Q-coefficients for Spectral Deferred Corrections (and other time-integration methods ...)"
 dependencies = [
     "numpy",
     "scipy",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 maintainers = [
     {name = "Thibaut Lunet", email = "thibaut.lunet@tuhh.de"},
     {name = "Thomas Saupe (né Baumann)", email = "t.baumann@fz-juelich.de"},
