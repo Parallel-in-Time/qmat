@@ -67,6 +67,7 @@ qmat-stability = "qmat.scripts.stability:main"
 [tool.pytest.ini_options]
 nb_diff_ignore = [
     "/metadata",
+    "/metadata/language_info",
     "/cells/*/outputs/*/data/image/png",
     "/cells/*/outputs/*/traceback"]
 pythonpath = [
