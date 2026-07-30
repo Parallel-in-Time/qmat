@@ -7,7 +7,7 @@ QMat Package
         <img alt="PyPI - Package" src="https://img.shields.io/pypi/v/qmat?logo=python">
     </a>
     <a href="https://pypistats.org/packages/qmat">
-        <img alt="PyPI - Download" src="https://img.shields.io/pypi/dm/qmat?logo=pypi">
+        <img alt="PyPI - Download" src="https://img.shields.io/pypi/dm/qmat?logo=pypi&cacheSeconds=86400">
     </a>
     <a href="https://github.com/Parallel-in-Time/qmat">
         <img alt="Last Commit" src="https://img.shields.io/github/last-commit/parallel-in-time/qmat/main?logo=github" />
