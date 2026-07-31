@@ -62,9 +62,9 @@ QDelta = genQDeltaCoeffs("IE", nodes=nodes)
 c, b, A = genQCoeffs("ERK4")
 ```
 
-> 🔔 _If you are not familiar with SDC or related methods, and want to learn more about it, checkout the
-> [latest documentation build](https://qmat.readthedocs.io/en/latest/) and
-in particular the [**step by step notebook tutorials**](https://qmat.readthedocs.io/en/latest/notebooks.html)_
+_More details are provided in the [**notebook tutorials**](./docs/notebooks.md)._
+
+> 🔔 _If you are not familiar with SDC or related methods, and want to learn more about it, checkout the [QMint Playground](https://qmint.readthedocs.io)_.
 
 For any contribution, please checkout out (very cool) [Contribution Guidelines](https://qmat.readthedocs.io/en/latest/contributing.html)
 and the current [Development Roadmap](https://qmat.readthedocs.io/en/latest/devdoc/roadmap.html).
