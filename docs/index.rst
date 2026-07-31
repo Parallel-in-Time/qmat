@@ -78,8 +78,9 @@ This package can be installed using `pip` :
     # Butcher table of the classical explicit RK4 method
     c, b, A = genQCoeffs("ERK4")
 
+*More details are provided in the* :doc:`**notebook tutorials**<notebooks>` .
 
-*But if you are new to this, then welcome ! ... and please have a look at the* **step by step tutorials** *below* 😉
+*But if you are new to this, welcome ! ... and maybe check first the* `**qmint playground**<https://qmint.readthedocs.io>` *to get a first glance on how everything works* 😉
 
     For any contribution, please checkout out (very cool) :doc:`Contribution Guidelines 🔑<contributing>`
     and the current :doc:`Development Roadmap 🎯<devdoc/roadmap>`

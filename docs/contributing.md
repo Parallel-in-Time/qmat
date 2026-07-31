@@ -36,9 +36,6 @@ _Some memos on how to develop this package ..._
 
 - [Code structure](./devdoc/structure.md)
 - [Add a Runge-Kutta scheme](./devdoc/addRK.md)
-- [Add a playground](./devdoc/addPlayground.md)
-- [Add a differential operator](./devdoc/addDiffOp.md)
-- [Add a $\phi$-based time-integrator](./devdoc/addPhiIntegrator.md)
 - [Testing your changes](./devdoc/testing.md)
 - [Update this documentation](./devdoc/updateDoc.md)
 - [Version update pipeline](./devdoc/versionUpdate.md)
@@ -50,9 +47,6 @@ _Some memos on how to develop this package ..._
 
     devdoc/structure
     devdoc/addRK
-    devdoc/addPlayground
-    devdoc/addDiffOp
-    devdoc/addPhiIntegrator
     devdoc/testing
     devdoc/updateDoc
     devdoc/versionUpdate

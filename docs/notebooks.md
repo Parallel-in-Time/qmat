@@ -9,42 +9,15 @@ All tutorials are written in jupyter notebooks, that can be :
 
 📋 **Table of content**
 
-1. **Basic usage tutorials** : how to generate and use basic $Q$-coefficients and $Q_\Delta$ approximations, through a step-by-step tutorial going from generic Runge-Kutta methods to SDC for simple problems.
-2. **Advanced tutorials** : additional features or `qmat` to go deeper into time-integration (Node-to-Node formulation, use for non-linear problems, $\phi$-SDC, ...)
-3. **Components usage** : how to use the main utility modules, like {py:mod}`qmat.lagrange`, etc ...
+1. [**Generate** $Q$**-coefficients (or Butcher table)**](./notebooks/1_qCoeffs.ipynb)
+2. [**Generate** $Q_\Delta$ **approximations of a $Q$ matrix**](./notebooks/2_qDelta.ipynb)
 
 
 ```{eval-rst}
-Base usage tutorial
-===================
-
-📜 *From Butcher Tables to Spectral Deferred Corrections ...*
-
 .. toctree::
     :maxdepth: 1
     :glob:
+    :hidden:
 
-    notebooks/0*
-
-Advanced tutorials
-==================
-
-📜 *Going deeper into advanced time-integration topics ...*
-
-.. toctree::
-    :maxdepth: 1
-    :glob:
-
-    notebooks/1*
-
-Components usage
-================
-
-📜 *How to use the utility modules ...*
-
-.. toctree::
-    :maxdepth: 1
-    :glob:
-
-    notebooks/2*
+    notebooks/*
 ```

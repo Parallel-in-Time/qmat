@@ -98,7 +98,7 @@ cd docs/notebooks
 💡 To execute only one notebook, simply run _e.g_ :
 
 ```bash
-./run.sh 01_qCoeffs.ipynb
+./run.sh 1_qCoeffs.ipynb
 ```
 
 Finally, you can test all notebooks by running :
