@@ -30,10 +30,8 @@ Detailed description of all specific versions and their associated changes is av
 - base console script interfacing `qmat` API for $Q$-coefficients and SDC coefficients generation (with IMEX)
 - ✅ integration of `qmat` into [SWEET](https://gitlab.inria.fr/sweet/sweet)
 - ✅ use of `qmat` for [Dedalus](https://github.com/DedalusProject/dedalus) IMEX SDC time-steppers developed within [pySDC](https://github.com/Parallel-in-Time/pySDC)
-- distribution to other people using former version of the core `qmat` code (_e.g_ Alex Brown from Exeter, ...)
-- addition of a few advanced usage tutorials :
-    - multilevel SDC
-    - PFASST
+- ✅ distribution to other people using former version of the core `qmat` code (_e.g_ Alex Brown from Exeter, ...)
+- ✅ switch theoretical tutorials and playground to [`qmint`](https://github.com/Parallel-in-Time/qmint).
 
 **Status 6 - Mature** : `v1.*.*`
 
