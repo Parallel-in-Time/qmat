@@ -51,8 +51,8 @@ If you modified several notebooks, and as a safety, it is also possible to regen
 
 ## Adding a tutorial
 
-Feel free to add new notebooks in the "Advanced Tutorial" section, for a specific application that is not covered by the current tutorials.
-Just name the notebook like this : `2{idx}_{shortName}.ipynb` when `idx` corresponds to its index in category (starts at 1),
-and use the `Tuto A{idx}` prefix for the notebook title.
+In case a new major feature is added to qmat, it could be beneficial to add a dedicated tutorial for it.
+To do that :
 
-> 💡 Don't hesitate to look at the other notebooks to use a common and consistent formatting ...
+1. add the notebook in `docs/notebooks` folder following the prefix indexing of the previous notebook
+2. add a link to it in `docs/notebooks.md` with a short description for it
