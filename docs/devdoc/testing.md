@@ -60,7 +60,7 @@ This will check :
 
 💡 **Hint :**
 
-There is currently more than 6000 tests, that take around 35 seconds on a standard computer.
+There is currently more than 5000 tests, that take around 50 seconds on a standard computer.
 So you may not want to run all of those every time you do a small modification somewhere 😅 ...
 Here are a few tricks you can use :
 
