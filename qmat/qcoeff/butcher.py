@@ -93,10 +93,10 @@ class RK(QGenerator):
             return hCoeffs
 
 
-RK_SCHEMES = {}
+RK_SCHEMES:dict[str, type[RK]] = {}
 """Dictionary storing all the implemented RK methods"""
 
-def checkAndStore(cls:RK)->RK:
+def checkAndStore(cls:RK) -> RK:
     """Check that a `RK`-inherited class is correctly implemented (and store it into the :class:`RK_SCHEMES` dict)"""
     cls.A = np.array(cls.A, dtype=float)
     cls.b = np.array(cls.b, dtype=float)
