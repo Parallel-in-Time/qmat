@@ -586,6 +586,9 @@ class ESDIRK53(RK):
     def orderEmbedded(self)->int: return 3
 
     @property
+    def orderLinearEmbedded(self)->int: return 3
+
+    @property
     def order(self)->int: return 5
 
 
@@ -718,7 +721,7 @@ class ARK548L2SAESDIRK(ARK548L2SAERK):
     def orderEmbedded(self)->int: return 4
 
     @property
-    def orderEmbeddedLinear(self)->int: return 5
+    def orderLinearEmbedded(self)->int: return 5
 
 
 @registerRK

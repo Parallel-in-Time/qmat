@@ -15,6 +15,7 @@ from typing import TypeVar
 
 from qmat.utils import checkOverriding, storeClass, importAll
 from qmat.lagrange import LagrangeApproximation
+import scipy.special as sps
 
 T = TypeVar("T")
 
@@ -248,6 +249,108 @@ class QGenerator(object):
             uNum = self.solveDahlquist(lam, u0, tEnd, nSteps, useEmbeddedWeights=useEmbeddedWeights)
         times = np.linspace(0, tEnd, nSteps+1)
         uExact = u0 * np.exp(lam*times)
+        return np.linalg.norm(uNum-uExact, ord=np.inf)
+
+    def solveRiccati(self, u0, tEnd, nSteps, useEmbeddedWeights=False,
+                     newtonTol=1e-13, newtonMaxIter=50):
+        r"""
+        Solve the Riccati test problem
+
+        .. math::
+
+            \frac{du}{dt} = t - u^2, \quad t \in [0, T], \quad u(0)=u_0
+
+        Parameters
+        ----------
+        u0 : float
+            The initial solution :math:`u_0`.
+        tEnd : float
+            Final time :math:`T`.
+        nSteps : int
+            Number of time-step for the whole :math:`[0,T]` interval.
+        useEmbeddedWeights : bool, optional
+            Wether or not use the embedded weights for the step update. The default is False.
+        newtonTol : float, optional
+            Stopping tolerance for the Newton iteration of the stage system.
+            The default is 1e-13.
+        newtonMaxIter : int, optional
+            Maximum number of Newton iterations for the stage system.
+            The default is 50.
+
+        Returns
+        -------
+        uNum : np.ndarray
+            Array containing the `nSteps+1` solutions :math:`\{u(0), ..., u(T)\}`.
+
+        Raises
+        ------
+        RuntimeError
+            If the Newton iteration does not converge within `newtonMaxIter` iterations.
+        """
+        nodes, Q = self.nodes, self.Q
+        weights = self.weightsEmbedded if useEmbeddedWeights else self.weights
+
+        uNum = np.zeros(nSteps+1)
+        uNum[0] = u0
+
+        dt = tEnd/nSteps
+        M = nodes.size
+        eye = np.eye(M)
+
+        for i in range(nSteps):
+            tStages = (i + nodes)*dt
+            uN = uNum[i]
+            U = np.full(M, uN)  # first guess : constant extrapolation
+            for _ in range(newtonMaxIter):
+                fStages = tStages - U**2
+                residual = U - uN - dt*Q.dot(fStages)
+                if np.linalg.norm(residual, ord=np.inf) < newtonTol:
+                    break
+                jacobian = eye + 2*dt*Q*U  # Q*U is Q @ diag(U) by broadcasting
+                U = U - np.linalg.solve(jacobian, residual)
+            else:
+                raise RuntimeError(
+                    f"Newton iteration did not converge in {newtonMaxIter} iterations "
+                    f"for step {i} with dt={dt} for {type(self).__name__}")
+            uNum[i+1] = uN + dt*weights.dot(tStages - U**2)
+
+        return uNum
+
+    def errorRiccati(self, u0, tEnd, nSteps, uNum=None, useEmbeddedWeights=False, **newtonKwargs):
+        r"""
+        Compute :math:`L_\infty` error in time for the Riccati problem :math:`u' = t - u^2`
+
+        The exact solution is expressed using Airy functions, from the
+        substitution :math:`u = v'/v` with :math:`v'' = t v`.
+
+        Parameters
+        ----------
+        u0 : float
+            The initial solution :math:`u_0`.
+        tEnd : float
+            Final time :math:`T`.
+        nSteps : int
+            Number of time-step for the whole :math:`[0,T]` interval.
+        uNum : np.ndarray, optional
+            Numerical solution, if not provided use the `solveRiccati` method
+            to compute the solution. The default is None.
+        useEmbeddedWeights : bool, optional
+            Wether or not use the embedded weights for the step update. The default is False.
+        **newtonKwargs :
+            Additional parameters for the Newton iteration, see `solveRiccati`.
+
+        Returns
+        -------
+        float
+            The :math:`L_\infty` norm.
+        """
+        if uNum is None:
+            uNum = self.solveRiccati(
+                u0, tEnd, nSteps, useEmbeddedWeights=useEmbeddedWeights, **newtonKwargs)
+        ai0, aip0, bi0, bip0 = sps.airy(0.0)
+        k = (u0*ai0 - aip0)/(bip0 - u0*bi0)
+        Ai, Aip, Bi, Bip = sps.airy(np.linspace(0, tEnd, nSteps+1))
+        uExact = (Aip + k*Bip)/(Ai + k*Bi)
         return np.linalg.norm(uNum-uExact, ord=np.inf)
 
 
