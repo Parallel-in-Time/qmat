@@ -34,15 +34,15 @@ def nStepsForTest(scheme:QGenerator, useEmbeddedWeights=False, linear=True):
 # Parameters for the Dahlquist test (u' = lam*u) : the purely imaginary lam
 # makes the solution perform exactly one full rotation over [0, tEnd], so
 # that the exact solution at tEnd is simply u0
-u0_Dahlquist = 1
-lam_Dahlquist = 1j
-tEnd_Dahlquist = 2*np.pi
+u0_DAHLQUIST = 1
+lam_DAHLQUIST = 1j
+tEnd_DAHLQUIST = 2*np.pi
 
 # Parameters for the Riccati test (u' = t - u^2) : a shorter interval is used to
 # ensure asymptotic convergence and stability of explicit schemes with the
 # nSteps used in the tests
-u0_Riccati = 1
-tEnd_Riccati = 1
+u0_RICCATI = 1
+tEnd_RICCATI = 1
 
 
 @pytest.mark.parametrize("useEmbeddedWeights", [True, False])
@@ -58,7 +58,7 @@ def testDahlquist(scheme, useEmbeddedWeights):
 
     expectedOrder = gen.getExpectedOrder(useEmbeddedWeights, linear=True)
     nSteps = nStepsForTest(gen, useEmbeddedWeights)
-    err = [gen.errorDahlquist(lam_Dahlquist, u0_Dahlquist, tEnd_Dahlquist, nS, useEmbeddedWeights=useEmbeddedWeights) for nS in nSteps]
+    err = [gen.errorDahlquist(lam_DAHLQUIST, u0_DAHLQUIST, tEnd_DAHLQUIST, nS, useEmbeddedWeights=useEmbeddedWeights) for nS in nSteps]
     order, rmse = numericalOrder(nSteps, err)
     assert rmse < 0.02, f"rmse to high ({rmse}) for {scheme}"
     assert abs(order-expectedOrder) < 0.1, f"Expected order {expectedOrder:.2f}, but got {order:.2f} for {scheme}"
@@ -76,7 +76,7 @@ def testDahlquistCollocation(nNodes, nodesType, quadType, useEmbeddedWeights=Fal
             return None
     scheme = f"Collocation({nNodes}, {nodesType}, {quadType})"
     nSteps = nStepsForTest(gen, useEmbeddedWeights)
-    err = [gen.errorDahlquist(lam_Dahlquist, u0_Dahlquist, tEnd_Dahlquist, nS, useEmbeddedWeights=useEmbeddedWeights) for nS in nSteps]
+    err = [gen.errorDahlquist(lam_DAHLQUIST, u0_DAHLQUIST, tEnd_DAHLQUIST, nS, useEmbeddedWeights=useEmbeddedWeights) for nS in nSteps]
     order, rmse = numericalOrder(nSteps, err)
     expectedOrder = gen.getExpectedOrder(useEmbeddedWeights, linear=True)
 
@@ -103,7 +103,7 @@ def testRiccati(scheme, useEmbeddedWeights):
 
     expectedOrder = gen.getExpectedOrder(useEmbeddedWeights, linear=False)
     nSteps = nStepsForTest(gen, useEmbeddedWeights)
-    err = [gen.errorRiccati(u0_Riccati, tEnd_Riccati, nS, useEmbeddedWeights=useEmbeddedWeights) for nS in nSteps]
+    err = [gen.errorRiccati(u0_RICCATI, tEnd_RICCATI, nS, useEmbeddedWeights=useEmbeddedWeights) for nS in nSteps]
     order, rmse = numericalOrder(nSteps, err)
     assert rmse < 0.02, f"rmse to high ({rmse}) for {scheme}"
     assert abs(order-expectedOrder) < 0.2, f"Expected order {expectedOrder:.2f}, but got {order:.2f} for {scheme}"
@@ -121,7 +121,7 @@ def testRiccatiCollocation(nNodes, nodesType, quadType, useEmbeddedWeights=False
             return None
     scheme = f"Collocation({nNodes}, {nodesType}, {quadType})"
     nSteps = nStepsForTest(gen, useEmbeddedWeights)
-    err = [gen.errorRiccati(u0_Riccati, tEnd_Riccati, nS, useEmbeddedWeights=useEmbeddedWeights) for nS in nSteps]
+    err = [gen.errorRiccati(u0_RICCATI, tEnd_RICCATI, nS, useEmbeddedWeights=useEmbeddedWeights) for nS in nSteps]
     order, rmse = numericalOrder(nSteps, err)
     expectedOrder = gen.getExpectedOrder(useEmbeddedWeights, linear=False)
 
