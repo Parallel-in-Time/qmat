@@ -54,6 +54,7 @@ test = [
     "matplotlib",
     "jupyter",
     "nbconvert",
+    "physverify>=0.4.1",
 ]
 
 [project.urls]
