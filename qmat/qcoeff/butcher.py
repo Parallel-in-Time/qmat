@@ -180,7 +180,6 @@ class HEUN2(RK):
     def order(self)->int: return 2
 
 
-# ---------------------------------- Order 3 ----------------------------------
 @registerRK
 class RK32(RK):
     """Explicit Runge-Kutta in 3 steps of order 2 from `[Wang & Spiteri, 2007]`_"""
@@ -192,9 +191,12 @@ class RK32(RK):
     c = [0, 1/3, 1]
 
     @property
-    def order(self)->int: return 3  # TODO: Dahlquist order is 3 actually ...
+    def order(self)->int: return 2
 
+    @property
+    def orderLinear(self)->int: return 3
 
+# ---------------------------------- Order 3 ----------------------------------
 @registerRK
 class RK33(RK):
     """Explicit Runge-Kutta in 3 steps of order 3 from `[Wang & Spiteri, 2007]`_"""
@@ -713,7 +715,10 @@ class ARK548L2SAESDIRK(ARK548L2SAERK):
     ]
 
     @property
-    def orderEmbedded(self)->int: return 5
+    def orderEmbedded(self)->int: return 4
+
+    @property
+    def orderEmbeddedLinear(self)->int: return 5
 
 
 @registerRK
@@ -971,7 +976,10 @@ class ARK343ERK(ARK343ESDIRK):
                   [ -0.105858296, 0.5529291479, 0.5529291479, 0 ]])
 
     @property
-    def order(self)->int: return 4
+    def order(self)->int: return 3
+
+    @property
+    def orderLinear(self)->int: return 4
 
 
 @registerRK

@@ -130,9 +130,51 @@ class QGenerator(object):
         raise NotImplementedError("mouahahah")
 
     @property
+    def orderLinear(self):
+        """Convergence order for linear autonomous problems.
+
+        Can be larger than :attr:`order` for methods showing super-convergence on linear problems.
+        Equals :attr:`order` by default.
+        """
+        return self.order
+
+    @property
     def orderEmbedded(self)->int:
         """Global convergence order of the associated embedded method"""
         return self.order - 1
+
+    @property
+    def orderLinearEmbedded(self)->int:
+        """Convergence order for linear autonomous problems of the associated embedded method.
+
+        Can be larger than :attr:`orderEmbedded` for methods showing super-convergence
+        on linear problems. Equals :attr:`orderEmbedded` by default.
+        """
+        return self.orderLinear - 1
+
+
+    def getExpectedOrder(self, embedded, linear):
+        """
+        Return the expected convergence order of the method.
+
+        Parameters
+        ----------
+        embedded : bool
+            Wether or not considering the embedded method.
+        linear : bool
+            Wether or not considering linear autonomous problems.
+
+        Returns
+        -------
+        out : int
+            The expected convergence order, given by :attr:`order`,
+            :attr:`orderLinear`, :attr:`orderEmbedded` or
+            :attr:`orderLinearEmbedded` depending on the parameters.
+        """
+        if linear:
+            return self.orderLinearEmbedded if embedded else self.orderLinear
+        else:
+            return self.orderEmbedded if embedded else self.order
 
     def solveDahlquist(self, lam, u0, tEnd, nSteps, useEmbeddedWeights=False):
         r"""
