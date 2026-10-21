@@ -54,7 +54,7 @@ def testDahlquist(scheme, useEmbeddedWeights):
         try:
             gen.weightsEmbedded
         except NotImplementedError:
-            return None
+            pytest.skip(f"no embedded weights implemented for {scheme}")
 
     expectedOrder = gen.getExpectedOrder(useEmbeddedWeights, linear=True)
     nSteps = nStepsForTest(gen, useEmbeddedWeights)
@@ -69,11 +69,6 @@ def testDahlquist(scheme, useEmbeddedWeights):
 @pytest.mark.parametrize("nNodes", [2, 3, 4])
 def testDahlquistCollocation(nNodes, nodesType, quadType, useEmbeddedWeights=False):
     gen:Collocation = SCHEMES["Collocation"](nNodes, nodesType, quadType)
-    if useEmbeddedWeights:
-        try:
-            gen.weightsEmbedded
-        except NotImplementedError:
-            return None
     scheme = f"Collocation({nNodes}, {nodesType}, {quadType})"
     nSteps = nStepsForTest(gen, useEmbeddedWeights)
     err = [gen.errorDahlquist(lam_DAHLQUIST, u0_DAHLQUIST, tEnd_DAHLQUIST, nS, useEmbeddedWeights=useEmbeddedWeights) for nS in nSteps]
@@ -99,7 +94,7 @@ def testRiccati(scheme, useEmbeddedWeights):
         try:
             gen.weightsEmbedded
         except NotImplementedError:
-            return None
+            pytest.skip(f"no embedded weights implemented for {scheme}")
 
     expectedOrder = gen.getExpectedOrder(useEmbeddedWeights, linear=False)
     nSteps = nStepsForTest(gen, useEmbeddedWeights)
@@ -114,11 +109,6 @@ def testRiccati(scheme, useEmbeddedWeights):
 @pytest.mark.parametrize("nNodes", [2, 3, 4])
 def testRiccatiCollocation(nNodes, nodesType, quadType, useEmbeddedWeights=False):
     gen:Collocation = SCHEMES["Collocation"](nNodes, nodesType, quadType)
-    if useEmbeddedWeights:
-        try:
-            gen.weightsEmbedded
-        except NotImplementedError:
-            return None
     scheme = f"Collocation({nNodes}, {nodesType}, {quadType})"
     nSteps = nStepsForTest(gen, useEmbeddedWeights)
     err = [gen.errorRiccati(u0_RICCATI, tEnd_RICCATI, nS, useEmbeddedWeights=useEmbeddedWeights) for nS in nSteps]
