@@ -72,7 +72,15 @@ the expected arrays in `numpy.ndarray` format :
 
 While `nNodes` is directly determined from the `nodes` property, later on the tests checks if the for each $Q$-generators, dimensions of `nodes`, `weights` and `Q` are consistent.
 Finally, you should implement the `order` property, that returns the theoretical accuracy order of the associated scheme (global truncation error).
-Value returned by `order` is used in the [test series for convergence](https://github.com/Parallel-in-Time/qmat/blob/main/tests/test_qcoeff/test_convergence.py) to check the coefficients.
+Values returned by `order` and its variants (see below) are used in the [test series for convergence](https://github.com/Parallel-in-Time/qmat/blob/main/tests/test_qcoeff/test_convergence.py) to check the coefficients, respectively on the linear Dahlquist problem and on the non-linear Riccati problem.
+
+The base `QGenerator` class also provides the following optional order properties :
+
+- `orderLinear` : convergence order for **linear autonomous problems**. Equals `order` by default, and must only be overridden for methods showing super-convergence on linear problems, _i.e_ when `orderLinear > order`
+- `orderEmbedded` : convergence order of the associated embedded method (when implemented), equals `order - 1` by default
+- `orderLinearEmbedded` : convergence order for linear autonomous problems of the associated embedded method. Equals `orderLinear - 1` by default, and must only be overridden when the embedded method shows super-convergence on linear problems
+
+> 💡 The `getExpectedOrder(embedded, linear)` method returns the appropriate order from those properties, depending on whether the embedded method and/or a linear autonomous problem are considered. It is used by the convergence tests to select the expected order for the test problem.
 
 > 🔔 For Runge-Kutta type generators, their implementation use an additional abstract layer to simplify the addition
 > of new schemes, see [specific documentation to add RK schemes ...](./addRK.md)

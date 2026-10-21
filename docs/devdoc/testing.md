@@ -54,7 +54,7 @@ pytest -v ./tests
 This will check :
 
 - the basic generation of all registered $Q$-coefficients and $Q_\Delta$ approximations (using functions or generator objects)
-- convergence order of all registered $Q$-coefficients
+- convergence order of all registered $Q$-coefficients (with order conditions of the Butcher tables checked using the [physverify](https://github.com/rcgiri-physics/physverify) package, developed by [Ram Chandra Giri](https://github.com/rcgiri-physics))
 - some properties of all registered $Q_\Delta$ approximations
 - all the solvers and differential operators implemented in `qmat`
 
