@@ -247,7 +247,7 @@ class LagrangeApproximation(object):
         t = np.asarray(t)
         fValues = np.asarray(fValues)
         values = self.getInterpolationMatrix(t.ravel()).dot(fValues)
-        values.shape = t.shape
+        values.reshape(t.shape)
         return values
 
 

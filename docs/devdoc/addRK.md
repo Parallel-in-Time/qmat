@@ -41,20 +41,55 @@ A[4, :4] = [-11.0 / 54.0, 5.0 / 2.0, -70.0 / 27.0, 35.0 / 27.0]
 A[5, :5] = [1631.0 / 55296.0, 175.0 / 512.0, 575.0 / 13824.0, 44275.0 / 110592.0, 253.0 / 4096.0]
 ```
 
+## Linear order
+
+By default, a RK scheme is expected to show the same convergence order for linear autonomous
+problems (_e.g_ the Dahlquist problem) as for non-linear ones, given by the `order` property.
+But some schemes show super-convergence on linear problems, and in that case you should
+override the `orderLinear` property from the base class :
+
+```python
+@registerRK
+class NewRK(RK):
+    # ...
+    @property
+    def orderLinear(self):
+        return ...  # effective order for linear autonomous problems
+```
+
+> ⚠️ The `orderLinear` property must only be overridden when the scheme shows super-convergence
+> on linear problems, _i.e_ when `orderLinear > order`.
+> The value returned by `orderLinear` is checked by the convergence tests on the Dahlquist problem,
+> while the one from `order` is checked on the (non-linear) Riccati problem.
+
 ## Convergence testing
 
 To test your scheme ... you don't have to do anything 🥳 : all RK schemes are automatically tested
 thanks to the [registration mechanism](./structure.md), that checks (in particular) the convergence
 order of each scheme (global truncation error).
 
+In particular, the order conditions of each Butcher table (for both the `order` and `orderLinear`
+properties) are checked using the [physverify](https://github.com/rcgiri-physics/physverify) package,
+developed by [Ram Chandra Giri](https://github.com/rcgiri-physics) 🙏
+
 > ⚠️ Depending on the implemented RK scheme, convergence test may fail ... in that case no worries 😉 you'll just have to adapt your scheme to the test, as explained below ...
 
-All convergence tests are done on the following Dahlquist problem :
+All convergence tests are done on the two following problems, using the order properties
+of the scheme to set the expected convergence order (see the [linear order section](#linear-order)) :
+
+- the (linear) Dahlquist problem, using `orderLinear` (or `orderLinearEmbedded` for the embedded method) :
 
 ```python
 u0 = 1          # unitary initial solution
 lam = 1j        # purely imaginary lambda
 tEnd = 2*np.pi  # one time period
+```
+
+- the (non-linear) Riccati problem, using `order` (or `orderEmbedded` for the embedded method) :
+
+```python
+u0 = 1      # unitary initial solution
+tEnd = 1
 ```
 
 They use three numbers of time-steps for the convergence analysis, depending on the order of the method
@@ -92,3 +127,20 @@ class NewRK(RK):
     def orderEmbedded(self):
         return ...  # effective embedded order
 ```
+
+Similarly, the order of the embedded method for linear autonomous problems is defined
+per default as **one order less than the linear order of the method** (that is, returned
+by the `orderLinear` property). If the embedded method shows super-convergence on linear
+problems, then override the `orderLinearEmbedded` property :
+
+```python
+@registerRK
+class NewRK(RK):
+    # ...
+    @property
+    def orderLinearEmbedded(self):
+        return ...  # effective embedded order for linear autonomous problems
+```
+
+> ⚠️ Only override `orderLinearEmbedded` when the embedded method shows super-convergence
+> on linear problems, _i.e_ when `orderLinearEmbedded > orderEmbedded`.
