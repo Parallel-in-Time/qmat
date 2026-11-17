@@ -153,9 +153,9 @@ class RK21(RK):
 
 
 @registerRK
-class RK21(RK):
+class RK21S(RK):
     """Explicit Runge-Kutta in 2 steps of order 1 maximizing the stability on the imaginary axis (inspired from `[Wang & Spiteri, 2007]`_)"""
-    aliases = ["ERK21"]
+    aliases = ["ERK21-S"]
     A = [[0, 0],
          [3/4, 0]]
     b = [-1/3, 4/3]
