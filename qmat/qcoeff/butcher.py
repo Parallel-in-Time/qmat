@@ -145,6 +145,19 @@ class RK21(RK):
     aliases = ["ERK21"]
     A = [[0, 0],
          [3/4, 0]]
+    b = [0, 1]
+    c = [0, 3/4]
+
+    @property
+    def order(self)->int: return 1
+
+
+@registerRK
+class RK21(RK):
+    """Explicit Runge-Kutta in 2 steps of order 1 maximizing the stability on the imaginary axis (inspired from `[Wang & Spiteri, 2007]`_)"""
+    aliases = ["ERK21"]
+    A = [[0, 0],
+         [3/4, 0]]
     b = [-1/3, 4/3]
     c = [0, 3/4]
 
